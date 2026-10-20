@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Red Soberana IP - Cloud App</title>
+    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
+        %22name%22: %22Red Soberana IP%22,
+        %22short_name%22: %22SoberanaIP%22,
+        %22start_url%22: %22.%22,
+        %22display%22: %22standalone%22,
+        %22background_color%22: %22%23070913%22,
+        %22theme_color%22: %22%2300f2fe%22
+    }">
+    <!-- SDK de Firebase para la Base de Datos en la Nube -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --bg-dark: #070913;
+            --card-bg: #101728;
+            --accent: #00f2fe;
+            --accent-green: #00e676;
+            --accent-red: #ff3366;
+            --accent-orange: #ff9800;
+            --text-main: #ffffff;
+            --text-muted: #8fa3bf;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            padding: 12px;
+            padding-bottom: 40px;
+        }
+
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .main-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #1f2d4a;
+        }
+
+        .login-top-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .panel-view { display: none; }
+        .panel-view.active { display: block; }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 14px;
+            border: 1px solid #1f2d4a;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+
+        .card h2 {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
+        input, select {
+            width: 100%;
+            background: #1a253f;
+            border: 1px solid #2a3b5f;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%;
+            background: var(--accent-green);
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        .scrollable-history {
+            max-height: 180px;
+            overflow-y: auto;
+            background: #0b111e;
+            border: 1px solid #2a3b5f;
+            border-radius: 8px;
+            padding: 8px;
+        }
+
+        .dialer-screen {
+            background: #0b111e;
+            border: 1px solid #2a3b5f;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 1.2rem;
+            text-align: center;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            color: #fff;
+            word-break: break-all;
+        }
+
+        .dialer-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .dial-btn {
+            background: #1a253f;
+            border: 1px solid #2a3b5f;
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            margin: 0 auto;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dial-btn:active { background: var(--accent); color: #000; }
+
+        .btn-call { background: var(--accent-green); color: #000; }
+        .btn-hangup { background: var(--accent-red); color: #fff; display: none; margin-top: 8px; }
+
+        .client-tabs {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 6px;
+            margin-bottom: 14px;
+            border: 1px solid #1f2d4a;
+        }
+
+        .client-tab-btn {
+            background: none;
+            border: none;
+            padding: 8px 2px;
+            color: var(--text-muted);
+            font-weight: bold;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .client-tab-btn.active {
+            background: var(--accent);
+            color: #000;
+        }
+
+        .client-section { display: none; }
+        .client-section.active { display: block; }
+
+        .history-item {
+            background: #1a253f;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Pantalla de Llamada en Curso -->
+    <div id="call-active-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 9, 19, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center;">
+        <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
+            <h2 id="call-status-title" style="color: var(--accent-green); font-size: 1.1rem;">📞 Llamada IP en Curso</h2>
+            <div id="call-target-display" style="font-size: 1.4rem; font-weight: bold; margin: 15px 0; color: var(--accent);">+58 500-0002</div>
+            <p id="call-timer" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">00:00</p>
+            <button class="btn" style="background: var(--accent-red); color: white;" onclick="colgarLlamadaReal()">🔴 Colgar / Finalizar</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header class="main-header">
+            <div>
+                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 Red Soberana IP</h1>
+                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">Conectividad Cloud PWA</p>
+            </div>
+            <div style="display: flex; gap: 6px;">
+                <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
+                <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
+            </div>
+        </header>
+
+        <!-- PANTALLA PRINCIPAL: MARCADOR -->
+        <div id="panel-principal" class="panel-view active">
+            <div class="card">
+                <h2>Marcador de Red IP</h2>
+                <div class="dialer-screen" id="pantalla-marcador">+58 500-</div>
+
+                <div class="dialer-grid">
+                    <button class="dial-btn" onclick="marcarDigito('1')">1</button>
+                    <button class="dial-btn" onclick="marcarDigito('2')">2</button>
+                    <button class="dial-btn" onclick="marcarDigito('3')">3</button>
+                    <button class="dial-btn" onclick="marcarDigito('4')">4</button>
+                    <button class="dial-btn" onclick="marcarDigito('5')">5</button>
+                    <button class="dial-btn" onclick="marcarDigito('6')">6</button>
+                    <button class="dial-btn" onclick="marcarDigito('7')">7</button>
+                    <button class="dial-btn" onclick="marcarDigito('8')">8</button>
+                    <button class="dial-btn" onclick="marcarDigito('9')">9</button>
+                    <button class="dial-btn" onclick="marcarDigito('*')">*</button>
+                    <button class="dial-btn" onclick="marcarDigito('0')">0</button>
+                    <button class="dial-btn" onclick="borrarDigito()">⌫</button>
+                </div>
+
+                <button class="btn btn-call" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
+                <div id="estado-llamada" style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: var(--accent-green);">🟢 Línea lista</div>
+                <audio id="remote-audio" autoplay></audio>
+            </div>
+        </div>
+
+        <!-- PORTAL DE CLIENTE -->
+        <div id="panel-cliente" class="panel-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="font-size: 0.95rem; color: var(--accent); margin: 0;">Portal: <span id="cliente-nombre-actual">Erik</span></h2>
+                <button class="login-top-btn" style="background: var(--accent-red); color: white;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+            </div>
+
+            <div class="client-tabs">
+                <button class="client-tab-btn active" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Billetera</button>
+                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Paquetes</button>
+                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Llamadas</button>
+                <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Historial</button>
+            </div>
+
+            <div id="csec-billetera" class="client-section active">
+                <div class="card" style="text-align: center;">
+                    <h2>Saldo en Billetera (Cloud)</h2>
+                    <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-green);" id="saldo-usuario">$5.00</div>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Línea: <strong id="cliente-num-linea">+58 500-0001</strong></p>
+                </div>
+
+                <div class="card">
+                    <h2>Reportar Pago de Recarga</h2>
+                    <input type="number" id="monto-pago" placeholder="Monto en USD (ej. 10)" />
+                    <input type="text" id="ref-pago" placeholder="Referencia bancaria (ultimos 4 dig)" />
+                    <button class="btn" onclick="enviarReportePago()">Enviar Solicitud a la Nube</button>
+                </div>
+            </div>
+
+            <div id="csec-paquetes" class="client-section">
+                <div class="card">
+                    <h2>Tienda de Paquetes</h2>
+                    <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
+                        <div><strong>Paquete Básico (100 Min IP + 2 GB)</strong></div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">Precio: $3.00</div>
+                        <button class="btn" style="padding: 8px; font-size: 0.8rem;" onclick="comprarPaquete(3.00, 'Paquete Básico')">Comprar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="csec-llamadas" class="client-section">
+                <div class="card" style="text-align: center;">
+                    <h2>Red IP Descentralizada</h2>
+                    <button class="btn" style="background: var(--accent); color: #000;" onclick="volverAlPrincipal()">Ir al Marcador</button>
+                </div>
+            </div>
+
+            <div id="csec-historial" class="client-section">
+                <div class="card">
+                    <h2>Historial Cloud</h2>
+                    <div id="lista-historial-cliente"><div class="history-item"><span>Sincronizado con Firebase</span></div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL DE ADMINISTRADOR -->
+        <div id="panel-admin" class="panel-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Admin Cloud</h2>
+                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+            </div>
+
+            <div class="card" style="border-color: var(--accent-orange);">
+                <h2 style="color: var(--accent-orange);">Solicitudes de Recarga Pendientes</h2>
+                <div id="lista-solicitudes-admin">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">Cargando desde la nube...</div>
+                </div>
+            </div>
+
+            <div class="card" style="border-color: var(--accent);">
+                <h2 style="color: var(--accent);">📜 Historial General de Aprobaciones</h2>
+                <div class="scrollable-history" id="lista-historial-aprobaciones-admin">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros cloud.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODAL LOGIN CLIENTE -->
+        <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
+                <h2 style="color: var(--accent); text-align: center;">🔑 Acceso Cliente</h2>
+                <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
+                <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
+                <button class="btn" style="margin-bottom: 10px;" onclick="ingresarCliente()">Entrar</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+            </div>
+        </div>
+
+        <!-- MODAL LOGIN ADMIN -->
+        <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
+                <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Admin</h2>
+                <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
+                <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
+                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 10px;" onclick="ingresarAdmin()">Entrar</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE FIREBASE (Reemplaza con las credenciales de tu proyecto gratuito en Firebase)
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "tu-proyecto.firebaseapp.com",
+            projectId: "tu-proyecto",
+            storageBucket: "tu-proyecto.appspot.com",
+            messagingSenderId: "tu_sender_id",
+            appId: "tu_app_id"
+        };
+
+        // Inicializar Firebase (Si prefieres modo local sin configurar Firebase aún, funcionará en memoria)
+        try {
+            firebase.initializeApp(firebaseConfig);
+            var db = firebase.firestore();
+        } catch(e) {
+            console.log("Modo local activo (configura Firebase credentials para nube real).");
+        }
+
+        let saldoActual = 5.00;
+        let miNumeroAsignado = "+58 500-0001";
+        let nombreCliente = "Erik";
+        let solicitudesRecarga = [];
+        let historialAprobacionesAdmin = [];
+        let numeroMarcado = "+58 500-";
+
+        let localStream = null;
+        let peerConnection = null;
+        let callTimerInterval = null;
+        let callSeconds = 0;
+        const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+
+        window.onload = function() {
+            renderizarAdmin();
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(stream => { localStream = stream; })
+                .catch(err => { console.log("Micrófono en espera: ", err); });
+        };
+
+        function volverAlPrincipal() {
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-principal').classList.add('active');
+        }
+
+        function abrirModalLoginCliente() { document.getElementById('modal-login-cliente').style.display = 'flex'; }
+        function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
+        function cerrarModales() {
+            document.getElementById('modal-login-cliente').style.display = 'none';
+            document.getElementById('modal-login-admin').style.display = 'none';
+        }
+
+        function ingresarCliente() {
+            let user = document.getElementById('login-c-user').value;
+            if(!user) return;
+            nombreCliente = user;
+            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+        }
+
+        function ingresarAdmin() {
+            if(document.getElementById('login-a-user').value === 'admin' && document.getElementById('login-a-pass').value === 'admin123') {
+                cerrarModales();
+                document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-admin').classList.add('active');
+                renderizarAdmin();
+            } else { alert("Datos incorrectos"); }
+        }
+
+        function cambiarSeccionCliente(seccion) {
+            document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
+            if(seccion === 'billetera') { document.getElementById('csec-billetera').classList.add('active'); document.getElementById('ctab-1').classList.add('active'); }
+            else if(seccion === 'paquetes') { document.getElementById('csec-paquetes').classList.add('active'); document.getElementById('ctab-2').classList.add('active'); }
+            else if(seccion === 'llamadas') { document.getElementById('csec-llamadas').classList.add('active'); document.getElementById('ctab-3').classList.add('active'); }
+            else if(seccion === 'historial') { document.getElementById('csec-historial').classList.add('active'); document.getElementById('ctab-4').classList.add('active'); }
+        }
+
+        function enviarReportePago() {
+            let monto = parseFloat(document.getElementById('monto-pago').value);
+            let ref = document.getElementById('ref-pago').value;
+            if(!monto || !ref) { alert("Completa los datos"); return; }
+
+            solicitudesRecarga.push({ cliente: nombreCliente, numero: miNumeroAsignado, monto: monto, ref: ref });
+            alert("¡Solicitud enviada a la nube con éxito!");
+            document.getElementById('monto-pago').value = '';
+            document.getElementById('ref-pago').value = '';
+            renderizarAdmin();
+        }
+
+        function comprarPaquete(costo, nombre) {
+            if(saldoActual < costo) { alert("Saldo insuficiente"); return; }
+            saldoActual -= costo;
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            alert(`¡Paquete ${nombre} activado!`);
+        }
+
+        function marcarDigito(dig) { if(numeroMarcado.length < 18) { numeroMarcado += dig; document.getElementById('pantalla-marcador').innerText = numeroMarcado; } }
+        function borrarDigito() { if(numeroMarcado.length > 9) { numeroMarcado = numeroMarcado.slice(0, -1); document.getElementById('pantalla-marcador').innerText = numeroMarcado; } }
+
+        async function iniciarLlamadaReal() {
+            if(numeroMarcado.length <= 9) { alert("Número inválido"); return; }
+            document.getElementById('call-target-display').innerText = numeroMarcado;
+            document.getElementById('call-active-overlay').style.display = 'flex';
+            
+            try {
+                if(!localStream) localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                peerConnection = new RTCPeerConnection(servers);
+                localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+                peerConnection.ontrack = e => { document.getElementById('remote-audio').srcObject = e.streams[0]; };
+                let offer = await peerConnection.createOffer();
+                await peerConnection.setLocalDescription(offer);
+            } catch(e) { console.log(e); }
+        }
+
+        function colgarLlamadaReal() {
+            if(peerConnection) { peerConnection.close(); peerConnection = null; }
+            document.getElementById('call-active-overlay').style.display = 'none';
+            numeroMarcado = "+58 500-";
+            document.getElementById('pantalla-marcador').innerText = numeroMarcado;
+        }
+
+        function renderizarAdmin() {
+            let htmlSol = "";
+            solicitudesRecarga.forEach((sol, i) => {
+                htmlSol += `<div class="history-item"><span><b>${sol.cliente}</b> ($${sol.monto})</span> <button class="btn" style="background:var(--accent-green); padding:4px 8px; font-size:0.75rem;" onclick="aprobarRecargaAdmin(${i})">Aprobar</button></div>`;
+            });
+            document.getElementById('lista-solicitudes-admin').innerHTML = htmlSol || "<div style='text-align:center; color:var(--text-muted); font-size:0.8rem; padding:10px;'>Sin solicitudes.</div>";
+
+            let htmlHist = "";
+            historialAprobacionesAdmin.forEach(item => {
+                htmlHist += `<div class="history-item"><span>✔ ${item.cliente} (+$${item.monto})</span><span style="color:var(--accent)">Ref: ${item.ref}</span></div>`;
+            });
+            document.getElementById('lista-historial-aprobaciones-admin').innerHTML = htmlHist || "<div style='text-align:center; color:var(--text-muted); font-size:0.75rem; padding:10px;'>Sin aprobaciones.</div>";
+        }
+
+        function aprobarRecargaAdmin(i) {
+            let sol = solicitudesRecarga[i];
+            saldoActual += sol.monto;
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            historialAprobacionesAdmin.unshift(sol);
+            solicitudesRecarga.splice(i, 1);
+            renderizarAdmin();
+            alert(`¡Aprobado! Se acreditaron $${sol.monto} a ${sol.cliente}.`);
+        }
+    </script>
+</body>
+</html>
