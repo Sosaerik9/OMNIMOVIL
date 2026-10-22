@@ -206,7 +206,14 @@
             align-items: center;
         }
 
-        /* NUEVA ESTRUCTURA TIPO WHATSAPP WEB MEJORADA (ESTILO IMAGEN 2) */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        /* ESTRUCTURA TIPO WHATSAPP WEB MEJORADA */
         .wa-pro-layout {
             display: grid;
             grid-template-columns: 280px 1fr 260px;
@@ -386,7 +393,7 @@
             font-size: 0.85rem;
         }
 
-        /* COLUMNA 3: BANNER PUBLICITARIO / DATOS (IGUAL A IMAGEN 2) */
+        /* COLUMNA 3: BANNER LATERAL DERECHO */
         .wa-ad-side {
             background: #ffffff;
             border-left: 1px solid #e9edef;
@@ -488,7 +495,7 @@
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
-            <!-- CHAT CON DISEÑO EXACTO A LA IMAGEN 2 -->
+            <!-- CHAT INTERFAZ TIPO WHATSAPP -->
             <div id="csec-chat" class="client-section active">
                 
                 <div class="wa-pro-layout">
@@ -566,7 +573,7 @@
                         </div>
                     </div>
 
-                    <!-- COLUMNA 3: BANNER LATERAL DERECHO (ESTILO IMAGEN 2 DE PANAXTREAMING) -->
+                    <!-- COLUMNA 3: BANNER DERECHO -->
                     <div class="wa-ad-side">
                         <div class="wa-ad-card">
                             <strong style="font-size: 0.8rem; color: #0f172a;">DATOS DE SU LÍNEA OMNIMOVIL</strong>
@@ -628,28 +635,99 @@
             </div>
         </div>
 
-        <!-- PANEL ADMINISTRADOR -->
+        <!-- PANEL ADMINISTRADOR COMPLETO -->
         <div id="panel-admin" class="panel-view">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Administrador</h2>
+                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+            </div>
+
+            <!-- CLIENTES REGISTRADOS CON FILTROS Y EXPORTACIÓN -->
+            <div class="card" style="border-color: var(--accent);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="color: var(--accent); margin:0;">👥 Clientes Registrados</h2>
+                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
+                </div>
+
+                <div class="filter-grid">
+                    <select id="filter-dia" onchange="renderizarAdmin()">
+                        <option value="">Día (Todos)</option>
+                        <script>
+                            for(let i=1; i<=31; i++) {
+                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                    <select id="filter-mes" onchange="renderizarAdmin()">
+                        <option value="">Mes (Todos)</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select id="filter-anio" onchange="renderizarAdmin()">
+                        <option value="">Año (Todos)</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div class="static-scroll-box" id="lista-clientes-admin">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
+                </div>
+            </div>
+
+            <!-- SOLICITUDES PENDIENTES -->
+            <div class="card" style="border-color: var(--accent-orange);">
+                <h2 style="color: var(--accent-orange);">Solicitudes de Recarga Pendientes</h2>
+                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>
+                </div>
+            </div>
+
+            <!-- GESTIÓN DE POOL -->
             <div class="card">
-                <h2>Panel Administrador</h2>
-                <button class="btn" onclick="exportarClientesCSV()">Exportar CSV Clientes</button>
-                <button class="btn" style="background: #ef4444; color: white; margin-top: 8px;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+                <h2>Gestión de Números (Pool)</h2>
+                <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
+                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número</button>
+                <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
 
         <!-- MODALES -->
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px;">
+            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
                 <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
                 <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
                 <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
                 <button class="btn" style="margin-bottom: 8px;" onclick="ingresarCliente()">Iniciar Sesión</button>
+                <button class="btn" style="background: #1a253f; color: var(--accent); margin-bottom: 8px;" onclick="abrirModalRegistro()">📝 Registrarse / Crear Línea</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
+                <h2 style="color: var(--accent-green); text-align: center;">✨ Registro de Nuevo Cliente</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Se te asignará una línea automáticamente.</p>
+                <input type="text" id="reg-nombre" placeholder="Nombre de usuario" />
+                <input type="password" id="reg-pass" placeholder="Contraseña" />
+                <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Registrarse y Obtener Número</button>
                 <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
 
         <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px;">
+            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
                 <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
                 <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
@@ -660,14 +738,14 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE REALTIME
+        // CONFIGURACIÓN SUPABASE REALTIME (LEGACY ANON KEY INTEGRADA)
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
         let supabaseClient = null;
 
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch(e) { console.error("Error Supabase", e); }
+        } catch(e) { console.error("Error al iniciar Supabase", e); }
 
         let miNumeroAsignado = "+58 500-0001";
         let numeroDestinoActual = "+58 500-0002";
@@ -675,7 +753,18 @@
         let saldoActual = 5.00;
         let numeroMarcado = "+58 500-";
 
+        let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
+        
+        let clientesRegistrados = [
+            { id: 1, nombre: "Erik Sosa", numero: "+58 500-0001", saldo: 5.00, fecha: "2026-10-22" },
+            { id: 2, nombre: "Maria Gomez", numero: "+58 500-0002", saldo: 12.50, fecha: "2026-10-21" },
+            { id: 3, nombre: "Carlos Perez", numero: "+58 500-0003", saldo: 0.00, fecha: "2026-09-15" }
+        ];
+
+        let solicitudesRecarga = [];
+
         window.onload = function() {
+            renderizarAdmin();
             if(supabaseClient) {
                 iniciarSuscripcionRealtime();
                 cargarMensajesSupabase();
@@ -688,9 +777,14 @@
         }
 
         function abrirModalLoginCliente() { document.getElementById('modal-login-cliente').style.display = 'flex'; }
+        function abrirModalRegistro() { 
+            document.getElementById('modal-login-cliente').style.display = 'none';
+            document.getElementById('modal-registro').style.display = 'flex'; 
+        }
         function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
         function cerrarModales() {
             document.getElementById('modal-login-cliente').style.display = 'none';
+            document.getElementById('modal-registro').style.display = 'none';
             document.getElementById('modal-login-admin').style.display = 'none';
         }
 
@@ -700,6 +794,43 @@
             document.getElementById('chat-numero-receptor').innerText = numero;
             document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
             cargarMensajesSupabase();
+        }
+
+        function registrarNuevoCliente() {
+            let nombre = document.getElementById('reg-nombre').value;
+            let pass = document.getElementById('reg-pass').value;
+            if(!nombre || !pass) { alert("Ingresa un usuario y contraseña."); return; }
+
+            if(poolNumeros.length === 0) { alert("No hay números libres en el pool."); return; }
+
+            miNumeroAsignado = poolNumeros.shift();
+            nombreCliente = nombre;
+            saldoActual = 2.00;
+
+            let hoy = new Date();
+            let fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+
+            clientesRegistrados.push({
+                id: clientesRegistrados.length + 1,
+                nombre: nombreCliente,
+                numero: miNumeroAsignado,
+                saldo: saldoActual,
+                fecha: fechaHoy
+            });
+
+            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
+            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
+            document.getElementById('ad-nombre-user').innerText = nombreCliente;
+            document.getElementById('ad-num-user').innerText = miNumeroAsignado;
+            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+            renderizarAdmin();
+            alert(`¡Registro exitoso! Tu número asignado es: ${miNumeroAsignado}`);
         }
 
         function ingresarCliente() {
@@ -715,9 +846,125 @@
         }
 
         function ingresarAdmin() {
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-admin').classList.add('active');
+            let u = document.getElementById('login-a-user').value;
+            let p = document.getElementById('login-a-pass').value;
+            if(u === 'admin' && p === 'admin123') {
+                cerrarModales();
+                document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-admin').classList.add('active');
+                renderizarAdmin();
+            } else {
+                alert("Credenciales administrativas incorrectas.");
+            }
+        }
+
+        function renderizarAdmin() {
+            let contClientes = document.getElementById('lista-clientes-admin');
+            let dia = document.getElementById('filter-dia')?.value || "";
+            let mes = document.getElementById('filter-mes')?.value || "";
+            let anio = document.getElementById('filter-anio')?.value || "";
+
+            let clientesFiltrados = clientesRegistrados.filter(c => {
+                let partes = c.fecha.split("-");
+                return (anio === "" || partes[0] === anio) &&
+                       (mes === "" || partes[1] === mes) &&
+                       (dia === "" || partes[2] === dia);
+            });
+
+            if(clientesFiltrados.length === 0) {
+                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros para los filtros seleccionados.</div>`;
+            } else {
+                contClientes.innerHTML = "";
+                clientesFiltrados.forEach(c => {
+                    contClientes.innerHTML += `
+                        <div class="history-item">
+                            <div>
+                                <strong style="color:var(--accent);">${c.nombre}</strong><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Fecha: ${c.fecha}</span>
+                            </div>
+                            <div style="font-weight:bold; color:var(--accent-green);">$${c.saldo.toFixed(2)}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            let contSolicitudes = document.getElementById('lista-solicitudes-admin');
+            if(solicitudesRecarga.length === 0) {
+                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>`;
+            } else {
+                contSolicitudes.innerHTML = "";
+                solicitudesRecarga.forEach((s, idx) => {
+                    contSolicitudes.innerHTML += `
+                        <div class="history-item">
+                            <div><strong>${s.cliente}</strong> ($${s.monto})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
+                            <div>
+                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            let contPool = document.getElementById('lista-pool-numeros');
+            contPool.innerHTML = "";
+            if(poolNumeros.length === 0) {
+                contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Sin números en el pool.</div>`;
+            } else {
+                poolNumeros.forEach((num) => {
+                    contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span></div>`;
+                });
+            }
+        }
+
+        function exportarClientesCSV() {
+            let csv = "ID,Nombre,Numero,Saldo,Fecha\n";
+            clientesRegistrados.forEach(c => { csv += `${c.id},"${c.nombre}","${c.numero}",${c.saldo},${c.fecha}\n`; });
+            let link = document.createElement("a");
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
+            link.download = "Clientes_OmniMovil.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function agregarNumeroAlPool() {
+            let input = document.getElementById('nuevo-num-pool');
+            if(input.value) { poolNumeros.push(input.value); input.value = ""; renderizarAdmin(); }
+        }
+
+        function enviarReportePago() {
+            let monto = parseFloat(document.getElementById('monto-pago').value);
+            let ref = document.getElementById('ref-pago').value;
+            if(!monto || !ref) { alert("Completa los datos de pago."); return; }
+
+            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref });
+            document.getElementById('monto-pago').value = "";
+            document.getElementById('ref-pago').value = "";
+            alert("Solicitud de recarga enviada al operador.");
+            renderizarAdmin();
+        }
+
+        function aprobarRecarga(idx) {
+            let sol = solicitudesRecarga[idx];
+            saldoActual += sol.monto;
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
+            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
+            if(cli) cli.saldo += sol.monto;
+            solicitudesRecarga.splice(idx, 1);
+            renderizarAdmin();
+            alert("Recarga aprobada exitosamente.");
+        }
+
+        function comprarPaquete(precio, nombre) {
+            if(saldoActual >= precio) {
+                saldoActual -= precio;
+                document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+                document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
+                alert(`¡Has adquirido el ${nombre}!`);
+            } else {
+                alert("Saldo insuficiente.");
+            }
         }
 
         function cambiarSeccionCliente(seccion) {
@@ -829,16 +1076,6 @@
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
-        }
-
-        function exportarClientesCSV() {
-            let csv = "ID,Nombre,Numero\n1,Erik Sosa,+58 500-0001\n";
-            let link = document.createElement("a");
-            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-            link.download = "Clientes_OmniMovil.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
         }
     </script>
 </body>
