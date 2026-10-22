@@ -140,13 +140,14 @@
             display: inline-block;
         }
 
+        /* Recuadro Estático Scrollable */
         .static-scroll-box {
-            height: 180px;
-            overflow-y: scroll;
+            height: 200px;
+            overflow-y: auto;
             background: #0b111e;
             border: 1px solid #2a3b5f;
             border-radius: 10px;
-            padding: 8px;
+            padding: 10px;
         }
 
         .dialer-screen {
@@ -442,6 +443,16 @@
             color: white;
             cursor: pointer;
         }
+
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        .status-badge.active-line { background: #dcfce7; color: #15803d; }
+        .status-badge.suspended-line { background: #fee2e2; color: #b91c1c; }
     </style>
 </head>
 <body>
@@ -492,15 +503,27 @@
         </div>
 
         <div id="panel-cliente" class="panel-view">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="font-size: 0.95rem; color: var(--accent); margin: 0;">Línea: <span id="cliente-num-linea">+58 500-0001</span> (<span id="cliente-nombre-actual">Erik</span>)</h2>
-                <button class="login-top-btn" style="background: var(--accent-red); color: white;" onclick="volverAlPrincipal()">Salir</button>
+            <div class="card" style="padding: 12px; margin-bottom: 10px; border-color: var(--accent);">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+                    <div>
+                        <strong style="font-size: 0.9rem; color: var(--accent);" id="cliente-num-linea">+58 500-0001</strong>
+                        <span style="font-size: 0.8rem; color: var(--text-muted);"> (<span id="cliente-nombre-actual">Erik</span>)</span>
+                    </div>
+                    <div>
+                        <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
+                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="volverAlPrincipal()">Salir</button>
+                    </div>
+                </div>
+                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
+                    <span>Plan Actual: <strong style="color: #fff;" id="linea-plan-nombre">Plan Básico IP ($3.00/mes)</strong></span>
+                    <span>Corte: <strong style="color: var(--accent-orange);" id="linea-fecha-venc">2026-11-22</strong></span>
+                </div>
             </div>
 
             <div class="client-tabs">
                 <button class="client-tab-btn" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Saldo</button>
                 <button class="client-tab-btn active" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 WhatsApp</button>
-                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Plan</button>
+                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Planes</button>
                 <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red</button>
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
@@ -603,49 +626,77 @@
                     <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-green);" id="saldo-usuario">$5.00</div>
                 </div>
                 <div class="card">
-                    <h2>Reportar Pago de Recarga</h2>
-                    <input type="number" id="monto-pago" placeholder="Monto pagado en USD" />
-                    <input type="text" id="ref-pago" placeholder="Referencia bancaria" />
-                    <button class="btn" onclick="enviarReportePago()">Enviar Solicitud</button>
+                    <h2>Reportar Pago de Mensualidad / Recarga</h2>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Pago Móvil / Zelle / Binance Pay. Al ser verificado se reanudará tu línea.</p>
+                    <input type="number" id="monto-pago" placeholder="Monto pagado en USD ($)" />
+                    <input type="text" id="ref-pago" placeholder="Número de Referencia" />
+                    <button class="btn" onclick="enviarReportePago()">Enviar Solicitud de Renovación</button>
                 </div>
             </div>
 
             <div id="csec-paquetes" class="client-section">
                 <div class="card">
-                    <h2>Tienda de Paquetes</h2>
+                    <h2>Catálogo de Planes Mensuales</h2>
                     <div class="history-item">
-                        <div><strong>Paquete Básico (100 Min IP)</strong><br/><span style="font-size:0.7rem;">$3.00</span></div>
-                        <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Paquete Básico')">Comprar</button>
+                        <div><strong>Plan Básico ($3.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">100 Mins IP + Mensajería</span></div>
+                        <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Plan Básico')">Suscribir</button>
+                    </div>
+                    <div class="history-item">
+                        <div><strong>Plan Ilimitado Pro ($5.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">Llamadas IP Ilimitadas + Chat</span></div>
+                        <button class="btn btn-small" style="background: var(--accent);" onclick="comprarPaquete(5.00, 'Plan Ilimitado Pro')">Suscribir</button>
                     </div>
                 </div>
             </div>
 
             <div id="csec-llamadas" class="client-section">
                 <div class="card" style="text-align: center;">
-                    <h2>Red IP Descentralizada</h2>
-                    <p style="font-size: 0.85rem; color: var(--accent-green);">🟢 Conectado con alta fidelidad</p>
+                    <h2>Estado de Conexión a la Red</h2>
+                    <p style="font-size: 0.85rem; color: var(--accent-green);" id="red-estado-texto">🟢 Conectado a Servidor VoIP</p>
                 </div>
             </div>
 
             <div id="csec-historial" class="client-section">
                 <div class="card">
-                    <h2>Historial de Cuenta</h2>
-                    <div class="history-item"><span>Cuenta activa</span></div>
+                    <h2>Historial de Suscripciones</h2>
+                    <div class="history-item"><span>Activación de línea inicial (+58 500)</span><span style="color:var(--accent-green); font-size:0.7rem;">Exitosa</span></div>
                 </div>
             </div>
         </div>
 
+        <!-- PANEL DE ADMINISTRADOR MEJORADO -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Administrador</h2>
+                <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
                 <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
             </div>
 
+            <!-- RECUADRO ESTÁTICO DE REGISTRO MANUAL DE CLIENTE CON SCROLL -->
+            <div class="card" style="border-color: var(--accent-green);">
+                <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
+                <div class="static-scroll-box" style="height: 180px; background: #070913;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo del Cliente" />
+                        <input type="text" id="admin-reg-cedula" placeholder="Cédula / Identificación (ID)" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="text" id="admin-reg-telefono" placeholder="Teléfono de Contacto" />
+                        <select id="admin-reg-plan">
+                            <option value="3.00">Plan Básico ($3.00/mes)</option>
+                            <option value="5.00">Plan Ilimitado Pro ($5.00/mes)</option>
+                        </select>
+                    </div>
+                    <button class="btn" style="background: var(--accent-green); color: #000; font-weight: bold; margin-top: 4px;" onclick="registrarClienteDesdeAdmin()">➕ Registrar Cliente y Generar Línea Automática</button>
+                </div>
+            </div>
+
+            <!-- RECUADRO CON BUSCADOR, FILTROS Y BASE DE DATOS DE CLIENTES -->
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="color: var(--accent); margin:0;">👥 Clientes Registrados</h2>
+                    <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes</h2>
                     <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
                 </div>
+
+                <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" style="margin-bottom: 8px;" />
 
                 <div class="filter-grid">
                     <select id="filter-dia" onchange="renderizarAdmin()">
@@ -679,44 +730,50 @@
                     </select>
                 </div>
 
-                <div class="static-scroll-box" id="lista-clientes-admin">
+                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 220px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
                 </div>
             </div>
 
             <div class="card" style="border-color: var(--accent-orange);">
-                <h2 style="color: var(--accent-orange);">Solicitudes de Recarga Pendientes</h2>
+                <h2 style="color: var(--accent-orange);">Solicitudes de Pagos y Renovación</h2>
                 <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>
                 </div>
             </div>
 
             <div class="card">
-                <h2>Gestión de Números (Pool)</h2>
+                <h2>Pool de Números Disponibles para Venta</h2>
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número</button>
+                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
                 <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
+            </div>
+        </div>
+
+        <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green);">
+                <h2 style="color: var(--accent-green); text-align: center;">📲 Comprar Nueva Línea OmniMovil</h2>
+                <div style="background: #1a253f; border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 0.78rem; border: 1px solid #2a3b5f;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                        <span>Costo de Activación + 1er Mes:</span>
+                        <strong style="color: var(--accent-green);">$5.00 USD</strong>
+                    </div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);">Incluye asignación inmediata de número + Plan Básico por 30 días.</div>
+                </div>
+                <input type="text" id="reg-nombre" placeholder="Nombre completo" />
+                <input type="password" id="reg-pass" placeholder="Contraseña de cuenta" />
+                <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Activar y Asignar Línea</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
 
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
-                <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
+                <h2 style="color: var(--accent); text-align: center;">🔑 Acceso a tu Línea</h2>
                 <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
                 <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
                 <button class="btn" style="margin-bottom: 8px;" onclick="ingresarCliente()">Iniciar Sesión</button>
-                <button class="btn" style="background: #1a253f; color: var(--accent); margin-bottom: 8px;" onclick="abrirModalRegistro()">📝 Registrarse / Crear Línea</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
-            </div>
-        </div>
-
-        <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
-                <h2 style="color: var(--accent-green); text-align: center;">✨ Registro de Nuevo Cliente</h2>
-                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 10px;">Se te asignará una línea automáticamente.</p>
-                <input type="text" id="reg-nombre" placeholder="Nombre de usuario" />
-                <input type="password" id="reg-pass" placeholder="Contraseña" />
-                <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Registrarse y Obtener Número</button>
+                <button class="btn" style="background: #1a253f; color: var(--accent); margin-bottom: 8px;" onclick="abrirModalRegistro()">🛒 Comprar / Registrar Nueva Línea</button>
                 <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
@@ -726,20 +783,18 @@
                 <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
                 <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
                 <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel</button>
+                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel Operadora</button>
                 <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // EJECUCIÓN DIRECTA Y CAPTURA DE INSTALACIÓN
         let deferredPrompt = null;
 
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            console.log("Evento PWA capturado con éxito");
         });
 
         function instalarPWA() {
@@ -752,18 +807,12 @@
                     deferredPrompt = null;
                 });
             } else {
-                // Si el evento no se ha registrado en el objeto global, reintenta el disparador nativo de Chrome
                 window.location.reload(true);
             }
         }
 
-        // REGISTRO DEL SERVICE WORKER
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=2').then(reg => {
-                console.log("Service Worker registrado correctamente");
-            }).catch(err => {
-                console.error("Error Service Worker", err);
-            });
+            navigator.serviceWorker.register('./sw.js?v=4').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -778,14 +827,17 @@
         let numeroDestinoActual = "+58 500-0002";
         let nombreCliente = "Erik";
         let saldoActual = 5.00;
+        let estadoLineaActual = "Activa";
+        let fechaVencimientoActual = "2026-11-22";
+        let planActualNombre = "Plan Básico IP ($3.00/mes)";
         let numeroMarcado = "+58 500-";
 
         let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
         
         let clientesRegistrados = [
-            { id: 1, nombre: "Erik Sosa", numero: "+58 500-0001", saldo: 5.00, fecha: "2026-10-22" },
-            { id: 2, nombre: "Maria Gomez", numero: "+58 500-0002", saldo: 12.50, fecha: "2026-10-21" },
-            { id: 3, nombre: "Carlos Perez", numero: "+58 500-0003", saldo: 0.00, fecha: "2026-09-15" }
+            { id: 1, nombre: "Erik Sosa", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22" },
+            { id: 2, nombre: "Maria Gomez", cedula: "V-18987654", contacto: "0424-7654321", numero: "+58 500-0002", saldo: 12.50, estado: "Activa", vencimiento: "2026-11-20", fecha: "2026-10-20" },
+            { id: 3, nombre: "Carlos Perez", cedula: "V-15432109", contacto: "0412-5554433", numero: "+58 500-0003", saldo: 0.00, estado: "Suspendida", vencimiento: "2026-09-15", fecha: "2026-08-15" }
         ];
 
         let solicitudesRecarga = [];
@@ -815,12 +867,50 @@
             document.getElementById('modal-login-admin').style.display = 'none';
         }
 
-        function seleccionarContacto(numero, nombre) {
-            numeroDestinoActual = numero;
-            document.getElementById('chat-nombre-receptor').innerText = nombre;
-            document.getElementById('chat-numero-receptor').innerText = numero;
-            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
-            cargarMensajesSupabase();
+        // REGISTRO DE CLIENTE DESDE EL PANEL DE ADMINISTRACIÓN
+        function registrarClienteDesdeAdmin() {
+            let nombre = document.getElementById('admin-reg-nombre').value;
+            let cedula = document.getElementById('admin-reg-cedula').value;
+            let telefono = document.getElementById('admin-reg-telefono').value;
+            let montoPlan = parseFloat(document.getElementById('admin-reg-plan').value);
+
+            if(!nombre || !cedula) {
+                alert("Ingresa al menos el Nombre completo y Cédula/ID.");
+                return;
+            }
+
+            if(poolNumeros.length === 0) {
+                alert("No hay números libres en el Pool de Líneas. Añade un número al Pool primero.");
+                return;
+            }
+
+            let numAsignado = poolNumeros.shift();
+            let hoy = new Date();
+            let fechaHoy = hoy.toISOString().split('T')[0];
+            
+            let proximoMes = new Date();
+            proximoMes.setDate(proximoMes.getDate() + 30);
+            let fechaVenc = proximoMes.toISOString().split('T')[0];
+
+            clientesRegistrados.push({
+                id: clientesRegistrados.length + 1,
+                nombre: nombre,
+                cedula: cedula || "N/A",
+                contacto: telefono || "N/A",
+                numero: numAsignado,
+                saldo: montoPlan,
+                estado: "Activa",
+                vencimiento: fechaVenc,
+                fecha: fechaHoy
+            });
+
+            // Limpiar formulario
+            document.getElementById('admin-reg-nombre').value = "";
+            document.getElementById('admin-reg-cedula').value = "";
+            document.getElementById('admin-reg-telefono').value = "";
+
+            renderizarAdmin();
+            alert(`¡Cliente registrado con éxito!\n\nLínea Asignada: ${numAsignado}\nVencimiento: ${fechaVenc}`);
         }
 
         function registrarNuevoCliente() {
@@ -832,44 +922,76 @@
 
             miNumeroAsignado = poolNumeros.shift();
             nombreCliente = nombre;
-            saldoActual = 2.00;
+            saldoActual = 5.00;
+            estadoLineaActual = "Activa";
 
             let hoy = new Date();
-            let fechaHoy = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+            let fechaHoy = hoy.toISOString().split('T')[0];
+            
+            let proximoMes = new Date();
+            proximoMes.setDate(proximoMes.getDate() + 30);
+            fechaVencimientoActual = proximoMes.toISOString().split('T')[0];
 
             clientesRegistrados.push({
                 id: clientesRegistrados.length + 1,
                 nombre: nombreCliente,
+                cedula: "Online",
+                contacto: "App Client",
                 numero: miNumeroAsignado,
                 saldo: saldoActual,
+                estado: "Activa",
+                vencimiento: fechaVencimientoActual,
                 fecha: fechaHoy
             });
 
+            actualizarVistaCliente();
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+            renderizarAdmin();
+            alert(`¡Activación Exitosa! Tu nueva línea asignada es: ${miNumeroAsignado}\nVencimiento de plan: ${fechaVencimientoActual}`);
+        }
+
+        function ingresarCliente() {
+            let user = document.getElementById('login-c-user').value;
+            if(!user) return;
+            
+            let cli = clientesRegistrados.find(c => c.nombre.toLowerCase().includes(user.toLowerCase()));
+            if(cli) {
+                nombreCliente = cli.nombre;
+                miNumeroAsignado = cli.numero;
+                saldoActual = cli.saldo;
+                estadoLineaActual = cli.estado;
+                fechaVencimientoActual = cli.vencimiento;
+            } else {
+                nombreCliente = user;
+            }
+
+            actualizarVistaCliente();
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+        }
+
+        function actualizarVistaCliente() {
             document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
             document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
             document.getElementById('ad-nombre-user').innerText = nombreCliente;
             document.getElementById('ad-num-user').innerText = miNumeroAsignado;
             document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            document.getElementById('linea-fecha-venc').innerText = fechaVencimientoActual;
 
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-            renderizarAdmin();
-            alert(`¡Registro exitoso! Tu número asignado es: ${miNumeroAsignado}`);
-        }
-
-        function ingresarCliente() {
-            let user = document.getElementById('login-c-user').value;
-            if(!user) return;
-            nombreCliente = user;
-            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
-            document.getElementById('ad-nombre-user').innerText = nombreCliente;
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
+            let badge = document.getElementById('linea-status-badge');
+            if(estadoLineaActual === "Activa") {
+                badge.className = "status-badge active-line";
+                badge.innerText = "● ACTIVA";
+            } else {
+                badge.className = "status-badge suspended-line";
+                badge.innerText = "● SUSPENDIDA";
+            }
         }
 
         function ingresarAdmin() {
@@ -887,29 +1009,40 @@
 
         function renderizarAdmin() {
             let contClientes = document.getElementById('lista-clientes-admin');
+            let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
             let dia = document.getElementById('filter-dia')?.value || "";
             let mes = document.getElementById('filter-mes')?.value || "";
             let anio = document.getElementById('filter-anio')?.value || "";
 
             let clientesFiltrados = clientesRegistrados.filter(c => {
                 let partes = c.fecha.split("-");
-                return (anio === "" || partes[0] === anio) &&
+                let coincideTexto = c.nombre.toLowerCase().includes(busqueda) || 
+                                   (c.cedula && c.cedula.toLowerCase().includes(busqueda)) || 
+                                   c.numero.toLowerCase().includes(busqueda);
+
+                return coincideTexto &&
+                       (anio === "" || partes[0] === anio) &&
                        (mes === "" || partes[1] === mes) &&
                        (dia === "" || partes[2] === dia);
             });
 
             if(clientesFiltrados.length === 0) {
-                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros para los filtros seleccionados.</div>`;
+                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros para los filtros o búsqueda ingresados.</div>`;
             } else {
                 contClientes.innerHTML = "";
-                clientesFiltrados.forEach(c => {
+                clientesFiltrados.forEach((c, idx) => {
+                    let esActivo = c.estado === "Activa";
                     contClientes.innerHTML += `
                         <div class="history-item">
                             <div>
-                                <strong style="color:var(--accent);">${c.nombre}</strong><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Fecha: ${c.fecha}</span>
+                                <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#00e676':'#ff3366'};">[${c.estado}]</span><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • Cédula: ${c.cedula || 'N/A'}</span><br/>
+                                <span style="font-size:0.68rem; color:#8fa3bf;">Corte: ${c.vencimiento} • Reg: ${c.fecha}</span>
                             </div>
-                            <div style="font-weight:bold; color:var(--accent-green);">$${c.saldo.toFixed(2)}</div>
+                            <div style="display:flex; gap:4px; align-items:center;">
+                                <span style="font-weight:bold; color:var(--accent-green); font-size:0.8rem; margin-right:4px;">$${c.saldo.toFixed(2)}</span>
+                                <button class="btn btn-small" style="background:${esActivo ? '#ff3366':'#00e676'}; color:#000;" onclick="alternarEstadoCliente(${idx})">${esActivo ? 'Suspender':'Activar'}</button>
+                            </div>
                         </div>
                     `;
                 });
@@ -925,7 +1058,7 @@
                         <div class="history-item">
                             <div><strong>${s.cliente}</strong> ($${s.monto})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
                             <div>
-                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
+                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Reanudar Plan</button>
                             </div>
                         </div>
                     `;
@@ -938,17 +1071,25 @@
                 contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Sin números en el pool.</div>`;
             } else {
                 poolNumeros.forEach((num) => {
-                    contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span></div>`;
+                    contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible p/ venta</span></div>`;
                 });
             }
         }
 
+        function alternarEstadoCliente(idx) {
+            let cli = clientesRegistrados[idx];
+            cli.estado = cli.estado === "Activa" ? "Suspendida" : "Activa";
+            renderizarAdmin();
+        }
+
         function exportarClientesCSV() {
-            let csv = "ID,Nombre,Numero,Saldo,Fecha\n";
-            clientesRegistrados.forEach(c => { csv += `${c.id},"${c.nombre}","${c.numero}",${c.saldo},${c.fecha}\n`; });
+            let csv = "ID,Nombre,Cedula,Contacto,NumeroVoIP,Saldo,Estado,FechaVencimiento,FechaRegistro\n";
+            clientesRegistrados.forEach(c => { 
+                csv += `${c.id},"${c.nombre}","${c.cedula || 'N/A'}","${c.contacto || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.vencimiento}","${c.fecha}"\n`; 
+            });
             let link = document.createElement("a");
             link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-            link.download = "Clientes_OmniMovil.csv";
+            link.download = "Base_Clientes_OmniMovil.csv";
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -967,30 +1108,45 @@
             solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref });
             document.getElementById('monto-pago').value = "";
             document.getElementById('ref-pago').value = "";
-            alert("Solicitud de recarga enviada al operador.");
+            alert("Solicitud de pago enviada al operador para renovación.");
             renderizarAdmin();
         }
 
         function aprobarRecarga(idx) {
             let sol = solicitudesRecarga[idx];
             saldoActual += sol.monto;
-            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
+            estadoLineaActual = "Activa";
+            
+            let nuevaFecha = new Date();
+            nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+            fechaVencimientoActual = nuevaFecha.toISOString().split('T')[0];
+
             let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
-            if(cli) cli.saldo += sol.monto;
+            if(cli) {
+                cli.saldo += sol.monto;
+                cli.estado = "Activa";
+                cli.vencimiento = fechaVencimientoActual;
+            }
+
             solicitudesRecarga.splice(idx, 1);
+            actualizarVistaCliente();
             renderizarAdmin();
-            alert("Recarga aprobada exitosamente.");
+            alert("Renovación de mensualidad aprobada con éxito.");
         }
 
         function comprarPaquete(precio, nombre) {
+            if(estadoLineaActual !== "Activa") {
+                alert("Tu línea está suspendida. Reporta tu pago mensual en la sección Saldo.");
+                return;
+            }
             if(saldoActual >= precio) {
                 saldoActual -= precio;
-                document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-                document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
-                alert(`¡Has adquirido el ${nombre}!`);
+                planActualNombre = nombre;
+                document.getElementById('linea-plan-nombre').innerText = nombre;
+                actualizarVistaCliente();
+                alert(`¡Te has suscrito exitosamente al ${nombre}!`);
             } else {
-                alert("Saldo insuficiente.");
+                alert("Saldo insuficiente. Reporta un pago en Billetera.");
             }
         }
 
@@ -1005,6 +1161,10 @@
         }
 
         function marcarDigito(d) {
+            if(estadoLineaActual !== "Activa") {
+                alert("Línea Suspendida por falta de pago de mensualidad. Por favor recarga para reanudar el servicio.");
+                return;
+            }
             numeroMarcado += d;
             document.getElementById('pantalla-marcador').innerText = numeroMarcado;
         }
@@ -1016,9 +1176,27 @@
             }
         }
 
-        function iniciarLlamadaReal() { alert(`Iniciando llamada HD hacia ${numeroDestinoActual}...`); }
+        function iniciarLlamadaReal() { 
+            if(estadoLineaActual !== "Activa") {
+                alert("Línea Suspendida. Reporta tu pago mensual en el portal del cliente.");
+                return;
+            }
+            alert(`Iniciando llamada HD hacia ${numeroDestinoActual}...`); 
+        }
+
+        function seleccionarContacto(numero, nombre) {
+            numeroDestinoActual = numero;
+            document.getElementById('chat-nombre-receptor').innerText = nombre;
+            document.getElementById('chat-numero-receptor').innerText = numero;
+            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
+            cargarMensajesSupabase();
+        }
 
         async function enviarMensajeSupabase() {
+            if(estadoLineaActual !== "Activa") {
+                alert("Línea Suspendida por vencimiento de plan. No puedes enviar mensajes.");
+                return;
+            }
             let texto = document.getElementById('chat-input-texto').value;
             if(!texto || !supabaseClient) return;
 
