@@ -5,24 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OmniMovil - Red IP y Mensajería Global</title>
     
-    <!-- Configuración PWA (App Instalable) -->
+    <!-- Configuración PWA Optimizada -->
     <meta name="theme-color" content="#070913">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
     
+    <!-- Manifest PWA con iconos oficiales -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22OmniMovil Red IP y Mensajeria%22,
         %22short_name%22: %22OmniMovil%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
         %22background_color%22: %22%23070913%22,
-        %22theme_color%22: %22%2300f2fe%22
+        %22theme_color%22: %22%2300f2fe%22,
+        %22icons%22: [
+            {
+                %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22,
+                %22sizes%22: %22192x192%22,
+                %22type%22: %22image/png%22
+            },
+            {
+                %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22,
+                %22sizes%22: %22512x512%22,
+                %22type%22: %22image/png%22
+            }
+        ]
     }">
 
-    <!-- SDK Oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -219,7 +230,6 @@
             margin-bottom: 8px;
         }
 
-        /* ESTRUCTURA TIPO WHATSAPP WEB MEJORADA */
         .wa-pro-layout {
             display: grid;
             grid-template-columns: 280px 1fr 260px;
@@ -245,7 +255,6 @@
             .wa-conversation-side.mobile-active { display: flex; }
         }
 
-        /* COLUMNA 1: LISTA CHATS */
         .wa-chat-list-side {
             background: #ffffff;
             border-right: 1px solid #e9edef;
@@ -336,7 +345,6 @@
             flex-shrink: 0;
         }
 
-        /* COLUMNA 2: CONVERSACIÓN */
         .wa-conversation-side {
             background: #efeae2;
             display: flex;
@@ -399,7 +407,6 @@
             font-size: 0.85rem;
         }
 
-        /* COLUMNA 3: BANNER LATERAL DERECHO */
         .wa-ad-side {
             background: #ffffff;
             border-left: 1px solid #e9edef;
@@ -439,7 +446,6 @@
 </head>
 <body>
 
-    <!-- NOTIFICACIÓN FLOTANTE -->
     <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
@@ -449,7 +455,6 @@
     </div>
 
     <div class="container">
-        <!-- Cabecera Global con Botón de Instalación Visible -->
         <header class="main-header">
             <div>
                 <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
@@ -462,7 +467,6 @@
             </div>
         </header>
 
-        <!-- MARCADOR PRINCIPAL -->
         <div id="panel-principal" class="panel-view active">
             <div class="card">
                 <h2>Marcador Telefónico IP</h2>
@@ -487,7 +491,6 @@
             </div>
         </div>
 
-        <!-- PORTAL CLIENTE -->
         <div id="panel-cliente" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent); margin: 0;">Línea: <span id="cliente-num-linea">+58 500-0001</span> (<span id="cliente-nombre-actual">Erik</span>)</h2>
@@ -502,12 +505,8 @@
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
-            <!-- CHAT INTERFAZ TIPO WHATSAPP -->
             <div id="csec-chat" class="client-section active">
-                
                 <div class="wa-pro-layout">
-                    
-                    <!-- COLUMNA 1: CHATS Y FILTROS -->
                     <div class="wa-chat-list-side mobile-active" id="wa-side-contacts">
                         <div class="wa-list-header">
                             <strong style="font-size: 0.85rem;">Conversaciones</strong>
@@ -552,7 +551,6 @@
                         </div>
                     </div>
 
-                    <!-- COLUMNA 2: CHAT ACTIVO -->
                     <div class="wa-conversation-side mobile-active" id="wa-side-conversation">
                         <div class="wa-chat-header">
                             <div style="display: flex; align-items: center; gap: 8px;">
@@ -580,7 +578,6 @@
                         </div>
                     </div>
 
-                    <!-- COLUMNA 3: BANNER DERECHO -->
                     <div class="wa-ad-side">
                         <div class="wa-ad-card">
                             <strong style="font-size: 0.8rem; color: #0f172a;">DATOS DE SU LÍNEA OMNIMOVIL</strong>
@@ -600,7 +597,6 @@
 
             </div>
 
-            <!-- BILLETERA -->
             <div id="csec-billetera" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible</h2>
@@ -614,7 +610,6 @@
                 </div>
             </div>
 
-            <!-- PAQUETES -->
             <div id="csec-paquetes" class="client-section">
                 <div class="card">
                     <h2>Tienda de Paquetes</h2>
@@ -625,7 +620,6 @@
                 </div>
             </div>
 
-            <!-- RED/ESTADO -->
             <div id="csec-llamadas" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Red IP Descentralizada</h2>
@@ -633,7 +627,6 @@
                 </div>
             </div>
 
-            <!-- HISTORIAL -->
             <div id="csec-historial" class="client-section">
                 <div class="card">
                     <h2>Historial de Cuenta</h2>
@@ -642,7 +635,6 @@
             </div>
         </div>
 
-        <!-- PANEL ADMINISTRADOR -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Administrador</h2>
@@ -707,18 +699,6 @@
             </div>
         </div>
 
-        <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN -->
-        <div id="modal-instalar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green);">
-                <h2 style="color: var(--accent-green); text-align: center;">📲 Instalar OmniMovil App</h2>
-                <div id="contenido-instrucciones" style="font-size: 0.85rem; color: #fff; line-height: 1.4; margin-bottom: 14px;">
-                    <!-- Se llena dinámicamente según el dispositivo -->
-                </div>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Entendido</button>
-            </div>
-        </div>
-
-        <!-- MODALES DE ACCESO -->
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
                 <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
@@ -753,11 +733,13 @@
     </div>
 
     <script>
-        // CONTROLADOR PWA / INSTALACIÓN INTELIGENTE
-        let deferredPrompt;
+        // EJECUCIÓN DIRECTA Y CAPTURA DE INSTALACIÓN
+        let deferredPrompt = null;
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
+            console.log("Evento PWA capturado con éxito");
         });
 
         function instalarPWA() {
@@ -765,45 +747,25 @@
                 deferredPrompt.prompt();
                 deferredPrompt.userChoice.then((choiceResult) => {
                     if (choiceResult.outcome === 'accepted') {
-                        console.log('Usuario aceptó instalar la PWA');
+                        console.log('App instalada');
                     }
                     deferredPrompt = null;
                 });
             } else {
-                // Si el navegador no disparó el evento automático, mostramos guía manual según el dispositivo
-                let esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                let contenido = document.getElementById('contenido-instrucciones');
-                
-                if (esIOS) {
-                    contenido.innerHTML = `
-                        <p>Para instalar en tu <strong>iPhone / iPad</strong>:</p>
-                        <ol style="padding-left: 20px; margin: 8px 0;">
-                            <li>Toca el botón de <strong>Compartir</strong> <i class="fa-solid fa-arrow-up-from-bracket"></i> en la barra inferior de Safari.</li>
-                            <li>Desplázate hacia abajo y selecciona <strong>"Agregar a Inicio"</strong>.</li>
-                            <li>Toca <strong>Agregar</strong> arriba a la derecha.</li>
-                        </ol>
-                    `;
-                } else {
-                    contenido.innerHTML = `
-                        <p>Para instalar en tu dispositivo:</p>
-                        <ol style="padding-left: 20px; margin: 8px 0;">
-                            <li>Toca el menú de los 3 puntos <strong>(⋮)</strong> en la esquina superior derecha de tu navegador.</li>
-                            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
-                            <li>Confirma la instalación.</li>
-                        </ol>
-                    `;
-                }
-                document.getElementById('modal-instalar').style.display = 'flex';
+                // Si el evento no se ha registrado en el objeto global, reintenta el disparador nativo de Chrome
+                window.location.reload(true);
             }
         }
 
+        // REGISTRO DEL SERVICE WORKER
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", function(e){});').catch(err => {
-                console.log("Service Worker error", err);
+            navigator.serviceWorker.register('./sw.js?v=2').then(reg => {
+                console.log("Service Worker registrado correctamente");
+            }).catch(err => {
+                console.error("Error Service Worker", err);
             });
         }
 
-        // CONFIGURACIÓN SUPABASE REALTIME (LEGACY ANON KEY)
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
         let supabaseClient = null;
@@ -851,7 +813,6 @@
             document.getElementById('modal-login-cliente').style.display = 'none';
             document.getElementById('modal-registro').style.display = 'none';
             document.getElementById('modal-login-admin').style.display = 'none';
-            document.getElementById('modal-instalar').style.display = 'none';
         }
 
         function seleccionarContacto(numero, nombre) {
@@ -1057,7 +1018,6 @@
 
         function iniciarLlamadaReal() { alert(`Iniciando llamada HD hacia ${numeroDestinoActual}...`); }
 
-        // MENSAJERÍA REALTIME CON SUPABASE
         async function enviarMensajeSupabase() {
             let texto = document.getElementById('chat-input-texto').value;
             if(!texto || !supabaseClient) return;
