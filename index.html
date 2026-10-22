@@ -12,9 +12,8 @@
         %22background_color%22: %22%23070913%22,
         %22theme_color%22: %22%2300f2fe%22
     }">
-    <!-- SDK de Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- SDK Oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --bg-dark: #070913;
@@ -108,14 +107,28 @@
         }
         .btn:hover { opacity: 0.9; }
 
-        .scrollable-history {
-            max-height: 220px;
-            overflow-y: auto;
+        .btn-small {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            width: auto;
+            display: inline-block;
+        }
+
+        /* Recuadro Estático con Desplazamiento y Barra Redonda */
+        .static-scroll-box {
+            height: 180px;
+            overflow-y: scroll;
             background: #0b111e;
             border: 1px solid #2a3b5f;
-            border-radius: 8px;
+            border-radius: 10px;
             padding: 8px;
+            box-sizing: border-box;
         }
+
+        .static-scroll-box::-webkit-scrollbar { width: 8px; }
+        .static-scroll-box::-webkit-scrollbar-track { background: #0b111e; border-radius: 10px; }
+        .static-scroll-box::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
 
         .dialer-screen {
             background: #0b111e;
@@ -153,7 +166,6 @@
             justify-content: center;
         }
         .dial-btn:active { background: var(--accent); color: #000; }
-
         .btn-call { background: var(--accent-green); color: #000; }
 
         .client-tabs {
@@ -178,10 +190,7 @@
             cursor: pointer;
             text-align: center;
         }
-        .client-tab-btn.active {
-            background: var(--accent);
-            color: #000;
-        }
+        .client-tab-btn.active { background: var(--accent); color: #000; }
 
         .client-section { display: none; }
         .client-section.active { display: block; }
@@ -197,7 +206,14 @@
             align-items: center;
         }
 
-        /* Estilos de la Mensajería */
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        /* Estilos de la Mensajería Supabase */
         .chat-box {
             display: flex;
             flex-direction: column;
@@ -237,7 +253,6 @@
             margin-top: 3px;
         }
 
-        /* Barra de Emojis y Stickers */
         .chat-toolbar {
             display: flex;
             gap: 4px;
@@ -248,17 +263,13 @@
             border-radius: 8px;
             border: 1px solid #2a3b5f;
         }
-        .emoji-btn, .sticker-btn {
+        .emoji-btn {
             background: none;
             border: none;
             font-size: 1.1rem;
             cursor: pointer;
             padding: 4px 6px;
             border-radius: 4px;
-            transition: background 0.2s;
-        }
-        .emoji-btn:hover, .sticker-btn:hover {
-            background: rgba(255,255,255,0.1);
         }
         .sticker-badge {
             background: #202c33;
@@ -270,12 +281,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .sticker-badge:hover {
-            background: var(--accent);
-            color: #000;
-        }
 
-        /* BANNER NOTIFICACIÓN */
         #chat-notification-banner {
             display: none;
             position: fixed;
@@ -292,12 +298,6 @@
             z-index: 3000;
             color: white;
             cursor: pointer;
-            animation: fadeInDown 0.3s ease-out;
-        }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translate(-50%, -20px); }
-            to { opacity: 1; transform: translate(-50%, 0); }
         }
     </style>
 </head>
@@ -310,27 +310,6 @@
             <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para abrir</span>
         </div>
         <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
-    </div>
-
-    <!-- Pantalla de Llamada Activa -->
-    <div id="call-active-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 9, 19, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center;">
-        <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
-            <h2 id="call-status-title" style="color: var(--accent-green); font-size: 1.1rem;">📞 Llamada IP en Curso</h2>
-            <div id="call-target-display" style="font-size: 1.4rem; font-weight: bold; margin: 15px 0; color: var(--accent);">+58 500-0002</div>
-            <p id="call-timer" style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">00:00</p>
-            <button class="btn" style="background: var(--accent-red); color: white;" onclick="colgarLlamadaReal()">🔴 Colgar / Finalizar</button>
-        </div>
-    </div>
-
-    <!-- Modal de Llamada Entrante -->
-    <div id="incoming-call-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center;">
-        <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
-            <h2 style="color: var(--accent-green); font-size: 1.2rem;">📞 ¡Llamada Entrante!</h2>
-            <div id="caller-id" style="font-size: 1.3rem; font-weight: bold; margin: 15px 0; color: var(--accent);">+58 500-0001</div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Llamada en la red OmniMovil...</p>
-            <button class="btn" style="background: var(--accent-green); margin-bottom: 10px;" onclick="aceptarLlamadaEntrante()">🟢 Contestar y Hablar</button>
-            <button class="btn" style="background: var(--accent-red); color: white;" onclick="rechazarLlamadaEntrante()">🔴 Rechazar</button>
-        </div>
     </div>
 
     <div class="container">
@@ -369,7 +348,6 @@
 
                 <button class="btn btn-call" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
                 <div id="estado-llamada" style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: var(--accent-green);">🟢 Línea lista para llamadas</div>
-                <audio id="remote-audio" autoplay></audio>
             </div>
         </div>
 
@@ -404,35 +382,28 @@
                 </div>
             </div>
 
-            <!-- CHAT TIPO WHATSAPP CON EMOJIS Y STICKERS -->
+            <!-- CHAT SUPABASE -->
             <div id="csec-chat" class="client-section">
                 <div class="card">
-                    <h2>💬 Mensajería Instantánea</h2>
-                    <input type="text" id="chat-num-destino" placeholder="Número destino (+58 500-XXXX)" value="+58 500-0002" />
+                    <h2>💬 Mensajería Instantánea en Vivo</h2>
+                    <input type="text" id="chat-num-destino" placeholder="Número destino (+58 500-XXXX)" value="+58 500-0002" onchange="cargarMensajesSupabase()" />
                     
                     <div class="chat-box" id="contenedor-mensajes">
-                        <div class="msg-bubble msg-received">
-                            ¡Bienvenido al chat de OmniMovil! Envía emojis y stickers en tiempo real.
-                            <div class="msg-info">Sistema • 00:00</div>
-                        </div>
+                        <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Conectando con Supabase...</div>
                     </div>
 
-                    <!-- BARRA DE EMOJIS Y STICKERS -->
                     <div class="chat-toolbar">
                         <button class="emoji-btn" onclick="agregarEmoji('😊')">😊</button>
                         <button class="emoji-btn" onclick="agregarEmoji('😂')">😂</button>
                         <button class="emoji-btn" onclick="agregarEmoji('❤️')">❤️</button>
                         <button class="emoji-btn" onclick="agregarEmoji('👍')">👍</button>
-                        <button class="emoji-btn" onclick="agregarEmoji('🔥')">🔥</button>
-                        <button class="emoji-btn" onclick="agregarEmoji('🚀')">🚀</button>
-                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 😎 Todo en orden]')">😎 Todo en orden</button>
+                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 😎 OK]')">😎 OK</button>
                         <button class="sticker-badge" onclick="enviarSticker('[Sticker: 📞 Llamada HD]')">📞 Llamada HD</button>
-                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 🇻🇪 Red Soberana]')">🇻🇪 Red Soberana</button>
                     </div>
 
                     <div style="display: flex; gap: 6px;">
-                        <input type="text" id="chat-input-texto" placeholder="Escribe tu mensaje..." style="margin-bottom: 0;" />
-                        <button class="btn" style="width: auto; padding: 0 16px;" onclick="enviarMensajeChat()">Enviar</button>
+                        <input type="text" id="chat-input-texto" placeholder="Escribe tu mensaje..." style="margin-bottom: 0;" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
+                        <button class="btn" style="width: auto; padding: 0 16px;" onclick="enviarMensajeSupabase()">Enviar</button>
                     </div>
                 </div>
             </div>
@@ -474,32 +445,72 @@
                 <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
             </div>
 
+            <!-- CLIENTES REGISTRADOS CON SCROLL Y FILTROS -->
             <div class="card" style="border-color: var(--accent);">
-                <h2 style="color: var(--accent);">👥 Clientes Registrados y Líneas Asignadas</h2>
-                <div class="scrollable-history" id="lista-clientes-admin">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="color: var(--accent); margin:0;">👥 Clientes Registrados</h2>
+                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
+                </div>
+
+                <div class="filter-grid">
+                    <select id="filter-dia" onchange="renderizarAdmin()">
+                        <option value="">Día (Todos)</option>
+                        <script>
+                            for(let i=1; i<=31; i++) {
+                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                    <select id="filter-mes" onchange="renderizarAdmin()">
+                        <option value="">Mes (Todos)</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select id="filter-anio" onchange="renderizarAdmin()">
+                        <option value="">Año (Todos)</option>
+                        <option value="2024">2024</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
+                <div class="static-scroll-box" id="lista-clientes-admin">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
                 </div>
             </div>
 
+            <!-- SOLICITUDES PENDIENTES -->
             <div class="card" style="border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange);">Solicitudes de Recarga Pendientes</h2>
-                <div id="lista-solicitudes-admin">
+                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>
                 </div>
             </div>
 
+            <!-- HISTORIAL DE APROBACIONES -->
             <div class="card" style="border-color: var(--accent);">
                 <h2 style="color: var(--accent);">📜 Historial de Aprobaciones</h2>
-                <div class="scrollable-history" id="lista-historial-aprobaciones-admin">
+                <div class="static-scroll-box" id="lista-historial-aprobaciones-admin" style="height: 120px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin aprobaciones recientes.</div>
                 </div>
             </div>
 
+            <!-- GESTIÓN DE POOL -->
             <div class="card">
                 <h2>Gestión de Números (Pool)</h2>
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
                 <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número</button>
-                <div id="lista-pool-numeros"></div>
+                <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
 
@@ -538,45 +549,40 @@
     </div>
 
     <script>
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "tu-proyecto.firebaseapp.com",
-            projectId: "tu-proyecto",
-            storageBucket: "tu-proyecto.appspot.com",
-            messagingSenderId: "tu_sender_id",
-            appId: "tu_app_id"
-        };
+        // CONFIGURACIÓN SUPABASE
+        const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_fWGQnIMBB95VSvj8AvNi_w_HjzFCfnl";
+        let supabaseClient = null;
 
         try {
-            firebase.initializeApp(firebaseConfig);
-            var db = firebase.firestore();
+            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         } catch(e) {
-            console.log("Modo local activo.");
+            console.error("Error al iniciar Supabase:", e);
         }
 
         let saldoActual = 5.00;
         let miNumeroAsignado = "+58 500-0001";
         let nombreCliente = "Erik";
         let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
+        
         let clientesRegistrados = [
-            { nombre: "Erik Sosa", numero: "+58 500-0001", saldo: 5.00 }
+            { id: 1, nombre: "Erik Sosa", numero: "+58 500-0001", saldo: 5.00, fecha: "2026-10-22" },
+            { id: 2, nombre: "Maria Gomez", numero: "+58 500-0002", saldo: 12.50, fecha: "2026-10-21" },
+            { id: 3, nombre: "Carlos Perez", numero: "+58 500-0003", saldo: 0.00, fecha: "2026-09-15" }
         ];
+
         let solicitudesRecarga = [];
-        let historialAprobacionesAdmin = [];
         let historialTransaccionesCliente = ["Cuenta inicializada con éxito"];
         let numeroMarcado = "+58 500-";
-
-        let localStream = null;
-        let peerConnection = null;
-        let callTimerInterval = null;
-        let callSeconds = 0;
-        const servers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
+        let ultimoRemitenteNotif = "";
+        let ultimoTextoNotif = "";
 
         window.onload = function() {
             renderizarAdmin();
-            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
-                .then(stream => { localStream = stream; })
-                .catch(err => { console.log("Micrófono en espera: ", err); });
+            if(supabaseClient) {
+                iniciarSuscripcionRealtime();
+                cargarMensajesSupabase();
+            }
         };
 
         function volverAlPrincipal() {
@@ -611,26 +617,29 @@
             nombreCliente = nombre;
             saldoActual = 2.00;
 
+            let hoy = new Date();
+            let yyyy = hoy.getFullYear();
+            let mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            let dd = String(hoy.getDate()).padStart(2, '0');
+            let fechaHoy = `${yyyy}-${mm}-${dd}`;
+
             clientesRegistrados.push({
+                id: clientesRegistrados.length + 1,
                 nombre: nombreCliente,
                 numero: miNumeroAsignado,
-                saldo: saldoActual
+                saldo: saldoActual,
+                fecha: fechaHoy
             });
 
             document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
             document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
 
-            historialTransaccionesCliente.push(`¡Línea creada con éxito: ${miNumeroAsignado}!`);
-            
             cerrarModales();
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('billetera');
-            activarEscuchaLlamadasEntrantes(miNumeroAsignado);
-            activarEscuchaChat(miNumeroAsignado);
             renderizarAdmin();
-
             alert(`¡Registro exitoso! Tu número asignado es: ${miNumeroAsignado}`);
         }
 
@@ -645,8 +654,7 @@
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('billetera');
-            activarEscuchaLlamadasEntrantes(miNumeroAsignado);
-            activarEscuchaChat(miNumeroAsignado);
+            cargarMensajesSupabase();
         }
 
         function ingresarAdmin() {
@@ -662,179 +670,270 @@
             }
         }
 
+        function renderizarAdmin() {
+            let contClientes = document.getElementById('lista-clientes-admin');
+            let dia = document.getElementById('filter-dia')?.value || "";
+            let mes = document.getElementById('filter-mes')?.value || "";
+            let anio = document.getElementById('filter-anio')?.value || "";
+
+            let clientesFiltrados = clientesRegistrados.filter(c => {
+                let partes = c.fecha.split("-");
+                return (anio === "" || partes[0] === anio) &&
+                       (mes === "" || partes[1] === mes) &&
+                       (dia === "" || partes[2] === dia);
+            });
+
+            if(clientesFiltrados.length === 0) {
+                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">No se encontraron clientes para la fecha seleccionada.</div>`;
+            } else {
+                contClientes.innerHTML = "";
+                clientesFiltrados.forEach(c => {
+                    contClientes.innerHTML += `
+                        <div class="history-item">
+                            <div>
+                                <strong style="color:var(--accent);">${c.nombre}</strong><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Fecha: ${c.fecha}</span>
+                            </div>
+                            <div style="font-weight:bold; color:var(--accent-green);">$${c.saldo.toFixed(2)}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            let contSolicitudes = document.getElementById('lista-solicitudes-admin');
+            if(solicitudesRecarga.length === 0) {
+                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>`;
+            } else {
+                contSolicitudes.innerHTML = "";
+                solicitudesRecarga.forEach((s, idx) => {
+                    contSolicitudes.innerHTML += `
+                        <div class="history-item">
+                            <div>
+                                <strong>${s.cliente}</strong> ($${s.monto})<br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref}</span>
+                            </div>
+                            <div>
+                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓</button>
+                                <button class="btn btn-small" style="background:var(--accent-red); color:white;" onclick="rechazarRecarga(${idx})">✗</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            let contPool = document.getElementById('lista-pool-numeros');
+            contPool.innerHTML = "";
+            poolNumeros.forEach((num) => {
+                contPool.innerHTML += `
+                    <div class="history-item">
+                        <span>${num}</span>
+                        <span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span>
+                    </div>
+                `;
+            });
+        }
+
+        function exportarClientesCSV() {
+            let dia = document.getElementById('filter-dia')?.value || "";
+            let mes = document.getElementById('filter-mes')?.value || "";
+            let anio = document.getElementById('filter-anio')?.value || "";
+
+            let clientesFiltrados = clientesRegistrados.filter(c => {
+                let partes = c.fecha.split("-");
+                return (anio === "" || partes[0] === anio) &&
+                       (mes === "" || partes[1] === mes) &&
+                       (dia === "" || partes[2] === dia);
+            });
+
+            if (clientesFiltrados.length === 0) { alert("No hay datos para exportar."); return; }
+
+            let csvContent = "data:text/csv;charset=utf-8,ID,Nombre,Numero,Saldo,Fecha\n";
+            clientesFiltrados.forEach(c => {
+                csvContent += `${c.id},"${c.nombre}","${c.numero}",${c.saldo},${c.fecha}\n`;
+            });
+
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Clientes_OmniMovil_${anio||'Todos'}-${mes||'Todos'}-${dia||'Todos'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function agregarNumeroAlPool() {
+            let input = document.getElementById('nuevo-num-pool');
+            if(input.value) {
+                poolNumeros.push(input.value);
+                input.value = "";
+                renderizarAdmin();
+            }
+        }
+
+        function enviarReportePago() {
+            let monto = parseFloat(document.getElementById('monto-pago').value);
+            let ref = document.getElementById('ref-pago').value;
+            if(!monto || !ref) { alert("Completa el monto y la referencia."); return; }
+
+            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref });
+            document.getElementById('monto-pago').value = "";
+            document.getElementById('ref-pago').value = "";
+            alert("Solicitud de recarga enviada al administrador.");
+            renderizarAdmin();
+        }
+
+        function aprobarRecarga(idx) {
+            let sol = solicitudesRecarga[idx];
+            saldoActual += sol.monto;
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
+            if(cli) cli.saldo += sol.monto;
+            solicitudesRecarga.splice(idx, 1);
+            renderizarAdmin();
+        }
+
+        function rechazarRecarga(idx) {
+            solicitudesRecarga.splice(idx, 1);
+            renderizarAdmin();
+        }
+
         function cambiarSeccionCliente(seccion) {
             document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
 
-            if(seccion === 'billetera') {
-                document.getElementById('csec-billetera').classList.add('active');
-                document.getElementById('ctab-1').classList.add('active');
-            } else if(seccion === 'chat') {
-                document.getElementById('csec-chat').classList.add('active');
-                document.getElementById('ctab-chat').classList.add('active');
-            } else if(seccion === 'paquetes') {
-                document.getElementById('csec-paquetes').classList.add('active');
-                document.getElementById('ctab-2').classList.add('active');
-            } else if(seccion === 'llamadas') {
-                document.getElementById('csec-llamadas').classList.add('active');
-                document.getElementById('ctab-3').classList.add('active');
-            } else if(seccion === 'historial') {
-                document.getElementById('csec-historial').classList.add('active');
-                document.getElementById('ctab-4').classList.add('active');
-                renderizarHistorialCliente();
+            document.getElementById(`csec-${seccion}`).classList.add('active');
+            let tabBtn = document.getElementById(`ctab-${seccion === 'billetera'? '1' : seccion === 'paquetes'? '2' : seccion === 'llamadas'? '3' : seccion === 'historial'? '4' : 'chat'}`);
+            if(tabBtn) tabBtn.classList.add('active');
+            if(seccion === 'chat') { cargarMensajesSupabase(); }
+        }
+
+        function marcarDigito(d) {
+            numeroMarcado += d;
+            document.getElementById('pantalla-marcador').innerText = numeroMarcado;
+        }
+
+        function borrarDigito() {
+            if(numeroMarcado.length > 8) {
+                numeroMarcado = numeroMarcado.slice(0, -1);
+                document.getElementById('pantalla-marcador').innerText = numeroMarcado;
             }
         }
 
-        // --- FUNCIONES DE EMOJIS Y STICKERS ---
+        function iniciarLlamadaReal() {
+            alert(`Llamando al número ${numeroMarcado}...`);
+        }
+
         function agregarEmoji(emoji) {
             let input = document.getElementById('chat-input-texto');
             input.value += emoji;
-            input.focus();
         }
 
         function enviarSticker(stickerTexto) {
             document.getElementById('chat-input-texto').value = stickerTexto;
-            enviarMensajeChat();
+            enviarMensajeSupabase();
         }
 
-        // --- REPRODUCIR SONIDO NOTIFICACIÓN ---
-        function reproducirSonidoNotificacion() {
-            try {
-                let ctx = new (window.AudioContext || window.webkitAudioContext)();
-                let osc = ctx.createOscillator();
-                let gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.3, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.15);
-            } catch(e) { console.log(e); }
-        }
-
-        // --- SISTEMA DE MENSAJERÍA INDEPENDIENTE TIPO WHATSAPP ---
-        
-        // Cargar historial de chat cuando cambias de número de destino
-        document.getElementById('chat-num-destino').addEventListener('change', function() {
-            cargarHistorialChatEntre(miNumeroAsignado, this.value);
-        });
-
-        function cargarHistorialChatEntre(miNum, otroNum) {
-            let box = document.getElementById('contenedor-mensajes');
-            box.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Cargando chat con ${otroNum}...</div>`;
-
-            if (!db) return;
-
-            // Consultar mensajes enviados y recibidos entre ambos números en Firebase
-            db.collection("mensajes")
-              .orderBy("fecha", "asc")
-              .get()
-              .then((snapshot) => {
-                  box.innerHTML = "";
-                  let hayMensajes = false;
-                  
-                  snapshot.forEach((doc) => {
-                      let msg = doc.data();
-                      // Verificar si el mensaje pertenece a esta pareja de números
-                      let esMioParaEl = (msg.origen === miNum && msg.destino === otroNum);
-                      let esDeElParaMi = (msg.origen === otroNum && msg.destino === miNum);
-
-                      if (esMioParaEl || esDeElParaMi) {
-                          hayMensajes = true;
-                          let claseBurbuja = esMioParaEl ? "msg-sent" : "msg-received";
-                          let etiquetaInfo = esMioParaEl ? `Para: ${msg.destino} • ${msg.hora}` : `De: ${msg.origen} • ${msg.hora}`;
-                          
-                          box.innerHTML += `
-                              <div class="msg-bubble ${claseBurbuja}">
-                                  ${msg.texto}
-                                  <div class="msg-info">${etiquetaInfo}</div>
-                              </div>
-                          `;
-                      }
-                  });
-
-                  if (!hayMensajes) {
-                      box.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.75rem; padding:10px;">No hay mensajes previos con ${otroNum}. ¡Envía el primero!</div>`;
-                  }
-                  box.scrollTop = box.scrollHeight;
-              })
-              .catch(err => {
-                  console.log("Error cargando historial: ", err);
-              });
-        }
-
-        function enviarMensajeChat() {
-            let destino = document.getElementById('chat-num-destino').value;
+        // --- FUNCIONES DE MENSAJERÍA CON SUPABASE ---
+        async function enviarMensajeSupabase() {
             let texto = document.getElementById('chat-input-texto').value;
+            let destino = document.getElementById('chat-num-destino').value;
+            if(!texto || !supabaseClient) return;
 
-            if(!destino || !texto) { alert("Ingresa un número de destino y el mensaje."); return; }
+            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
-            let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            // Mostrar inmediatamente en la pantalla del emisor
-            let box = document.getElementById('contenedor-mensajes');
-            // Si el contenedor decía "No hay mensajes", lo limpiamos
-            if(box.innerHTML.includes("No hay mensajes previos")) { box.innerHTML = ""; }
-
-            box.innerHTML += `
-                <div class="msg-bubble msg-sent">
-                    ${texto}
-                    <div class="msg-info">Para: ${destino} • ${hora}</div>
-                </div>
-            `;
-            box.scrollTop = box.scrollHeight;
-
-            if (db) {
-                db.collection("mensajes").add({
+            let { error } = await supabaseClient
+                .from('mensajes')
+                .insert([{
                     origen: miNumeroAsignado,
                     destino: destino,
                     texto: texto,
-                    hora: hora,
-                    fecha: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                    hora: horaActual,
+                    estado: 'entregado'
+                }]);
+
+            if(error) {
+                alert("Error al enviar mensaje: " + error.message);
+                return;
             }
 
             document.getElementById('chat-input-texto').value = "";
+            cargarMensajesSupabase();
         }
 
-        function activarEscuchaChat(miNumero) {
-            if (!db) return;
-            let primerCarga = true;
+        async function cargarMensajesSupabase() {
+            if(!supabaseClient) return;
+            let destinoActual = document.getElementById('chat-num-destino').value;
 
-            db.collection("mensajes")
-              .where("destino", "==", miNumero)
-              .onSnapshot((snapshot) => {
-                  snapshot.docChanges().forEach((change) => {
-                      if (change.type === "added") {
-                          let msg = change.doc.data();
-                          let numSeleccionado = document.getElementById('chat-num-destino').value;
+            let { data, error } = await supabaseClient
+                .from('mensajes')
+                .select('*')
+                .or(`and(origen.eq.${miNumeroAsignado},destino.eq.${destinoActual}),and(origen.eq.${destinoActual},destino.eq.${miNumeroAsignado})`)
+                .order('created_at', { ascending: true });
 
-                          // Si el mensaje entrante es del número con el que estás chateando ahora mismo, lo pintamos de inmediato
-                          if (msg.origen === numSeleccionado) {
-                              let box = document.getElementById('contenedor-mensajes');
-                              if(box.innerHTML.includes("No hay mensajes previos")) { box.innerHTML = ""; }
-                              
-                              box.innerHTML += `
-                                  <div class="msg-bubble msg-received">
-                                      ${msg.texto}
-                                      <div class="msg-info">De: ${msg.origen} • ${msg.hora}</div>
-                                  </div>
-                              `;
-                              box.scrollTop = box.scrollHeight;
-                          }
+            if(error) {
+                console.error("Error al cargar mensajes", error);
+                return;
+            }
 
-                          // Si la app ya inició y recibe un mensaje de cualquier otro, suena la alerta y sale la notificación flotante
-                          if(!primerCarga) {
-                              reproducirSonidoNotificacion();
-                              mostrarNotificacionChat(msg.origen, msg.texto);
-                          }
-                      }
-                  });
-                  primerCarga = false;
-              });
+            let box = document.getElementById('contenedor-mensajes');
+            box.innerHTML = "";
+
+            if(!data || data.length === 0) {
+                box.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">No hay mensajes aún con este número.</div>`;
+                return;
+            }
+
+            data.forEach(m => {
+                let esMio = m.origen === miNumeroAsignado;
+                box.innerHTML += `
+                    <div class="msg-bubble ${esMio ? 'msg-sent' : 'msg-received'}">
+                        ${m.texto}
+                        <div class="msg-info">${m.hora} ${esMio ? '✓✓' : ''}</div>
+                    </div>
+                `;
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function iniciarSuscripcionRealtime() {
+            if(!supabaseClient) return;
+
+            supabaseClient
+                .channel('public:mensajes')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
+                    let nuevoMsg = payload.new;
+                    let destinoActual = document.getElementById('chat-num-destino').value;
+
+                    // Si el mensaje va dirigido a nosotros
+                    if(nuevoMsg.destino === miNumeroAsignado) {
+                        ultimoRemitenteNotif = nuevoMsg.origen;
+                        ultimoTextoNotif = nuevoMsg.texto;
+                        mostrarBannerNotificacion(nuevoMsg.origen, nuevoMsg.texto);
+                    }
+
+                    // Si estamos chateando con ese número, refrescar el chat
+                    if(nuevoMsg.origen === destinoActual || nuevoMsg.destino === destinoActual) {
+                        cargarMensajesSupabase();
+                    }
+                })
+                .subscribe();
+        }
+
+        function mostrarBannerNotificacion(remitente, texto) {
+            document.getElementById('notif-sender').innerText = remitente;
+            document.getElementById('notif-body').innerText = texto;
+            let banner = document.getElementById('chat-notification-banner');
+            banner.style.display = 'block';
+            setTimeout(() => { banner.style.display = 'none'; }, 6000);
+        }
+
+        function abrirChatDesdeNotificacion() {
+            document.getElementById('chat-notification-banner').style.display = 'none';
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+            document.getElementById('chat-num-destino').value = ultimoRemitenteNotif;
+            cargarMensajesSupabase();
         }
     </script>
 </body>
