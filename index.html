@@ -115,7 +115,6 @@
             display: inline-block;
         }
 
-        /* Recuadro Estático con Desplazamiento y Barra Redonda */
         .static-scroll-box {
             height: 180px;
             overflow-y: scroll;
@@ -213,7 +212,6 @@
             margin-bottom: 8px;
         }
 
-        /* Estilos de la Mensajería Supabase */
         .chat-box {
             display: flex;
             flex-direction: column;
@@ -303,7 +301,7 @@
 </head>
 <body>
 
-    <!-- NOTIFICACIÓN FLOTANTE -->
+    <!-- NOTIFICACIÓN FLOTANTE DE CHAT -->
     <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
@@ -389,7 +387,7 @@
                     <input type="text" id="chat-num-destino" placeholder="Número destino (+58 500-XXXX)" value="+58 500-0002" onchange="cargarMensajesSupabase()" />
                     
                     <div class="chat-box" id="contenedor-mensajes">
-                        <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Conectando con Supabase...</div>
+                        <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;" id="supabase-estado-txt">Conectando con Supabase...</div>
                     </div>
 
                     <div class="chat-toolbar">
@@ -556,6 +554,7 @@
 
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("Supabase inicializado correctamente.");
         } catch(e) {
             console.error("Error al iniciar Supabase:", e);
         }
@@ -580,8 +579,13 @@
         window.onload = function() {
             renderizarAdmin();
             if(supabaseClient) {
+                document.getElementById('supabase-estado-txt').innerText = "🟢 Conectado con Supabase";
+                document.getElementById('supabase-estado-txt').style.color = "var(--accent-green)";
                 iniciarSuscripcionRealtime();
                 cargarMensajesSupabase();
+            } else {
+                document.getElementById('supabase-estado-txt').innerText = "🔴 Error de conexión con Supabase";
+                document.getElementById('supabase-estado-txt').style.color = "var(--accent-red)";
             }
         };
 
@@ -904,14 +908,12 @@
                     let nuevoMsg = payload.new;
                     let destinoActual = document.getElementById('chat-num-destino').value;
 
-                    // Si el mensaje va dirigido a nosotros
                     if(nuevoMsg.destino === miNumeroAsignado) {
                         ultimoRemitenteNotif = nuevoMsg.origen;
                         ultimoTextoNotif = nuevoMsg.texto;
                         mostrarBannerNotificacion(nuevoMsg.origen, nuevoMsg.texto);
                     }
 
-                    // Si estamos chateando con ese número, refrescar el chat
                     if(nuevoMsg.origen === destinoActual || nuevoMsg.destino === destinoActual) {
                         cargarMensajesSupabase();
                     }
