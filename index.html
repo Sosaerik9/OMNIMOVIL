@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OmniMovil - Red IP y Mensajería WhatsApp</title>
+    <title>OmniMovil - Red IP y Mensajería Global</title>
     
     <!-- Configuración PWA (App Instalable) -->
     <meta name="theme-color" content="#00f2fe">
@@ -18,6 +18,8 @@
 
     <!-- SDK Oficial de Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- FontAwesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         :root {
@@ -39,11 +41,11 @@
             color: var(--text-main);
             margin: 0;
             padding: 12px;
-            padding-bottom: 30px;
+            padding-bottom: 40px;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 1100px;
             margin: 0 auto;
         }
 
@@ -81,6 +83,13 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.4);
         }
 
+        .card h2 {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            margin-top: 0;
+        }
+
         input, select {
             width: 100%;
             background: #1a253f;
@@ -102,116 +111,25 @@
             font-weight: bold;
             font-size: 0.95rem;
             cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { opacity: 0.9; }
+
+        .btn-small {
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            border-radius: 6px;
+            width: auto;
+            display: inline-block;
         }
 
-        /* LAYOUT TIPO WHATSAPP (MULTIPLATAFORMA) */
-        .whatsapp-layout {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            gap: 12px;
-            min-height: 450px;
+        .static-scroll-box {
+            height: 180px;
+            overflow-y: scroll;
             background: #0b111e;
             border: 1px solid #2a3b5f;
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        @media (max-width: 768px) {
-            .whatsapp-layout {
-                grid-template-columns: 1fr;
-            }
-            .chat-side-panel { display: none; }
-            .chat-side-panel.active { display: block; }
-            .chat-main-panel { display: none; }
-            .chat-main-panel.active { display: block; }
-        }
-
-        .chat-side-panel {
-            background: #101728;
-            border-right: 1px solid #1f2d4a;
-            padding: 10px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            border-bottom: 1px solid #1f2d4a;
-            transition: background 0.2s;
-        }
-        .contact-item:hover, .contact-item.active {
-            background: #1a253f;
-        }
-
-        .contact-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--accent);
-            color: #000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        .chat-main-panel {
-            display: flex;
-            flex-direction: column;
-            padding: 10px;
-            background: #070913;
-        }
-
-        .chat-header-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #1f2d4a;
-            margin-bottom: 8px;
-        }
-
-        .chat-box {
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            height: 300px;
-            overflow-y: auto;
-            padding: 10px;
-            background: #0b111e;
-            border-radius: 8px;
-            border: 1px solid #2a3b5f;
-            margin-bottom: 8px;
-        }
-
-        .msg-bubble {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            line-height: 1.3;
-        }
-        .msg-sent {
-            align-self: flex-end;
-            background: #005c4b;
-            color: #fff;
-            border-bottom-right-radius: 2px;
-        }
-        .msg-received {
-            align-self: flex-start;
-            background: #202c33;
-            color: #fff;
-            border-bottom-left-radius: 2px;
-        }
-        .msg-info {
-            font-size: 0.65rem;
-            color: rgba(255,255,255,0.6);
-            text-align: right;
-            margin-top: 3px;
+            border-radius: 10px;
+            padding: 8px;
         }
 
         .dialer-screen {
@@ -224,6 +142,7 @@
             letter-spacing: 1px;
             margin-bottom: 12px;
             color: #fff;
+            word-break: break-all;
         }
 
         .dialer-grid {
@@ -276,7 +195,216 @@
         .client-section { display: none; }
         .client-section.active { display: block; }
 
-        /* BANNER FLOTANTE */
+        .history-item {
+            background: #1a253f;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* NUEVA ESTRUCTURA TIPO WHATSAPP WEB MEJORADA (ESTILO IMAGEN 2) */
+        .wa-pro-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 260px;
+            gap: 10px;
+            background: #f0f2f5;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 520px;
+            border: 1px solid #1f2d4a;
+            color: #111b21;
+        }
+
+        @media (max-width: 950px) {
+            .wa-pro-layout { grid-template-columns: 260px 1fr; }
+            .wa-ad-side { display: none; }
+        }
+
+        @media (max-width: 650px) {
+            .wa-pro-layout { grid-template-columns: 1fr; }
+            .wa-chat-list-side { display: none; }
+            .wa-chat-list-side.mobile-active { display: flex; }
+            .wa-conversation-side { display: none; }
+            .wa-conversation-side.mobile-active { display: flex; }
+        }
+
+        /* COLUMNA 1: LISTA CHATS */
+        .wa-chat-list-side {
+            background: #ffffff;
+            border-right: 1px solid #e9edef;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wa-list-header {
+            background: #f0f2f5;
+            padding: 10px 12px;
+            border-bottom: 1px solid #e9edef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wa-search-bar {
+            padding: 8px;
+            background: #fff;
+            border-bottom: 1px solid #e9edef;
+        }
+
+        .wa-search-input {
+            background: #f0f2f5;
+            border-radius: 8px;
+            padding: 6px 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wa-search-input input {
+            border: none;
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            color: #111b21;
+            font-size: 0.8rem;
+        }
+
+        .wa-pills {
+            display: flex;
+            gap: 4px;
+            padding: 6px 8px;
+            border-bottom: 1px solid #e9edef;
+            overflow-x: auto;
+        }
+
+        .wa-pill {
+            background: #e9edef;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            color: #54656f;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .wa-pill.active { background: #d9fdd3; color: #008069; font-weight: bold; }
+
+        .wa-contacts-container {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .wa-contact-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #f5f6f6;
+            transition: background 0.15s;
+        }
+        .wa-contact-card:hover, .wa-contact-card.active { background: #f0f2f5; }
+
+        .wa-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #00a884;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+
+        /* COLUMNA 2: CONVERSACIÓN */
+        .wa-conversation-side {
+            background: #efeae2;
+            display: flex;
+            flex-direction: column;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 0);
+            background-size: 16px 16px;
+        }
+
+        .wa-chat-header {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e9edef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wa-messages-box {
+            flex-grow: 1;
+            padding: 12px 16px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .wa-msg {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.3;
+            box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
+        }
+        .wa-msg-out { align-self: flex-end; background: #d9fdd3; color: #111b21; border-top-right-radius: 0; }
+        .wa-msg-in { align-self: flex-start; background: #ffffff; color: #111b21; border-top-left-radius: 0; }
+
+        .wa-msg-meta {
+            font-size: 0.65rem;
+            color: #667781;
+            text-align: right;
+            margin-top: 2px;
+        }
+
+        .wa-input-bar {
+            background: #f0f2f5;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-top: 1px solid #e9edef;
+        }
+
+        .wa-input-bar input {
+            margin-bottom: 0;
+            background: white;
+            color: #111b21;
+            border: none;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+
+        /* COLUMNA 3: BANNER PUBLICITARIO / DATOS (IGUAL A IMAGEN 2) */
+        .wa-ad-side {
+            background: #ffffff;
+            border-left: 1px solid #e9edef;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            overflow-y: auto;
+        }
+
+        .wa-ad-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
         #chat-notification-banner {
             display: none;
             position: fixed;
@@ -298,19 +426,20 @@
 </head>
 <body>
 
-    <!-- BANNER DE NOTIFICACIÓN PUSH MULTIPLATAFORMA -->
+    <!-- NOTIFICACIÓN FLOTANTE -->
     <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para responder</span>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para abrir</span>
         </div>
         <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
     </div>
 
     <div class="container">
+        <!-- Cabecera Global -->
         <header class="main-header">
             <div>
-                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil IP WhatsApp</h1>
+                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
             <div style="display: flex; gap: 6px;">
@@ -340,11 +469,11 @@
                     <button class="dial-btn" onclick="borrarDigito()">⌫</button>
                 </div>
 
-                <button class="btn" style="background: var(--accent-green);" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
+                <button class="btn" style="background: var(--accent-green); color: #000;" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
             </div>
         </div>
 
-        <!-- PORTAL CLIENTE CON WHATSAPP INTEGRADO -->
+        <!-- PORTAL CLIENTE -->
         <div id="panel-cliente" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent); margin: 0;">Línea: <span id="cliente-num-linea">+58 500-0001</span> (<span id="cliente-nombre-actual">Erik</span>)</h2>
@@ -359,50 +488,102 @@
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
-            <!-- CHAT WHATSAPP STYLE -->
+            <!-- CHAT CON DISEÑO EXACTO A LA IMAGEN 2 -->
             <div id="csec-chat" class="client-section active">
-                <div class="whatsapp-layout">
-                    <!-- PANEL IZQUIERDO: LISTA DE CONTACTOS/CHATS -->
-                    <div class="chat-side-panel active" id="chat-side-panel">
-                        <div style="font-size: 0.8rem; font-weight: bold; color: var(--accent); margin-bottom: 8px;">Conversaciones</div>
-                        <div id="lista-contactos-chat">
-                            <div class="contact-item active" onclick="seleccionarContacto('+58 500-0002', 'Maria Gomez')">
-                                <div class="contact-avatar">MG</div>
-                                <div>
-                                    <strong style="font-size: 0.85rem;">Maria Gomez</strong><br/>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted);">+58 500-0002</span>
+                
+                <div class="wa-pro-layout">
+                    
+                    <!-- COLUMNA 1: CHATS Y FILTROS -->
+                    <div class="wa-chat-list-side mobile-active" id="wa-side-contacts">
+                        <div class="wa-list-header">
+                            <strong style="font-size: 0.85rem;">Conversaciones</strong>
+                            <i class="fa-solid fa-circle-notch" style="color: #54656f;"></i>
+                        </div>
+
+                        <div class="wa-search-bar">
+                            <div class="wa-search-input">
+                                <i class="fa-solid fa-magnifying-glass" style="color: #54656f;"></i>
+                                <input type="text" placeholder="Buscar chat o iniciar uno nuevo">
+                            </div>
+                        </div>
+
+                        <div class="wa-pills">
+                            <button class="wa-pill active">Todos</button>
+                            <button class="wa-pill">No leídos</button>
+                            <button class="wa-pill">Favoritos</button>
+                            <button class="wa-pill">Grupos</button>
+                        </div>
+
+                        <div class="wa-contacts-container" id="lista-contactos-chat">
+                            <div class="wa-contact-card active" onclick="seleccionarContacto('+58 500-0002', 'Maria Gomez')">
+                                <div class="wa-avatar">MG</div>
+                                <div style="flex-grow: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <strong style="font-size: 0.85rem;">Maria Gomez</strong>
+                                        <span style="font-size: 0.65rem; color: #667781;">3:23 p.m.</span>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #667781;">+58 500-0002</div>
                                 </div>
                             </div>
-                            <div class="contact-item" onclick="seleccionarContacto('+58 500-0003', 'Carlos Perez')">
-                                <div class="contact-avatar" style="background: var(--accent-orange);">CP</div>
-                                <div>
-                                    <strong style="font-size: 0.85rem;">Carlos Perez</strong><br/>
-                                    <span style="font-size: 0.7rem; color: var(--text-muted);">+58 500-0003</span>
+                            <div class="wa-contact-card" onclick="seleccionarContacto('+58 500-0003', 'Carlos Perez')">
+                                <div class="wa-avatar" style="background: var(--accent-orange);">CP</div>
+                                <div style="flex-grow: 1;">
+                                    <div style="display: flex; justify-content: space-between;">
+                                        <strong style="font-size: 0.85rem;">Carlos Perez</strong>
+                                        <span style="font-size: 0.65rem; color: #667781;">2:15 p.m.</span>
+                                    </div>
+                                    <div style="font-size: 0.75rem; color: #667781;">+58 500-0003</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- PANEL DERECHO: CHAT EN VIVO -->
-                    <div class="chat-main-panel active" id="chat-main-panel">
-                        <div class="chat-header-bar">
-                            <div>
-                                <strong style="color: var(--accent); font-size: 0.9rem;" id="chat-nombre-receptor">Maria Gomez</strong><br/>
-                                <span style="font-size: 0.7rem; color: var(--accent-green);" id="chat-numero-receptor">+58 500-0002</span>
+                    <!-- COLUMNA 2: CHAT ACTIVO -->
+                    <div class="wa-conversation-side mobile-active" id="wa-side-conversation">
+                        <div class="wa-chat-header">
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div class="wa-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;" id="chat-header-avatar">MG</div>
+                                <div>
+                                    <strong style="font-size: 0.85rem;" id="chat-nombre-receptor">Maria Gomez</strong><br/>
+                                    <span style="font-size: 0.65rem; color: #00a884;" id="chat-numero-receptor">+58 500-0002</span>
+                                </div>
                             </div>
-                            <span style="font-size: 0.75rem; color: var(--accent-green);" id="estado-conexion-badge">🟢 En línea</span>
+                            <div style="display: flex; gap: 12px; color: #54656f; font-size: 0.9rem;">
+                                <i class="fa-solid fa-video" style="cursor: pointer;" onclick="iniciarLlamadaReal()"></i>
+                                <i class="fa-solid fa-phone" style="cursor: pointer;" onclick="iniciarLlamadaReal()"></i>
+                            </div>
                         </div>
 
-                        <div class="chat-box" id="contenedor-mensajes">
-                            <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Conectando con Supabase Realtime...</div>
+                        <div class="wa-messages-box" id="contenedor-mensajes">
+                            <div style="text-align: center; color: #667781; font-size: 0.75rem;">Comienza a chatear en vivo.</div>
                         </div>
 
-                        <div style="display: flex; gap: 6px;">
-                            <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje estilo WhatsApp..." style="margin-bottom: 0;" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
-                            <button class="btn" style="width: auto; padding: 0 16px; background: var(--accent-green);" onclick="enviarMensajeSupabase()">Enviar</button>
+                        <div class="wa-input-bar">
+                            <i class="fa-regular fa-face-smile" style="color: #54656f; font-size: 1.1rem; cursor: pointer;"></i>
+                            <i class="fa-solid fa-paperclip" style="color: #54656f; font-size: 1.1rem; cursor: pointer;"></i>
+                            <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
+                            <i class="fa-solid fa-paper-plane" style="color: #00a884; font-size: 1.1rem; cursor: pointer;" onclick="enviarMensajeSupabase()"></i>
                         </div>
                     </div>
+
+                    <!-- COLUMNA 3: BANNER LATERAL DERECHO (ESTILO IMAGEN 2 DE PANAXTREAMING) -->
+                    <div class="wa-ad-side">
+                        <div class="wa-ad-card">
+                            <strong style="font-size: 0.8rem; color: #0f172a;">DATOS DE SU LÍNEA OMNIMOVIL</strong>
+                            <p style="font-size: 0.7rem; color: #475569; margin-top: 4px;">Usuario: <strong id="ad-nombre-user">Erik</strong></p>
+                            <p style="font-size: 0.7rem; color: #475569;">Número: <strong id="ad-num-user">+58 500-0001</strong></p>
+                            <p style="font-size: 0.75rem; color: #00a884; font-weight: bold; margin-top: 4px;">Saldo: $<span id="ad-saldo-user">5.00</span></p>
+                        </div>
+
+                        <div class="wa-ad-card" style="background: #f0fdf4; border-color: #bbf7d0;">
+                            <i class="fa-solid fa-tv" style="font-size: 1.3rem; color: #16a34a; margin-bottom: 4px;"></i>
+                            <strong style="font-size: 0.75rem; color: #14532d; display: block;">DISFRUTA EN FAMILIA TU PANTALLA</strong>
+                            <p style="font-size: 0.65rem; color: #166534; margin-top: 2px;">Conéctate con PanaXtreaming y disfruta del mejor contenido.</p>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
 
             <!-- BILLETERA -->
@@ -411,6 +592,39 @@
                     <h2>Saldo Disponible</h2>
                     <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-green);" id="saldo-usuario">$5.00</div>
                 </div>
+                <div class="card">
+                    <h2>Reportar Pago de Recarga</h2>
+                    <input type="number" id="monto-pago" placeholder="Monto pagado en USD" />
+                    <input type="text" id="ref-pago" placeholder="Referencia bancaria" />
+                    <button class="btn" onclick="enviarReportePago()">Enviar Solicitud</button>
+                </div>
+            </div>
+
+            <!-- PAQUETES -->
+            <div id="csec-paquetes" class="client-section">
+                <div class="card">
+                    <h2>Tienda de Paquetes</h2>
+                    <div class="history-item">
+                        <div><strong>Paquete Básico (100 Min IP)</strong><br/><span style="font-size:0.7rem;">$3.00</span></div>
+                        <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Paquete Básico')">Comprar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RED/ESTADO -->
+            <div id="csec-llamadas" class="client-section">
+                <div class="card" style="text-align: center;">
+                    <h2>Red IP Descentralizada</h2>
+                    <p style="font-size: 0.85rem; color: var(--accent-green);">🟢 Conectado con alta fidelidad</p>
+                </div>
+            </div>
+
+            <!-- HISTORIAL -->
+            <div id="csec-historial" class="client-section">
+                <div class="card">
+                    <h2>Historial de Cuenta</h2>
+                    <div class="history-item"><span>Cuenta activa</span></div>
+                </div>
             </div>
         </div>
 
@@ -418,43 +632,50 @@
         <div id="panel-admin" class="panel-view">
             <div class="card">
                 <h2>Panel Administrador</h2>
-                <button class="btn" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+                <button class="btn" onclick="exportarClientesCSV()">Exportar CSV Clientes</button>
+                <button class="btn" style="background: #ef4444; color: white; margin-top: 8px;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
             </div>
         </div>
 
-        <!-- MODALES DE LOGIN Y REGISTRO -->
+        <!-- MODALES -->
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
+            <div class="card" style="width: 100%; max-width: 320px;">
                 <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
                 <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
                 <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
-                <button class="btn" style="margin-bottom: 10px;" onclick="ingresarCliente()">Iniciar Sesión</button>
+                <button class="btn" style="margin-bottom: 8px;" onclick="ingresarCliente()">Iniciar Sesión</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+            </div>
+        </div>
+
+        <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 320px;">
+                <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
+                <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
+                <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
+                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel</button>
                 <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN LEGACY ANON DE SUPABASE
+        // CONFIGURACIÓN SUPABASE REALTIME
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
         let supabaseClient = null;
 
         try {
             supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch(e) {
-            console.error("Error al conectar con Supabase:", e);
-        }
+        } catch(e) { console.error("Error Supabase", e); }
 
         let miNumeroAsignado = "+58 500-0001";
         let numeroDestinoActual = "+58 500-0002";
         let nombreCliente = "Erik";
+        let saldoActual = 5.00;
         let numeroMarcado = "+58 500-";
 
         window.onload = function() {
-            if('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('data:text/javascript,console.log("SW Activo");');
-            }
             if(supabaseClient) {
                 iniciarSuscripcionRealtime();
                 cargarMensajesSupabase();
@@ -467,31 +688,46 @@
         }
 
         function abrirModalLoginCliente() { document.getElementById('modal-login-cliente').style.display = 'flex'; }
-        function cerrarModales() { document.getElementById('modal-login-cliente').style.display = 'none'; }
-
-        function ingresarCliente() {
-            let user = document.getElementById('login-c-user').value;
-            if(!user) return;
-            nombreCliente = user;
-            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
-            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cargarMensajesSupabase();
+        function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
+        function cerrarModales() {
+            document.getElementById('modal-login-cliente').style.display = 'none';
+            document.getElementById('modal-login-admin').style.display = 'none';
         }
 
         function seleccionarContacto(numero, nombre) {
             numeroDestinoActual = numero;
             document.getElementById('chat-nombre-receptor').innerText = nombre;
             document.getElementById('chat-numero-receptor').innerText = numero;
+            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
             cargarMensajesSupabase();
+        }
+
+        function ingresarCliente() {
+            let user = document.getElementById('login-c-user').value;
+            if(!user) return;
+            nombreCliente = user;
+            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
+            document.getElementById('ad-nombre-user').innerText = nombreCliente;
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+        }
+
+        function ingresarAdmin() {
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-admin').classList.add('active');
         }
 
         function cambiarSeccionCliente(seccion) {
             document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
+
             document.getElementById(`csec-${seccion}`).classList.add('active');
+            let tabBtn = document.getElementById(`ctab-${seccion === 'billetera'? '1' : seccion === 'paquetes'? '2' : seccion === 'llamadas'? '3' : seccion === 'historial'? '4' : 'chat'}`);
+            if(tabBtn) tabBtn.classList.add('active');
+            if(seccion === 'chat') { cargarMensajesSupabase(); }
         }
 
         function marcarDigito(d) {
@@ -506,9 +742,9 @@
             }
         }
 
-        function iniciarLlamadaReal() { alert(`Llamando a ${numeroMarcado}...`); }
+        function iniciarLlamadaReal() { alert(`Iniciando llamada HD hacia ${numeroDestinoActual}...`); }
 
-        // MENSAJERÍA REALTIME SUPABASE
+        // MENSAJERÍA REALTIME CON SUPABASE
         async function enviarMensajeSupabase() {
             let texto = document.getElementById('chat-input-texto').value;
             if(!texto || !supabaseClient) return;
@@ -526,7 +762,7 @@
                 }]);
 
             if(error) {
-                alert("Error de red: " + error.message);
+                alert("Error al enviar: " + error.message);
                 return;
             }
 
@@ -547,16 +783,16 @@
             box.innerHTML = "";
 
             if(error || !data || data.length === 0) {
-                box.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Comienza a chatear en vivo.</div>`;
+                box.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem;">Comienza tu chat en vivo.</div>`;
                 return;
             }
 
             data.forEach(m => {
                 let esMio = m.origen === miNumeroAsignado;
                 box.innerHTML += `
-                    <div class="msg-bubble ${esMio ? 'msg-sent' : 'msg-received'}">
+                    <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
                         ${m.texto}
-                        <div class="msg-info">${m.hora} ${esMio ? '✓✓' : ''}</div>
+                        <div class="wa-msg-meta">${m.hora} ${esMio ? '<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>' : ''}</div>
                     </div>
                 `;
             });
@@ -569,11 +805,11 @@
             supabaseClient
                 .channel('public:mensajes')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
-                    let nuevo = payload.new;
-                    if(nuevo.destino === miNumeroAsignado) {
-                        mostrarBannerNotificacion(nuevo.origen, nuevo.texto);
+                    let m = payload.new;
+                    if(m.destino === miNumeroAsignado) {
+                        mostrarBannerNotificacion(m.origen, m.texto);
                     }
-                    if(nuevo.origen === numeroDestinoActual || nuevo.destino === numeroDestinoActual) {
+                    if(m.origen === numeroDestinoActual || m.destino === numeroDestinoActual) {
                         cargarMensajesSupabase();
                     }
                 })
@@ -593,6 +829,16 @@
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
+        }
+
+        function exportarClientesCSV() {
+            let csv = "ID,Nombre,Numero\n1,Erik Sosa,+58 500-0001\n";
+            let link = document.createElement("a");
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
+            link.download = "Clientes_OmniMovil.csv";
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
     </script>
 </body>
