@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Red Soberana IP - Llamadas en Red</title>
+    <title>OmniMovil - Red IP y Mensajería</title>
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22Red Soberana IP%22,
-        %22short_name%22: %22SoberanaIP%22,
+        %22name%22: %22OmniMovil Red IP%22,
+        %22short_name%22: %22OmniMovil%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
         %22background_color%22: %22%23070913%22,
@@ -109,7 +109,7 @@
         .btn:hover { opacity: 0.9; }
 
         .scrollable-history {
-            max-height: 180px;
+            max-height: 220px;
             overflow-y: auto;
             background: #0b111e;
             border: 1px solid #2a3b5f;
@@ -158,7 +158,7 @@
 
         .client-tabs {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 4px;
             background: var(--card-bg);
             border-radius: 12px;
@@ -173,7 +173,7 @@
             padding: 8px 2px;
             color: var(--text-muted);
             font-weight: bold;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             border-radius: 8px;
             cursor: pointer;
             text-align: center;
@@ -196,11 +196,123 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        /* Estilos de la Mensajería */
+        .chat-box {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 220px;
+            overflow-y: auto;
+            padding: 8px;
+            background: #0b111e;
+            border-radius: 8px;
+            border: 1px solid #2a3b5f;
+            margin-bottom: 8px;
+        }
+
+        .msg-bubble {
+            max-width: 80%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+        .msg-sent {
+            align-self: flex-end;
+            background: #005c4b;
+            color: #fff;
+            border-bottom-right-radius: 2px;
+        }
+        .msg-received {
+            align-self: flex-start;
+            background: #202c33;
+            color: #fff;
+            border-bottom-left-radius: 2px;
+        }
+        .msg-info {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.6);
+            text-align: right;
+            margin-top: 3px;
+        }
+
+        /* Barra de Emojis y Stickers */
+        .chat-toolbar {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            background: #1a253f;
+            padding: 6px;
+            border-radius: 8px;
+            border: 1px solid #2a3b5f;
+        }
+        .emoji-btn, .sticker-btn {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .emoji-btn:hover, .sticker-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .sticker-badge {
+            background: #202c33;
+            border: 1px dashed var(--accent);
+            color: var(--accent);
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .sticker-badge:hover {
+            background: var(--accent);
+            color: #000;
+        }
+
+        /* BANNER NOTIFICACIÓN */
+        #chat-notification-banner {
+            display: none;
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 440px;
+            background: #202c33;
+            border: 1px solid var(--accent-green);
+            box-shadow: 0 4px 15px rgba(0,230,118,0.3);
+            border-radius: 12px;
+            padding: 12px;
+            z-index: 3000;
+            color: white;
+            cursor: pointer;
+            animation: fadeInDown 0.3s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translate(-50%, -20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
     </style>
 </head>
 <body>
 
-    <!-- Pantalla de Llamada Activa / En Curso -->
+    <!-- NOTIFICACIÓN FLOTANTE -->
+    <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
+            <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para abrir</span>
+        </div>
+        <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
+    </div>
+
+    <!-- Pantalla de Llamada Activa -->
     <div id="call-active-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7, 9, 19, 0.95); z-index: 2000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center;">
         <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
             <h2 id="call-status-title" style="color: var(--accent-green); font-size: 1.1rem;">📞 Llamada IP en Curso</h2>
@@ -210,12 +322,12 @@
         </div>
     </div>
 
-    <!-- Modal de Llamada Entrante (Repica en el dispositivo destino) -->
+    <!-- Modal de Llamada Entrante -->
     <div id="incoming-call-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; padding: 20px; text-align: center;">
         <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
             <h2 style="color: var(--accent-green); font-size: 1.2rem;">📞 ¡Llamada Entrante!</h2>
             <div id="caller-id" style="font-size: 1.3rem; font-weight: bold; margin: 15px 0; color: var(--accent);">+58 500-0001</div>
-            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Llamando a tu número asignado...</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px;">Llamada en la red OmniMovil...</p>
             <button class="btn" style="background: var(--accent-green); margin-bottom: 10px;" onclick="aceptarLlamadaEntrante()">🟢 Contestar y Hablar</button>
             <button class="btn" style="background: var(--accent-red); color: white;" onclick="rechazarLlamadaEntrante()">🔴 Rechazar</button>
         </div>
@@ -225,8 +337,8 @@
         <!-- Cabecera Global -->
         <header class="main-header">
             <div>
-                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 Red Soberana IP</h1>
-                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">Llamadas independientes</p>
+                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
+                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
             <div style="display: flex; gap: 6px;">
                 <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
@@ -234,10 +346,10 @@
             </div>
         </header>
 
-        <!-- PANTALLA PRINCIPAL: MARCADOR -->
+        <!-- MARCADOR PRINCIPAL -->
         <div id="panel-principal" class="panel-view active">
             <div class="card">
-                <h2>Marcador de Red IP</h2>
+                <h2>Marcador Telefónico IP</h2>
                 <div class="dialer-screen" id="pantalla-marcador">+58 500-</div>
 
                 <div class="dialer-grid">
@@ -256,12 +368,12 @@
                 </div>
 
                 <button class="btn btn-call" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
-                <div id="estado-llamada" style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: var(--accent-green);">🟢 Línea lista</div>
+                <div id="estado-llamada" style="text-align: center; font-size: 0.8rem; margin-top: 10px; color: var(--accent-green);">🟢 Línea lista para llamadas</div>
                 <audio id="remote-audio" autoplay></audio>
             </div>
         </div>
 
-        <!-- PORTAL DE CLIENTE -->
+        <!-- PORTAL CLIENTE -->
         <div id="panel-cliente" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent); margin: 0;">Portal: <span id="cliente-nombre-actual">Erik</span></h2>
@@ -269,45 +381,84 @@
             </div>
 
             <div class="client-tabs">
-                <button class="client-tab-btn active" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Billetera</button>
-                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Paquetes</button>
-                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Llamadas</button>
-                <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Historial</button>
+                <button class="client-tab-btn active" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Saldo</button>
+                <button class="client-tab-btn" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 Chats</button>
+                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Plan</button>
+                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red</button>
+                <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
+            <!-- BILLETERA -->
             <div id="csec-billetera" class="client-section active">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible</h2>
                     <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-green);" id="saldo-usuario">$5.00</div>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Tu Número de Línea: <strong id="cliente-num-linea">+58 500-0001</strong></p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 4px;">Tu Línea Asignada: <strong id="cliente-num-linea">+58 500-0001</strong></p>
                 </div>
 
                 <div class="card">
                     <h2>Reportar Pago de Recarga</h2>
                     <input type="number" id="monto-pago" placeholder="Monto pagado en USD (ej. 10)" />
-                    <input type="text" id="ref-pago" placeholder="Referencia bancaria (ultimos 4 dig)" />
+                    <input type="text" id="ref-pago" placeholder="Referencia bancaria" />
                     <button class="btn" onclick="enviarReportePago()">Enviar Solicitud al Operador</button>
                 </div>
             </div>
 
+            <!-- CHAT TIPO WHATSAPP CON EMOJIS Y STICKERS -->
+            <div id="csec-chat" class="client-section">
+                <div class="card">
+                    <h2>💬 Mensajería Instantánea</h2>
+                    <input type="text" id="chat-num-destino" placeholder="Número destino (+58 500-XXXX)" value="+58 500-0002" />
+                    
+                    <div class="chat-box" id="contenedor-mensajes">
+                        <div class="msg-bubble msg-received">
+                            ¡Bienvenido al chat de OmniMovil! Envía emojis y stickers en tiempo real.
+                            <div class="msg-info">Sistema • 00:00</div>
+                        </div>
+                    </div>
+
+                    <!-- BARRA DE EMOJIS Y STICKERS -->
+                    <div class="chat-toolbar">
+                        <button class="emoji-btn" onclick="agregarEmoji('😊')">😊</button>
+                        <button class="emoji-btn" onclick="agregarEmoji('😂')">😂</button>
+                        <button class="emoji-btn" onclick="agregarEmoji('❤️')">❤️</button>
+                        <button class="emoji-btn" onclick="agregarEmoji('👍')">👍</button>
+                        <button class="emoji-btn" onclick="agregarEmoji('🔥')">🔥</button>
+                        <button class="emoji-btn" onclick="agregarEmoji('🚀')">🚀</button>
+                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 😎 Todo en orden]')">😎 Todo en orden</button>
+                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 📞 Llamada HD]')">📞 Llamada HD</button>
+                        <button class="sticker-badge" onclick="enviarSticker('[Sticker: 🇻🇪 Red Soberana]')">🇻🇪 Red Soberana</button>
+                    </div>
+
+                    <div style="display: flex; gap: 6px;">
+                        <input type="text" id="chat-input-texto" placeholder="Escribe tu mensaje..." style="margin-bottom: 0;" />
+                        <button class="btn" style="width: auto; padding: 0 16px;" onclick="enviarMensajeChat()">Enviar</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAQUETES -->
             <div id="csec-paquetes" class="client-section">
                 <div class="card">
                     <h2>Tienda de Paquetes</h2>
                     <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 6px;">
-                        <div><strong>Paquete Básico (100 Min IP + 2 GB)</strong></div>
+                        <div><strong>Paquete Básico (100 Min IP + Textos)</strong></div>
                         <div style="font-size: 0.75rem; color: var(--text-muted);">Precio: $3.00</div>
                         <button class="btn" style="padding: 8px; font-size: 0.8rem;" onclick="comprarPaquete(3.00, 'Paquete Básico')">Comprar</button>
                     </div>
                 </div>
             </div>
 
+            <!-- RED/ESTADO -->
             <div id="csec-llamadas" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Red IP Descentralizada</h2>
+                    <p style="font-size: 0.85rem; color: var(--accent-green);">🟢 Conectado con alta fidelidad de voz</p>
                     <button class="btn" style="background: var(--accent); color: #000;" onclick="volverAlPrincipal()">Ir al Marcador</button>
                 </div>
             </div>
 
+            <!-- HISTORIAL -->
             <div id="csec-historial" class="client-section">
                 <div class="card">
                     <h2>Historial de Cuenta</h2>
@@ -316,7 +467,7 @@
             </div>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR -->
+        <!-- PANEL ADMINISTRADOR -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Administrador</h2>
@@ -352,7 +503,7 @@
             </div>
         </div>
 
-        <!-- MODAL LOGIN CLIENTE -->
+        <!-- MODALES -->
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
                 <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
@@ -364,7 +515,6 @@
             </div>
         </div>
 
-        <!-- MODAL REGISTRO DE NUEVO CLIENTE -->
         <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-green);">
                 <h2 style="color: var(--accent-green); text-align: center;">✨ Registro de Nuevo Cliente</h2>
@@ -376,7 +526,6 @@
             </div>
         </div>
 
-        <!-- MODAL LOGIN ADMIN -->
         <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
@@ -479,6 +628,7 @@
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('billetera');
             activarEscuchaLlamadasEntrantes(miNumeroAsignado);
+            activarEscuchaChat(miNumeroAsignado);
             renderizarAdmin();
 
             alert(`¡Registro exitoso! Tu número asignado es: ${miNumeroAsignado}`);
@@ -496,6 +646,7 @@
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('billetera');
             activarEscuchaLlamadasEntrantes(miNumeroAsignado);
+            activarEscuchaChat(miNumeroAsignado);
         }
 
         function ingresarAdmin() {
@@ -518,6 +669,9 @@
             if(seccion === 'billetera') {
                 document.getElementById('csec-billetera').classList.add('active');
                 document.getElementById('ctab-1').classList.add('active');
+            } else if(seccion === 'chat') {
+                document.getElementById('csec-chat').classList.add('active');
+                document.getElementById('ctab-chat').classList.add('active');
             } else if(seccion === 'paquetes') {
                 document.getElementById('csec-paquetes').classList.add('active');
                 document.getElementById('ctab-2').classList.add('active');
@@ -529,6 +683,112 @@
                 document.getElementById('ctab-4').classList.add('active');
                 renderizarHistorialCliente();
             }
+        }
+
+        // --- FUNCIONES DE EMOJIS Y STICKERS ---
+        function agregarEmoji(emoji) {
+            let input = document.getElementById('chat-input-texto');
+            input.value += emoji;
+            input.focus();
+        }
+
+        function enviarSticker(stickerTexto) {
+            document.getElementById('chat-input-texto').value = stickerTexto;
+            enviarMensajeChat();
+        }
+
+        // --- REPRODUCIR SONIDO NOTIFICACIÓN ---
+        function reproducirSonidoNotificacion() {
+            try {
+                let ctx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) { console.log(e); }
+        }
+
+        // --- SISTEMA DE MENSAJERÍA ---
+        function enviarMensajeChat() {
+            let destino = document.getElementById('chat-num-destino').value;
+            let texto = document.getElementById('chat-input-texto').value;
+
+            if(!destino || !texto) { alert("Ingresa un número de destino y el mensaje."); return; }
+
+            let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            let box = document.getElementById('contenedor-mensajes');
+            box.innerHTML += `
+                <div class="msg-bubble msg-sent">
+                    ${texto}
+                    <div class="msg-info">Para: ${destino} • ${hora}</div>
+                </div>
+            `;
+            box.scrollTop = box.scrollHeight;
+
+            if (db) {
+                db.collection("mensajes").add({
+                    origen: miNumeroAsignado,
+                    destino: destino,
+                    texto: texto,
+                    hora: hora,
+                    fecha: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            }
+
+            document.getElementById('chat-input-texto').value = "";
+        }
+
+        function activarEscuchaChat(miNumero) {
+            if (!db) return;
+            let primerCarga = true;
+            db.collection("mensajes")
+              .where("destino", "==", miNumero)
+              .onSnapshot((snapshot) => {
+                  snapshot.docChanges().forEach((change) => {
+                      if (change.type === "added") {
+                          let msg = change.doc.data();
+                          let box = document.getElementById('contenedor-mensajes');
+                          box.innerHTML += `
+                              <div class="msg-bubble msg-received">
+                                  ${msg.texto}
+                                  <div class="msg-info">De: ${msg.origen} • ${msg.hora}</div>
+                              </div>
+                          `;
+                          box.scrollTop = box.scrollHeight;
+
+                          if(!primerCarga) {
+                              reproducirSonidoNotificacion();
+                              mostrarNotificacionChat(msg.origen, msg.texto);
+                          }
+                      }
+                  });
+                  primerCarga = false;
+              });
+        }
+
+        function mostrarNotificacionChat(origen, texto) {
+            document.getElementById('notif-sender').innerText = origen;
+            document.getElementById('notif-body').innerText = texto;
+            document.getElementById('chat-num-destino').value = origen;
+            let banner = document.getElementById('chat-notification-banner');
+            banner.style.display = 'block';
+
+            setTimeout(() => { banner.style.display = 'none'; }, 4500);
+        }
+
+        function abrirChatDesdeNotificacion() {
+            document.getElementById('chat-notification-banner').style.display = 'none';
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
         }
 
         function enviarReportePago() {
@@ -575,7 +835,7 @@
             }
         }
 
-        // --- SISTEMA DE LLAMADAS REALES EN RED ---
+        // --- SISTEMA DE LLAMADAS ---
         function activarEscuchaLlamadasEntrantes(miNumero) {
             if (!db) return;
             db.collection("llamadas")
