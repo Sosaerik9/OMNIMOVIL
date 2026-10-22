@@ -715,7 +715,57 @@
             } catch(e) { console.log(e); }
         }
 
-        // --- SISTEMA DE MENSAJERÍA ---
+        // --- SISTEMA DE MENSAJERÍA INDEPENDIENTE TIPO WHATSAPP ---
+        
+        // Cargar historial de chat cuando cambias de número de destino
+        document.getElementById('chat-num-destino').addEventListener('change', function() {
+            cargarHistorialChatEntre(miNumeroAsignado, this.value);
+        });
+
+        function cargarHistorialChatEntre(miNum, otroNum) {
+            let box = document.getElementById('contenedor-mensajes');
+            box.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.75rem;">Cargando chat con ${otroNum}...</div>`;
+
+            if (!db) return;
+
+            // Consultar mensajes enviados y recibidos entre ambos números en Firebase
+            db.collection("mensajes")
+              .orderBy("fecha", "asc")
+              .get()
+              .then((snapshot) => {
+                  box.innerHTML = "";
+                  let hayMensajes = false;
+                  
+                  snapshot.forEach((doc) => {
+                      let msg = doc.data();
+                      // Verificar si el mensaje pertenece a esta pareja de números
+                      let esMioParaEl = (msg.origen === miNum && msg.destino === otroNum);
+                      let esDeElParaMi = (msg.origen === otroNum && msg.destino === miNum);
+
+                      if (esMioParaEl || esDeElParaMi) {
+                          hayMensajes = true;
+                          let claseBurbuja = esMioParaEl ? "msg-sent" : "msg-received";
+                          let etiquetaInfo = esMioParaEl ? `Para: ${msg.destino} • ${msg.hora}` : `De: ${msg.origen} • ${msg.hora}`;
+                          
+                          box.innerHTML += `
+                              <div class="msg-bubble ${claseBurbuja}">
+                                  ${msg.texto}
+                                  <div class="msg-info">${etiquetaInfo}</div>
+                              </div>
+                          `;
+                      }
+                  });
+
+                  if (!hayMensajes) {
+                      box.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.75rem; padding:10px;">No hay mensajes previos con ${otroNum}. ¡Envía el primero!</div>`;
+                  }
+                  box.scrollTop = box.scrollHeight;
+              })
+              .catch(err => {
+                  console.log("Error cargando historial: ", err);
+              });
+        }
+
         function enviarMensajeChat() {
             let destino = document.getElementById('chat-num-destino').value;
             let texto = document.getElementById('chat-input-texto').value;
@@ -724,7 +774,11 @@
 
             let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+            // Mostrar inmediatamente en la pantalla del emisor
             let box = document.getElementById('contenedor-mensajes');
+            // Si el contenedor decía "No hay mensajes", lo limpiamos
+            if(box.innerHTML.includes("No hay mensajes previos")) { box.innerHTML = ""; }
+
             box.innerHTML += `
                 <div class="msg-bubble msg-sent">
                     ${texto}
@@ -749,21 +803,30 @@
         function activarEscuchaChat(miNumero) {
             if (!db) return;
             let primerCarga = true;
+
             db.collection("mensajes")
               .where("destino", "==", miNumero)
               .onSnapshot((snapshot) => {
                   snapshot.docChanges().forEach((change) => {
                       if (change.type === "added") {
                           let msg = change.doc.data();
-                          let box = document.getElementById('contenedor-mensajes');
-                          box.innerHTML += `
-                              <div class="msg-bubble msg-received">
-                                  ${msg.texto}
-                                  <div class="msg-info">De: ${msg.origen} • ${msg.hora}</div>
-                              </div>
-                          `;
-                          box.scrollTop = box.scrollHeight;
+                          let numSeleccionado = document.getElementById('chat-num-destino').value;
 
+                          // Si el mensaje entrante es del número con el que estás chateando ahora mismo, lo pintamos de inmediato
+                          if (msg.origen === numSeleccionado) {
+                              let box = document.getElementById('contenedor-mensajes');
+                              if(box.innerHTML.includes("No hay mensajes previos")) { box.innerHTML = ""; }
+                              
+                              box.innerHTML += `
+                                  <div class="msg-bubble msg-received">
+                                      ${msg.texto}
+                                      <div class="msg-info">De: ${msg.origen} • ${msg.hora}</div>
+                                  </div>
+                              `;
+                              box.scrollTop = box.scrollHeight;
+                          }
+
+                          // Si la app ya inició y recibe un mensaje de cualquier otro, suena la alerta y sale la notificación flotante
                           if(!primerCarga) {
                               reproducirSonidoNotificacion();
                               mostrarNotificacionChat(msg.origen, msg.texto);
@@ -772,246 +835,6 @@
                   });
                   primerCarga = false;
               });
-        }
-
-        function mostrarNotificacionChat(origen, texto) {
-            document.getElementById('notif-sender').innerText = origen;
-            document.getElementById('notif-body').innerText = texto;
-            document.getElementById('chat-num-destino').value = origen;
-            let banner = document.getElementById('chat-notification-banner');
-            banner.style.display = 'block';
-
-            setTimeout(() => { banner.style.display = 'none'; }, 4500);
-        }
-
-        function abrirChatDesdeNotificacion() {
-            document.getElementById('chat-notification-banner').style.display = 'none';
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-        }
-
-        function enviarReportePago() {
-            let monto = parseFloat(document.getElementById('monto-pago').value);
-            let ref = document.getElementById('ref-pago').value;
-            if(!monto || !ref) { alert("Ingresa monto y referencia."); return; }
-
-            solicitudesRecarga.push({ id: Date.now(), cliente: nombreCliente, numero: miNumeroAsignado, monto: monto, ref: ref });
-            historialTransaccionesCliente.push(`Reporte de pago enviado: $${monto} (Ref: ${ref})`);
-            alert("¡Solicitud enviada al administrador!");
-            document.getElementById('monto-pago').value = '';
-            document.getElementById('ref-pago').value = '';
-            renderizarAdmin();
-        }
-
-        function comprarPaquete(costo, nombrePaquete) {
-            if(saldoActual < costo) { alert("Saldo insuficiente."); return; }
-            saldoActual -= costo;
-            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            historialTransaccionesCliente.push(`Compra: ${nombrePaquete} (-$${costo})`);
-            alert(`¡Has adquirido el ${nombrePaquete}!`);
-        }
-
-        function renderizarHistorialCliente() {
-            let contenedor = document.getElementById('lista-historial-cliente');
-            let html = "";
-            historialTransaccionesCliente.forEach(item => {
-                html += `<div class="history-item"><span>📌 ${item}</span><span style="color:var(--accent-green);">OK</span></div>`;
-            });
-            contenedor.innerHTML = html;
-        }
-
-        function marcarDigito(digito) {
-            if(numeroMarcado.length < 18) {
-                numeroMarcado += digito;
-                document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-            }
-        }
-
-        function borrarDigito() {
-            if(numeroMarcado.length > 9) {
-                numeroMarcado = numeroMarcado.slice(0, -1);
-                document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-            }
-        }
-
-        // --- SISTEMA DE LLAMADAS ---
-        function activarEscuchaLlamadasEntrantes(miNumero) {
-            if (!db) return;
-            db.collection("llamadas")
-              .where("destino", "==", miNumero)
-              .where("estado", "==", "marcando")
-              .onSnapshot((snapshot) => {
-                  snapshot.docChanges().forEach((change) => {
-                      if (change.type === "added") {
-                          let datosLlamada = change.doc.data();
-                          document.getElementById('caller-id').innerText = datosLlamada.origen;
-                          document.getElementById('incoming-call-modal').style.display = 'flex';
-                          window.llamadaActualId = change.doc.id;
-                          window.ofertaRemota = JSON.parse(datosLlamada.offerSDP);
-                      }
-                  });
-              });
-        }
-
-        async function iniciarLlamadaReal() {
-            if(numeroMarcado.length <= 9) { alert("Marca un número válido."); return; }
-            if(saldoActual < 0.10) { alert("Saldo insuficiente."); return; }
-
-            let numeroDestino = numeroMarcado;
-            document.getElementById('call-target-display').innerText = numeroDestino;
-            document.getElementById('call-status-title').innerText = "🔄 Llamando al " + numeroDestino + "...";
-            document.getElementById('call-timer').innerText = "00:00";
-            document.getElementById('call-active-overlay').style.display = 'flex';
-
-            try {
-                if(!localStream) localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-
-                peerConnection = new RTCPeerConnection(servers);
-                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-                peerConnection.ontrack = (event) => { document.getElementById('remote-audio').srcObject = event.streams[0]; };
-
-                let offer = await peerConnection.createOffer();
-                await peerConnection.setLocalDescription(offer);
-
-                if (db) {
-                    let docRef = await db.collection("llamadas").add({
-                        origen: miNumeroAsignado,
-                        destino: numeroDestino,
-                        offerSDP: JSON.stringify(offer),
-                        estado: "marcando",
-                        fecha: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    window.llamadaActualId = docRef.id;
-
-                    db.collection("llamadas").doc(docRef.id).onSnapshot(doc => {
-                        let data = doc.data();
-                        if (data && data.estado === "contestada" && data.answerSDP) {
-                            let answer = new RTCSessionDescription(JSON.parse(data.answerSDP));
-                            peerConnection.setRemoteDescription(answer);
-                            document.getElementById('call-status-title').innerText = "🔊 En Comunicación (Voz HD)";
-                        } else if (data && data.estado === "colgada") {
-                            colgarLlamadaReal();
-                        }
-                    });
-                }
-            } catch (error) {
-                console.error(error);
-                colgarLlamadaReal();
-            }
-        }
-
-        async function aceptarLlamadaEntrante() {
-            document.getElementById('incoming-call-modal').style.display = 'none';
-            document.getElementById('call-status-title').innerText = "🔄 Conectando voz...";
-            document.getElementById('call-active-overlay').style.display = 'flex';
-
-            try {
-                if(!localStream) localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
-
-                peerConnection = new RTCPeerConnection(servers);
-                localStream.getTracks().forEach(track => { peerConnection.addTrack(track, localStream); });
-                peerConnection.ontrack = (event) => { document.getElementById('remote-audio').srcObject = event.streams[0]; };
-
-                await peerConnection.setRemoteDescription(new RTCSessionDescription(window.ofertaRemota));
-                let answer = await peerConnection.createAnswer();
-                await peerConnection.setLocalDescription(answer);
-
-                if (db && window.llamadaActualId) {
-                    await db.collection("llamadas").doc(window.llamadaActualId).update({
-                        answerSDP: JSON.stringify(answer),
-                        estado: "contestada"
-                    });
-                }
-
-                document.getElementById('call-status-title').innerText = "🔊 En Comunicación (Voz HD)";
-            } catch (error) {
-                console.error(error);
-                colgarLlamadaReal();
-            }
-        }
-
-        function rechazarLlamadaEntrante() {
-            document.getElementById('incoming-call-modal').style.display = 'none';
-            if (db && window.llamadaActualId) {
-                db.collection("llamadas").doc(window.llamadaActualId).update({ estado: "colgada" });
-            }
-        }
-
-        function colgarLlamadaReal() {
-            if(peerConnection) { peerConnection.close(); peerConnection = null; }
-            if(db && window.llamadaActualId) {
-                db.collection("llamadas").doc(window.llamadaActualId).update({ estado: "colgada" }).catch(()=>{});
-            }
-            document.getElementById('call-active-overlay').style.display = 'none';
-            document.getElementById('incoming-call-modal').style.display = 'none';
-            document.getElementById('estado-llamada').innerHTML = "🟢 Línea lista";
-            numeroMarcado = "+58 500-";
-            document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-        }
-
-        function agregarNumeroAlPool() {
-            let nuevoNum = document.getElementById('nuevo-num-pool').value;
-            if(!nuevoNum) { alert("Ingresa un número."); return; }
-            poolNumeros.push(nuevoNum);
-            document.getElementById('nuevo-num-pool').value = '';
-            renderizarAdmin();
-            alert("¡Número agregado al pool!");
-        }
-
-        function renderizarAdmin() {
-            let contenedorClientes = document.getElementById('lista-clientes-admin');
-            let htmlClientes = "";
-            clientesRegistrados.forEach(cli => {
-                htmlClientes += `<div class="history-item"><span><b>${cli.nombre}</b></span><span style="color:var(--accent);">${cli.numero}</span></div>`;
-            });
-            contenedorClientes.innerHTML = htmlClientes || "<div style='color:var(--text-muted); font-size:0.75rem; text-align:center;'>No hay clientes registrados.</div>";
-
-            let contenedorPool = document.getElementById('lista-pool-numeros');
-            let htmlPool = "";
-            poolNumeros.forEach(num => {
-                htmlPool += `<div class="history-item"><span>📱 ${num}</span><span style="color:var(--accent-green);">Libre</span></div>`;
-            });
-            contenedorPool.innerHTML = htmlPool || "<div style='color:var(--text-muted); font-size:0.8rem;'>Pool agotado.</div>";
-
-            let contenedorSol = document.getElementById('lista-solicitudes-admin');
-            let htmlSol = "";
-            solicitudesRecarga.forEach((sol, index) => {
-                htmlSol += `
-                    <div class="history-item" style="flex-direction:column; align-items:flex-start; gap:6px;">
-                        <div><strong>Cliente:</strong> ${sol.cliente} (${sol.numero})</div>
-                        <div><strong>Monto:</strong> $${sol.monto} | <strong>Ref:</strong> ${sol.ref}</div>
-                        <button class="btn" style="background:var(--accent-green); padding:6px; font-size:0.8rem;" onclick="aprobarRecargaAdmin(${index})">✅ Aprobar Saldo</button>
-                    </div>
-                `;
-            });
-            contenedorSol.innerHTML = htmlSol || "<div style='text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;'>No hay solicitudes pendientes.</div>";
-
-            let contenedorHistorialAdmin = document.getElementById('lista-historial-aprobaciones-admin');
-            let htmlHistorialAdmin = "";
-            historialAprobacionesAdmin.forEach(item => {
-                htmlHistorialAdmin += `<div class="history-item"><span>✔ ${item.cliente} (+$${item.monto})</span><span style="color:var(--accent)">Ref: ${item.ref}</span></div>`;
-            });
-            contenedorHistorialAdmin.innerHTML = htmlHistorialAdmin || "<div style='text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;'>Sin aprobaciones aún.</div>";
-        }
-
-        function aprobarRecargaAdmin(index) {
-            let sol = solicitudesRecarga[index];
-            saldoActual += sol.monto;
-            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            
-            historialAprobacionesAdmin.unshift({
-                cliente: sol.cliente,
-                monto: sol.monto,
-                ref: sol.ref,
-                fecha: new Date().toLocaleTimeString()
-            });
-
-            historialTransaccionesCliente.push(`Recarga aprobada por Admin: +$${sol.monto} (Ref: ${sol.ref})`);
-            
-            alert(`¡Aprobado! Se acreditaron $${sol.monto} a ${sol.cliente}.`);
-            solicitudesRecarga.splice(index, 1);
-            renderizarAdmin();
         }
     </script>
 </body>
