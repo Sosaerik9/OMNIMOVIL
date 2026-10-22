@@ -62,6 +62,8 @@
             border-radius: 12px;
             margin-bottom: 16px;
             border: 1px solid #1f2d4a;
+            flex-wrap: wrap;
+            gap: 8px;
         }
 
         .login-top-btn {
@@ -447,14 +449,14 @@
     </div>
 
     <div class="container">
-        <!-- Cabecera Global con Botón de Instalación PWA -->
+        <!-- Cabecera Global con Botón de Instalación Visible -->
         <header class="main-header">
             <div>
                 <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
-            <div style="display: flex; gap: 6px; align-items: center;">
-                <button id="btn-instalar-app" style="display: none; background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
+            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <button id="btn-instalar-app" style="background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
                 <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
                 <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
             </div>
@@ -705,7 +707,18 @@
             </div>
         </div>
 
-        <!-- MODALES -->
+        <!-- MODAL DE INSTRUCCIONES DE INSTALACIÓN -->
+        <div id="modal-instalar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green);">
+                <h2 style="color: var(--accent-green); text-align: center;">📲 Instalar OmniMovil App</h2>
+                <div id="contenido-instrucciones" style="font-size: 0.85rem; color: #fff; line-height: 1.4; margin-bottom: 14px;">
+                    <!-- Se llena dinámicamente según el dispositivo -->
+                </div>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Entendido</button>
+            </div>
+        </div>
+
+        <!-- MODALES DE ACCESO -->
         <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
                 <h2 style="color: var(--accent); text-align: center;">🔑 Acceso de Cliente</h2>
@@ -740,12 +753,11 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN PWA / SERVICE WORKER
+        // CONTROLADOR PWA / INSTALACIÓN INTELIGENTE
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
-            document.getElementById('btn-instalar-app').style.display = 'inline-block';
         });
 
         function instalarPWA() {
@@ -756,8 +768,32 @@
                         console.log('Usuario aceptó instalar la PWA');
                     }
                     deferredPrompt = null;
-                    document.getElementById('btn-instalar-app').style.display = 'none';
                 });
+            } else {
+                // Si el navegador no disparó el evento automático, mostramos guía manual según el dispositivo
+                let esIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+                let contenido = document.getElementById('contenido-instrucciones');
+                
+                if (esIOS) {
+                    contenido.innerHTML = `
+                        <p>Para instalar en tu <strong>iPhone / iPad</strong>:</p>
+                        <ol style="padding-left: 20px; margin: 8px 0;">
+                            <li>Toca el botón de <strong>Compartir</strong> <i class="fa-solid fa-arrow-up-from-bracket"></i> en la barra inferior de Safari.</li>
+                            <li>Desplázate hacia abajo y selecciona <strong>"Agregar a Inicio"</strong>.</li>
+                            <li>Toca <strong>Agregar</strong> arriba a la derecha.</li>
+                        </ol>
+                    `;
+                } else {
+                    contenido.innerHTML = `
+                        <p>Para instalar en tu dispositivo:</p>
+                        <ol style="padding-left: 20px; margin: 8px 0;">
+                            <li>Toca el menú de los 3 puntos <strong>(⋮)</strong> en la esquina superior derecha de tu navegador.</li>
+                            <li>Selecciona <strong>"Instalar aplicación"</strong> o <strong>"Agregar a la pantalla principal"</strong>.</li>
+                            <li>Confirma la instalación.</li>
+                        </ol>
+                    `;
+                }
+                document.getElementById('modal-instalar').style.display = 'flex';
             }
         }
 
@@ -815,6 +851,7 @@
             document.getElementById('modal-login-cliente').style.display = 'none';
             document.getElementById('modal-registro').style.display = 'none';
             document.getElementById('modal-login-admin').style.display = 'none';
+            document.getElementById('modal-instalar').style.display = 'none';
         }
 
         function seleccionarContacto(numero, nombre) {
@@ -1086,7 +1123,6 @@
                         mostrarBannerNotificacion(m.origen, m.texto);
                     }
                     if(m.origen === numeroDestinoActual || m.destino === numeroDestinoActual) {
-                        cargarMensajesSobrecarga(); // fallback
                         cargarMensajesSupabase();
                     }
                 })
