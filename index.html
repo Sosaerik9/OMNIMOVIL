@@ -6,9 +6,13 @@
     <title>OmniMovil - Red IP y Mensajería Global</title>
     
     <!-- Configuración PWA (App Instalable) -->
-    <meta name="theme-color" content="#00f2fe">
+    <meta name="theme-color" content="#070913">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OmniMovil">
+    
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22OmniMovil Red IP%22,
+        %22name%22: %22OmniMovil Red IP y Mensajeria%22,
         %22short_name%22: %22OmniMovil%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
@@ -443,13 +447,14 @@
     </div>
 
     <div class="container">
-        <!-- Cabecera Global -->
+        <!-- Cabecera Global con Botón de Instalación PWA -->
         <header class="main-header">
             <div>
                 <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
-            <div style="display: flex; gap: 6px;">
+            <div style="display: flex; gap: 6px; align-items: center;">
+                <button id="btn-instalar-app" style="display: none; background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
                 <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
                 <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
             </div>
@@ -635,14 +640,13 @@
             </div>
         </div>
 
-        <!-- PANEL ADMINISTRADOR COMPLETO -->
+        <!-- PANEL ADMINISTRADOR -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Panel Administrador</h2>
                 <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
             </div>
 
-            <!-- CLIENTES REGISTRADOS CON FILTROS Y EXPORTACIÓN -->
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <h2 style="color: var(--accent); margin:0;">👥 Clientes Registrados</h2>
@@ -686,7 +690,6 @@
                 </div>
             </div>
 
-            <!-- SOLICITUDES PENDIENTES -->
             <div class="card" style="border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange);">Solicitudes de Recarga Pendientes</h2>
                 <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
@@ -694,7 +697,6 @@
                 </div>
             </div>
 
-            <!-- GESTIÓN DE POOL -->
             <div class="card">
                 <h2>Gestión de Números (Pool)</h2>
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
@@ -738,7 +740,34 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN SUPABASE REALTIME (LEGACY ANON KEY INTEGRADA)
+        // CONFIGURACIÓN PWA / SERVICE WORKER
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('btn-instalar-app').style.display = 'inline-block';
+        });
+
+        function instalarPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó instalar la PWA');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('btn-instalar-app').style.display = 'none';
+                });
+            }
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('data:text/javascript,self.addEventListener("fetch", function(e){});').catch(err => {
+                console.log("Service Worker error", err);
+            });
+        }
+
+        // CONFIGURACIÓN SUPABASE REALTIME (LEGACY ANON KEY)
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
         let supabaseClient = null;
@@ -1057,6 +1086,7 @@
                         mostrarBannerNotificacion(m.origen, m.texto);
                     }
                     if(m.origen === numeroDestinoActual || m.destino === numeroDestinoActual) {
+                        cargarMensajesSobrecarga(); // fallback
                         cargarMensajesSupabase();
                     }
                 })
