@@ -478,6 +478,17 @@
         }
         .status-badge.active-line { background: #dcfce7; color: #15803d; }
         .status-badge.suspended-line { background: #fee2e2; color: #b91c1c; }
+
+        .st-tag {
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.65rem;
+            font-weight: bold;
+        }
+        .st-procesado { background: #dcfce7; color: #15803d; }
+        .st-pendiente { background: #fef3c7; color: #d97706; }
+        .st-rechazado { background: #fee2e2; color: #b91c1c; }
+        .st-enviado { background: #e0f2fe; color: #0369a1; }
     </style>
 </head>
 <body>
@@ -490,20 +501,21 @@
         <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
     </div>
 
-    <!-- MODAL SELECCIONAR CONTACTO / NUEVO CHAT -->
+    <!-- MODAL AGREGAR CONTACTO / NUEVO CHAT -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent-green);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--accent-green); margin: 0;">💬 Elegir Contacto o Nuevo Chat</h2>
+                <h2 style="color: var(--accent-green); margin: 0;">➕ Agregar Contacto / Nuevo Chat</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: #8fa3bf;" onclick="cerrarModalNuevoChat()"></i>
             </div>
             
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">Escribe un número VoIP directo o selecciona de tu agenda:</p>
-            <input type="text" id="input-nuevo-numero-chat" placeholder="Ej: +58 500-0004" />
-            <button class="btn" style="background: var(--accent); color: #000; margin-bottom: 12px; font-size: 0.85rem;" onclick="iniciarChatPorNumeroInscrito()">Abrir Conversación</button>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">Añadir nuevo contacto a tu lista:</p>
+            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre del Contacto" />
+            <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-0004)" />
+            <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 12px; font-size: 0.85rem;" onclick="guardarNuevoContactoChat()">Guardar e Iniciar Chat</button>
             
-            <strong style="font-size: 0.8rem; color: #fff; display: block; margin-bottom: 6px;">Contactos Registrados:</strong>
-            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 160px; background: #070913;"></div>
+            <strong style="font-size: 0.8rem; color: #fff; display: block; margin-bottom: 6px;">Contactos Registrados en la Red:</strong>
+            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 140px; background: #070913;"></div>
         </div>
     </div>
 
@@ -639,14 +651,14 @@
                             <strong style="font-size: 0.85rem;">Conversaciones</strong>
                             <div style="display: flex; gap: 12px; color: #54656f; font-size: 1rem;">
                                 <i class="fa-solid fa-circle-notch" style="cursor: pointer;" title="Ver Estados" onclick="abrirModalEstados()"></i>
-                                <i class="fa-solid fa-message" style="cursor: pointer;" title="Nuevo Chat / Elegir Contacto" onclick="abrirModalNuevoChat()"></i>
+                                <i class="fa-solid fa-plus" style="cursor: pointer;" title="Agregar Contacto / Nuevo Chat" onclick="abrirModalNuevoChat()"></i>
                             </div>
                         </div>
 
                         <div class="wa-search-bar">
                             <div class="wa-search-input">
                                 <i class="fa-solid fa-magnifying-glass" style="color: #54656f;"></i>
-                                <input type="text" id="wa-contact-search-input" placeholder="Buscar chat o número..." onkeyup="filtrarContactosChat()">
+                                <input type="text" id="wa-contact-search-input" placeholder="Buscar contacto o número..." onkeyup="filtrarContactosChat()">
                             </div>
                         </div>
 
@@ -656,28 +668,7 @@
                             <button class="wa-pill">Favoritos</button>
                         </div>
 
-                        <div class="wa-contacts-container" id="lista-contactos-chat">
-                            <div class="wa-contact-card active" onclick="seleccionarContacto('+58 500-0002', 'Maria Gomez')">
-                                <div class="wa-avatar">MG</div>
-                                <div style="flex-grow: 1;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <strong style="font-size: 0.85rem;" class="contact-name-text">Maria Gomez</strong>
-                                        <span style="font-size: 0.65rem; color: #667781;">3:23 p.m.</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">+58 500-0002</div>
-                                </div>
-                            </div>
-                            <div class="wa-contact-card" onclick="seleccionarContacto('+58 500-0003', 'Carlos Perez')">
-                                <div class="wa-avatar" style="background: var(--accent-orange);">CP</div>
-                                <div style="flex-grow: 1;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <strong style="font-size: 0.85rem;" class="contact-name-text">Carlos Perez</strong>
-                                        <span style="font-size: 0.65rem; color: #667781;">2:15 p.m.</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">+58 500-0003</div>
-                                </div>
-                            </div>
-                        </div>
+                        <div class="wa-contacts-container" id="lista-contactos-chat"></div>
                     </div>
 
                     <div class="wa-conversation-side mobile-active" id="wa-side-conversation">
@@ -782,8 +773,8 @@
 
             <div id="csec-historial" class="client-section">
                 <div class="card">
-                    <h2>Historial de Suscripciones</h2>
-                    <div class="history-item"><span>Activación de línea inicial (+58 500)</span><span style="color:var(--accent-green); font-size:0.7rem;">Exitosa</span></div>
+                    <h2>Historial Personal de Transacciones y Actividad</h2>
+                    <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px; background: #070913;"></div>
                 </div>
             </div>
         </div>
@@ -797,10 +788,14 @@
 
             <div class="card" style="border-color: var(--accent-green);">
                 <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-                <div class="static-scroll-box" style="height: 180px; background: #070913;">
+                <div class="static-scroll-box" style="height: 220px; background: #070913;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo del Cliente" />
                         <input type="text" id="admin-reg-cedula" placeholder="Cédula / Identificación (ID)" />
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="text" id="admin-reg-user" placeholder="Usuario de Acceso" />
+                        <input type="text" id="admin-reg-pass" placeholder="Contraseña de Acceso" />
                     </div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="admin-reg-telefono" placeholder="Teléfono de Contacto" />
@@ -884,6 +879,7 @@
                     <div style="font-size: 0.7rem; color: var(--text-muted);">Incluye asignación inmediata de número + Plan Básico por 30 días.</div>
                 </div>
                 <input type="text" id="reg-nombre" placeholder="Nombre completo" />
+                <input type="text" id="reg-user" placeholder="Nombre de usuario" />
                 <input type="password" id="reg-pass" placeholder="Contraseña de cuenta" />
                 <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Activar y Asignar Línea</button>
                 <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
@@ -933,7 +929,7 @@
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=7').catch(err => console.error(err));
+            navigator.serviceWorker.register('./sw.js?v=8').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -951,6 +947,7 @@
             return supabaseClient;
         }
 
+        let clienteAutenticado = null;
         let miNumeroAsignado = "+58 500-0001";
         let numeroDestinoActual = "+58 500-0002";
         let nombreCliente = "Erik";
@@ -969,9 +966,65 @@
         let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
         
         let clientesRegistrados = [
-            { id: 1, nombre: "Erik Sosa", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22" },
-            { id: 2, nombre: "Maria Gomez", cedula: "V-18987654", contacto: "0424-7654321", numero: "+58 500-0002", saldo: 12.50, estado: "Activa", vencimiento: "2026-11-20", fecha: "2026-10-20" },
-            { id: 3, nombre: "Carlos Perez", cedula: "V-15432109", contacto: "0412-5554433", numero: "+58 500-0003", saldo: 0.00, estado: "Suspendida", vencimiento: "2026-09-15", fecha: "2026-08-15" }
+            { 
+                id: 1, 
+                nombre: "Erik Sosa", 
+                usuario: "Erik",
+                pass: "1234",
+                cedula: "V-20123456", 
+                contacto: "0414-1234567", 
+                numero: "+58 500-0001", 
+                saldo: 5.00, 
+                estado: "Activa", 
+                vencimiento: "2026-11-22", 
+                fecha: "2026-10-22",
+                contactosChat: [
+                    { nombre: "Maria Gomez", numero: "+58 500-0002" },
+                    { nombre: "Carlos Perez", numero: "+58 500-0003" }
+                ],
+                historialTransacciones: [
+                    { id: 101, fecha: "2026-10-22", tipo: "Activación Inicial", descripcion: "Línea activada (+58 500-0001)", monto: 5.00, estado: "Procesado" },
+                    { id: 102, fecha: "2026-10-23", tipo: "Suscripción Plan", descripcion: "Plan Básico IP ($3.00/mes)", monto: -3.00, estado: "Procesado" }
+                ]
+            },
+            { 
+                id: 2, 
+                nombre: "Maria Gomez", 
+                usuario: "maria",
+                pass: "1234",
+                cedula: "V-18987654", 
+                contacto: "0424-7654321", 
+                numero: "+58 500-0002", 
+                saldo: 12.50, 
+                estado: "Activa", 
+                vencimiento: "2026-11-20", 
+                fecha: "2026-10-20",
+                contactosChat: [
+                    { nombre: "Erik Sosa", numero: "+58 500-0001" }
+                ],
+                historialTransacciones: [
+                    { id: 201, fecha: "2026-10-20", tipo: "Recarga Saldo", descripcion: "Pago Móvil Ref #88412", monto: 12.50, estado: "Procesado" }
+                ]
+            },
+            { 
+                id: 3, 
+                nombre: "Carlos Perez", 
+                usuario: "carlos",
+                pass: "1234",
+                cedula: "V-15432109", 
+                contacto: "0412-5554433", 
+                numero: "+58 500-0003", 
+                saldo: 0.00, 
+                estado: "Suspendida", 
+                vencimiento: "2026-09-15", 
+                fecha: "2026-08-15",
+                contactosChat: [
+                    { nombre: "Erik Sosa", numero: "+58 500-0001" }
+                ],
+                historialTransacciones: [
+                    { id: 301, fecha: "2026-08-15", tipo: "Reporte de Pago", descripcion: "Referencia #4410", monto: 5.00, estado: "Rechazado" }
+                ]
+            }
         ];
 
         let solicitudesRecarga = [];
@@ -980,7 +1033,6 @@
             obtenerClienteSupabase();
             renderizarAdmin();
             iniciarSuscripcionRealtime();
-            cargarMensajesSupabase();
         };
 
         function volverAlPrincipal() {
@@ -1006,12 +1058,12 @@
             clientesRegistrados.forEach(c => {
                 if(c.numero !== miNumeroAsignado) {
                     container.innerHTML += `
-                        <div class="history-item" style="cursor:pointer;" onclick="iniciarChatSeleccionado('${c.numero}', '${c.nombre}')">
+                        <div class="history-item" style="cursor:pointer;" onclick="seleccionarContactoDeModal('${c.numero}', '${c.nombre}')">
                             <div>
                                 <strong style="color:var(--accent);">${c.nombre}</strong><br/>
                                 <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero}</span>
                             </div>
-                            <span style="color:var(--accent-green); font-size:0.75rem;">💬 Chatear</span>
+                            <span style="color:var(--accent-green); font-size:0.75rem;">➕ Agregar</span>
                         </div>
                     `;
                 }
@@ -1021,18 +1073,55 @@
 
         function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
 
-        function iniciarChatSeleccionado(numero, nombre) {
-            cerrarModalNuevoChat();
-            seleccionarContacto(numero, nombre);
+        function seleccionarContactoDeModal(numero, nombre) {
+            document.getElementById('input-nuevo-nombre-contacto').value = nombre;
+            document.getElementById('input-nuevo-numero-chat').value = numero;
         }
 
-        function iniciarChatPorNumeroInscrito() {
+        function guardarNuevoContactoChat() {
+            let nombre = document.getElementById('input-nuevo-nombre-contacto').value;
             let num = document.getElementById('input-nuevo-numero-chat').value;
-            if(!num) { alert("Ingresa un número VoIP."); return; }
-            let cli = clientesRegistrados.find(c => c.numero === num);
-            let nombre = cli ? cli.nombre : `Usuario (${num})`;
+            if(!nombre || !num) { alert("Ingresa nombre y número."); return; }
+
+            if(clienteAutenticado) {
+                if(!clienteAutenticado.contactosChat) clienteAutenticado.contactosChat = [];
+                let existe = clienteAutenticado.contactosChat.find(c => c.numero === num);
+                if(!existe) {
+                    clienteAutenticado.contactosChat.push({ nombre: nombre, numero: num });
+                }
+            }
+
             cerrarModalNuevoChat();
+            renderizarContactosCliente();
             seleccionarContacto(num, nombre);
+        }
+
+        function renderizarContactosCliente() {
+            let cont = document.getElementById('lista-contactos-chat');
+            cont.innerHTML = "";
+            
+            let lista = (clienteAutenticado && clienteAutenticado.contactosChat) ? clienteAutenticado.contactosChat : [];
+            if(lista.length === 0) {
+                cont.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem; padding: 20px;">Sin contactos guardados. Toca ➕ para agregar.</div>`;
+                return;
+            }
+
+            lista.forEach((c, idx) => {
+                let iniciales = c.nombre.split(" ").map(n=>n[0]).join("");
+                let esActivo = c.numero === numeroDestinoActual;
+                cont.innerHTML += `
+                    <div class="wa-contact-card ${esActivo ? 'active':''}" onclick="seleccionarContacto('${c.numero}', '${c.nombre}')">
+                        <div class="wa-avatar" style="${idx % 2 === 1 ? 'background:var(--accent-orange);':''}">${iniciales}</div>
+                        <div style="flex-grow: 1;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="font-size: 0.85rem;" class="contact-name-text">${c.nombre}</strong>
+                                <span style="font-size: 0.65rem; color: #667781;">En línea</span>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">${c.numero}</div>
+                        </div>
+                    </div>
+                `;
+            });
         }
 
         function abrirModalEstados() { document.getElementById('modal-status-screen').style.display = 'flex'; }
@@ -1173,7 +1262,6 @@
             document.getElementById('modal-call-screen').style.display = 'none';
         }
 
-        // ENVÍO DE MENSAJES OPTIMIZADO CON MANEJO DE ERRORES Y RECONEXIÓN
         async function enviarMensajeSupabaseConContenido(contenidoHTML) {
             if(estadoLineaActual !== "Activa") {
                 alert("Línea Suspendida por vencimiento de plan.");
@@ -1196,14 +1284,13 @@
                         }]);
 
                     if(error) {
-                        console.warn("Fallo temporal en la base de datos, guardando local:", error.message);
+                        console.warn("Fallo temporal BD:", error.message);
                     }
                 } catch(e) {
-                    console.warn("Conexión interrumpida de red:", e);
+                    console.warn("Interrupción de red:", e);
                 }
             }
 
-            // Renderizado instantáneo en pantalla para fluidez total
             renderizarMensajeEnPantalla(miNumeroAsignado, contenidoHTML, horaActual);
         }
 
@@ -1253,10 +1340,12 @@
         function registrarClienteDesdeAdmin() {
             let nombre = document.getElementById('admin-reg-nombre').value;
             let cedula = document.getElementById('admin-reg-cedula').value;
+            let user = document.getElementById('admin-reg-user').value;
+            let pass = document.getElementById('admin-reg-pass').value;
             let telefono = document.getElementById('admin-reg-telefono').value;
             let montoPlan = parseFloat(document.getElementById('admin-reg-plan').value);
 
-            if(!nombre || !cedula) { alert("Ingresa Nombre completo y Cédula."); return; }
+            if(!nombre || !cedula || !user || !pass) { alert("Ingresa Nombre, Cédula, Usuario y Contraseña."); return; }
             if(poolNumeros.length === 0) { alert("No hay números en el Pool."); return; }
 
             let numAsignado = poolNumeros.shift();
@@ -1270,27 +1359,36 @@
             clientesRegistrados.push({
                 id: clientesRegistrados.length + 1,
                 nombre: nombre,
+                usuario: user,
+                pass: pass,
                 cedula: cedula || "N/A",
                 contacto: telefono || "N/A",
                 numero: numAsignado,
                 saldo: montoPlan,
                 estado: "Activa",
                 vencimiento: fechaVenc,
-                fecha: fechaHoy
+                fecha: fechaHoy,
+                contactosChat: [],
+                historialTransacciones: [
+                    { id: Date.now(), fecha: fechaHoy, tipo: "Registro Admin", descripcion: `Asignación de línea ${numAsignado}`, monto: montoPlan, estado: "Procesado" }
+                ]
             });
 
             document.getElementById('admin-reg-nombre').value = "";
             document.getElementById('admin-reg-cedula').value = "";
+            document.getElementById('admin-reg-user').value = "";
+            document.getElementById('admin-reg-pass').value = "";
             document.getElementById('admin-reg-telefono').value = "";
 
             renderizarAdmin();
-            alert(`¡Cliente registrado con éxito!\n\nLínea: ${numAsignado}\nVencimiento: ${fechaVenc}`);
+            alert(`¡Cliente registrado con éxito!\n\nUsuario: ${user}\nLínea: ${numAsignado}\nVencimiento: ${fechaVenc}`);
         }
 
         function registrarNuevoCliente() {
             let nombre = document.getElementById('reg-nombre').value;
+            let user = document.getElementById('reg-user').value;
             let pass = document.getElementById('reg-pass').value;
-            if(!nombre || !pass) { alert("Ingresa usuario y contraseña."); return; }
+            if(!nombre || !user || !pass) { alert("Ingresa nombre, usuario y contraseña."); return; }
             if(poolNumeros.length === 0) { alert("No hay números libres en el pool."); return; }
 
             miNumeroAsignado = poolNumeros.shift();
@@ -1305,17 +1403,28 @@
             proximoMes.setDate(proximoMes.getDate() + 30);
             fechaVencimientoActual = proximoMes.toISOString().split('T')[0];
 
-            clientesRegistrados.push({
+            let nuevoCli = {
                 id: clientesRegistrados.length + 1,
                 nombre: nombreCliente,
+                usuario: user,
+                pass: pass,
                 cedula: "Online",
                 contacto: "App Client",
                 numero: miNumeroAsignado,
                 saldo: saldoActual,
                 estado: "Activa",
                 vencimiento: fechaVencimientoActual,
-                fecha: fechaHoy
-            });
+                fecha: fechaHoy,
+                contactosChat: [
+                    { nombre: "Soporte OmniMovil", numero: "+58 500-0002" }
+                ],
+                historialTransacciones: [
+                    { id: Date.now(), fecha: fechaHoy, tipo: "Compra de Línea", descripcion: `Asignación de línea ${miNumeroAsignado}`, monto: 5.00, estado: "Procesado" }
+                ]
+            };
+
+            clientesRegistrados.push(nuevoCli);
+            clienteAutenticado = nuevoCli;
 
             actualizarVistaCliente();
             cerrarModales();
@@ -1323,29 +1432,38 @@
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
             renderizarAdmin();
-            alert(`¡Activación Exitosa! Tu nueva línea asignada es: ${miNumeroAsignado}\nVencimiento: ${fechaVencimientoActual}`);
+            alert(`¡Activación Exitosa! Tu nueva línea es: ${miNumeroAsignado}\nUsuario: ${user}`);
         }
 
         function ingresarCliente() {
-            let user = document.getElementById('login-c-user').value;
-            if(!user) return;
+            let user = document.getElementById('login-c-user').value.trim();
+            let pass = document.getElementById('login-c-pass').value.trim();
+            if(!user || !pass) { alert("Ingresa usuario y contraseña."); return; }
             
-            let cli = clientesRegistrados.find(c => c.nombre.toLowerCase().includes(user.toLowerCase()));
+            let cli = clientesRegistrados.find(c => (c.usuario && c.usuario.toLowerCase() === user.toLowerCase() && c.pass === pass) || (c.nombre.toLowerCase().includes(user.toLowerCase()) && pass === "1234"));
+            
             if(cli) {
+                clienteAutenticado = cli;
                 nombreCliente = cli.nombre;
                 miNumeroAsignado = cli.numero;
                 saldoActual = cli.saldo;
                 estadoLineaActual = cli.estado;
                 fechaVencimientoActual = cli.vencimiento;
-            } else {
-                nombreCliente = user;
-            }
 
-            actualizarVistaCliente();
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
+                if(cli.contactosChat && cli.contactosChat.length > 0) {
+                    numeroDestinoActual = cli.contactosChat[0].numero;
+                    document.getElementById('chat-nombre-receptor').innerText = cli.contactosChat[0].nombre;
+                    document.getElementById('chat-numero-receptor').innerText = cli.contactosChat[0].numero;
+                }
+
+                actualizarVistaCliente();
+                cerrarModales();
+                document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+                document.getElementById('panel-cliente').classList.add('active');
+                cambiarSeccionCliente('chat');
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
         }
 
         function actualizarVistaCliente() {
@@ -1365,6 +1483,36 @@
                 badge.className = "status-badge suspended-line";
                 badge.innerText = "● SUSPENDIDA";
             }
+
+            renderizarContactosCliente();
+            renderizarHistorialPersonal();
+        }
+
+        function renderizarHistorialPersonal() {
+            let container = document.getElementById('lista-historial-personal');
+            container.innerHTML = "";
+
+            let historial = (clienteAutenticado && clienteAutenticado.historialTransacciones) ? clienteAutenticado.historialTransacciones : [];
+            
+            if(historial.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px;">Sin transacciones registradas.</div>`;
+                return;
+            }
+
+            historial.forEach(item => {
+                let badgeClass = item.estado === 'Procesado' ? 'st-procesado' : item.estado === 'Pendiente' ? 'st-pendiente' : item.estado === 'Rechazado' ? 'st-rechazado' : 'st-enviado';
+                let signo = item.monto > 0 ? '+' : '';
+                container.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <strong style="color:white; font-size:0.85rem;">${item.tipo}</strong> 
+                            <span class="st-tag ${badgeClass}">${item.estado}</span><br/>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">${item.descripcion} • ${item.fecha}</span>
+                        </div>
+                        <span style="font-weight:bold; color:${item.monto >= 0 ? 'var(--accent-green)':'var(--accent-red)'}; font-size:0.85rem;">${signo}$${Math.abs(item.monto).toFixed(2)}</span>
+                    </div>
+                `;
+            });
         }
 
         function ingresarAdmin() {
@@ -1409,7 +1557,7 @@
                         <div class="history-item">
                             <div>
                                 <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#00e676':'#ff3366'};">[${c.estado}]</span><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • Cédula: ${c.cedula || 'N/A'}</span><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • User: ${c.usuario || 'N/A'}</span><br/>
                                 <span style="font-size:0.68rem; color:#8fa3bf;">Corte: ${c.vencimiento} • Reg: ${c.fecha}</span>
                             </div>
                             <div style="display:flex; gap:4px; align-items:center;">
@@ -1429,9 +1577,10 @@
                 solicitudesRecarga.forEach((s, idx) => {
                     contSolicitudes.innerHTML += `
                         <div class="history-item">
-                            <div><strong>${s.cliente}</strong> ($${s.monto})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
-                            <div>
-                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Reanudar Plan</button>
+                            <div><strong>${s.cliente}</strong> ($${s.monto.toFixed(2)})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
+                            <div style="display:flex; gap:4px;">
+                                <button class="btn btn-small" style="background:var(--accent-green); color:#000;" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
+                                <button class="btn btn-small" style="background:var(--accent-red); color:#fff;" onclick="rechazarRecarga(${idx})">✗ Rechazar</button>
                             </div>
                         </div>
                     `;
@@ -1456,9 +1605,9 @@
         }
 
         function exportarClientesCSV() {
-            let csv = "ID,Nombre,Cedula,Contacto,NumeroVoIP,Saldo,Estado,FechaVencimiento,FechaRegistro\n";
+            let csv = "ID,Nombre,Usuario,Cedula,Contacto,NumeroVoIP,Saldo,Estado,FechaVencimiento,FechaRegistro\n";
             clientesRegistrados.forEach(c => { 
-                csv += `${c.id},"${c.nombre}","${c.cedula || 'N/A'}","${c.contacto || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.vencimiento}","${c.fecha}"\n`; 
+                csv += `${c.id},"${c.nombre}","${c.usuario || 'N/A'}","${c.cedula || 'N/A'}","${c.contacto || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.vencimiento}","${c.fecha}"\n`; 
             });
             let link = document.createElement("a");
             link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
@@ -1478,11 +1627,28 @@
             let ref = document.getElementById('ref-pago').value;
             if(!monto || !ref) { alert("Completa los datos de pago."); return; }
 
-            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref });
+            let hoy = new Date().toISOString().split('T')[0];
+            let itemHistorial = {
+                id: Date.now(),
+                fecha: hoy,
+                tipo: "Reporte de Pago",
+                descripcion: `Pago Móvil / Zelle Ref #${ref}`,
+                monto: monto,
+                estado: "Pendiente"
+            };
+
+            if(clienteAutenticado) {
+                if(!clienteAutenticado.historialTransacciones) clienteAutenticado.historialTransacciones = [];
+                clienteAutenticado.historialTransacciones.unshift(itemHistorial);
+            }
+
+            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref, itemId: itemHistorial.id });
             document.getElementById('monto-pago').value = "";
             document.getElementById('ref-pago').value = "";
-            alert("Solicitud de pago enviada al operador para renovación.");
+            
+            actualizarVistaCliente();
             renderizarAdmin();
+            alert("Solicitud de pago enviada al operador. Tu transacción figura como PENDIENTE en el Historial.");
         }
 
         function aprobarRecarga(idx) {
@@ -1499,12 +1665,31 @@
                 cli.saldo += sol.monto;
                 cli.estado = "Activa";
                 cli.vencimiento = fechaVencimientoActual;
+                
+                if(cli.historialTransacciones) {
+                    let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
+                    if(h) h.estado = "Procesado";
+                }
             }
 
             solicitudesRecarga.splice(idx, 1);
             actualizarVistaCliente();
             renderizarAdmin();
             alert("Renovación de mensualidad aprobada con éxito.");
+        }
+
+        function rechazarRecarga(idx) {
+            let sol = solicitudesRecarga[idx];
+            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
+            if(cli && cli.historialTransacciones) {
+                let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
+                if(h) h.estado = "Rechazado";
+            }
+
+            solicitudesRecarga.splice(idx, 1);
+            actualizarVistaCliente();
+            renderizarAdmin();
+            alert("Solicitud rechazada.");
         }
 
         function comprarPaquete(precio, nombre) {
@@ -1516,6 +1701,21 @@
                 saldoActual -= precio;
                 planActualNombre = nombre;
                 document.getElementById('linea-plan-nombre').innerText = nombre;
+
+                let hoy = new Date().toISOString().split('T')[0];
+                if(clienteAutenticado) {
+                    clienteAutenticado.saldo = saldoActual;
+                    if(!clienteAutenticado.historialTransacciones) clienteAutenticado.historialTransacciones = [];
+                    clienteAutenticado.historialTransacciones.unshift({
+                        id: Date.now(),
+                        fecha: hoy,
+                        tipo: "Suscripción Plan",
+                        descripcion: nombre,
+                        monto: -precio,
+                        estado: "Procesado"
+                    });
+                }
+
                 actualizarVistaCliente();
                 alert(`¡Te has suscrito exitosamente al ${nombre}!`);
             } else {
@@ -1531,6 +1731,7 @@
             let tabBtn = document.getElementById(`ctab-${seccion === 'billetera'? '1' : seccion === 'paquetes'? '2' : seccion === 'llamadas'? '3' : seccion === 'historial'? '4' : 'chat'}`);
             if(tabBtn) tabBtn.classList.add('active');
             if(seccion === 'chat') { cargarMensajesSupabase(); }
+            if(seccion === 'historial') { renderizarHistorialPersonal(); }
         }
 
         function marcarDigito(d) {
@@ -1554,6 +1755,7 @@
             document.getElementById('chat-nombre-receptor').innerText = nombre;
             document.getElementById('chat-numero-receptor').innerText = numero;
             document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
+            renderizarContactosCliente();
             cargarMensajesSupabase();
         }
 
