@@ -2,1285 +2,430 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OmniMovil - Red IP y Mensajería Global</title>
-    
-    <!-- Configuración PWA Optimizada -->
-    <meta name="theme-color" content="#070913">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="OmniMovil">
-    
-    <!-- Manifest PWA con iconos oficiales -->
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22OmniMovil Red IP y Mensajeria%22,
-        %22short_name%22: %22OmniMovil%22,
-        %22start_url%22: %22.%22,
-        %22display%22: %22standalone%22,
-        %22background_color%22: %22%23070913%22,
-        %22theme_color%22: %22%2300f2fe%22,
-        %22icons%22: [
-            {
-                %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22,
-                %22sizes%22: %22192x192%22,
-                %22type%22: %22image/png%22
-            },
-            {
-                %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22,
-                %22sizes%22: %22512x512%22,
-                %22type%22: %22image/png%22
-            }
-        ]
-    }">
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OmniMóvil - Sistema Integrado VoIP & Chat</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- SIP.js SDK para Telefonía VoIP WebRTC -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sip.js/0.20.1/sip.min.js"></script>
+    
     <style>
-        :root {
-            --bg-dark: #070913;
-            --card-bg: #101728;
-            --accent: #00f2fe;
-            --accent-green: #00e676;
-            --accent-red: #ff3366;
-            --accent-orange: #ff9800;
-            --text-main: #ffffff;
-            --text-muted: #8fa3bf;
+        .zoiper-screen {
+            background-color: #121824;
+            color: #38bdf8;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
         }
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            padding: 12px;
-            padding-bottom: 40px;
-        }
-
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .main-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 12px 16px;
-            border-radius: 12px;
-            margin-bottom: 16px;
-            border: 1px solid #1f2d4a;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .login-top-btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.8rem;
-            cursor: pointer;
-        }
-
-        .panel-view { display: none; }
-        .panel-view.active { display: block; }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
-            border: 1px solid #1f2d4a;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-        }
-
-        .card h2 {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-            margin-top: 0;
-        }
-
-        input, select {
-            width: 100%;
-            background: #1a253f;
-            border: 1px solid #2a3b5f;
-            border-radius: 8px;
-            padding: 10px;
-            color: white;
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .btn {
-            width: 100%;
-            background: var(--accent-green);
-            color: #000;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        .btn:hover { opacity: 0.9; }
-
-        .btn-small {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            width: auto;
-            display: inline-block;
-        }
-
-        /* Recuadro Estático Scrollable */
-        .static-scroll-box {
-            height: 200px;
-            overflow-y: auto;
-            background: #0b111e;
-            border: 1px solid #2a3b5f;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .dialer-screen {
-            background: #0b111e;
-            border: 1px solid #2a3b5f;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 1.2rem;
-            text-align: center;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            color: #fff;
-            word-break: break-all;
-        }
-
-        .dialer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
         .dial-btn {
-            background: #1a253f;
-            border: 1px solid #2a3b5f;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            margin: 0 auto;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.15s ease-in-out;
         }
-
-        .client-tabs {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 4px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 6px;
-            margin-bottom: 14px;
-            border: 1px solid #1f2d4a;
+        .dial-btn:active {
+            transform: scale(0.92);
+            background-color: #0284c7 !important;
         }
-
-        .client-tab-btn {
-            background: none;
-            border: none;
-            padding: 8px 2px;
-            color: var(--text-muted);
-            font-weight: bold;
-            font-size: 0.7rem;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        .client-tab-btn.active { background: var(--accent); color: #000; }
-
-        .client-section { display: none; }
-        .client-section.active { display: block; }
-
-        .history-item {
-            background: #1a253f;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            font-size: 0.8rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
         }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 6px;
-            margin-bottom: 8px;
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 3px;
         }
-
-        .wa-pro-layout {
-            display: grid;
-            grid-template-columns: 280px 1fr 260px;
-            gap: 10px;
-            background: #f0f2f5;
-            border-radius: 12px;
-            overflow: hidden;
-            height: 520px;
-            border: 1px solid #1f2d4a;
-            color: #111b21;
-        }
-
-        @media (max-width: 950px) {
-            .wa-pro-layout { grid-template-columns: 260px 1fr; }
-            .wa-ad-side { display: none; }
-        }
-
-        @media (max-width: 650px) {
-            .wa-pro-layout { grid-template-columns: 1fr; }
-            .wa-chat-list-side { display: none; }
-            .wa-chat-list-side.mobile-active { display: flex; }
-            .wa-conversation-side { display: none; }
-            .wa-conversation-side.mobile-active { display: flex; }
-        }
-
-        .wa-chat-list-side {
-            background: #ffffff;
-            border-right: 1px solid #e9edef;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .wa-list-header {
-            background: #f0f2f5;
-            padding: 10px 12px;
-            border-bottom: 1px solid #e9edef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .wa-search-bar {
-            padding: 8px;
-            background: #fff;
-            border-bottom: 1px solid #e9edef;
-        }
-
-        .wa-search-input {
-            background: #f0f2f5;
-            border-radius: 8px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .wa-search-input input {
-            border: none;
-            background: transparent;
-            margin: 0;
-            padding: 0;
-            color: #111b21;
-            font-size: 0.8rem;
-        }
-
-        .wa-pills {
-            display: flex;
-            gap: 4px;
-            padding: 6px 8px;
-            border-bottom: 1px solid #e9edef;
-            overflow-x: auto;
-        }
-
-        .wa-pill {
-            background: #e9edef;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: #54656f;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .wa-pill.active { background: #d9fdd3; color: #008069; font-weight: bold; }
-
-        .wa-contacts-container {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .wa-contact-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #f5f6f6;
-            transition: background 0.15s;
-        }
-        .wa-contact-card:hover, .wa-contact-card.active { background: #f0f2f5; }
-
-        .wa-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00a884;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .wa-conversation-side {
-            background: #efeae2;
-            display: flex;
-            flex-direction: column;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 0);
-            background-size: 16px 16px;
-        }
-
-        .wa-chat-header {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            border-bottom: 1px solid #e9edef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .wa-messages-box {
-            flex-grow: 1;
-            padding: 12px 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .wa-msg {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            line-height: 1.3;
-            box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
-        }
-        .wa-msg-out { align-self: flex-end; background: #d9fdd3; color: #111b21; border-top-right-radius: 0; }
-        .wa-msg-in { align-self: flex-start; background: #ffffff; color: #111b21; border-top-left-radius: 0; }
-
-        .wa-msg-meta {
-            font-size: 0.65rem;
-            color: #667781;
-            text-align: right;
-            margin-top: 2px;
-        }
-
-        .wa-input-bar {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-top: 1px solid #e9edef;
-        }
-
-        .wa-input-bar input {
-            margin-bottom: 0;
-            background: white;
-            color: #111b21;
-            border: none;
-            padding: 8px 12px;
-            font-size: 0.85rem;
-        }
-
-        .wa-ad-side {
-            background: #ffffff;
-            border-left: 1px solid #e9edef;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-        }
-
-        .wa-ad-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        #chat-notification-banner {
-            display: none;
-            position: fixed;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 440px;
-            background: #202c33;
-            border: 1px solid var(--accent-green);
-            box-shadow: 0 4px 15px rgba(0,230,118,0.3);
-            border-radius: 12px;
-            padding: 12px;
-            z-index: 3000;
-            color: white;
-            cursor: pointer;
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
-        .status-badge.active-line { background: #dcfce7; color: #15803d; }
-        .status-badge.suspended-line { background: #fee2e2; color: #b91c1c; }
     </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col justify-between">
 
-    <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
-        <div style="display: flex; align-items: center; justify-content: space-between;">
-            <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
-            <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para abrir</span>
-        </div>
-        <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
-    </div>
+    <!-- Elementos de Audio para WebRTC -->
+    <audio id="remoteAudio" autoplay></audio>
+    <audio id="localAudio" muted autoplay></audio>
 
-    <div class="container">
-        <header class="main-header">
+    <!-- Header / Barra Superior -->
+    <header class="bg-slate-900 border-b border-slate-800 px-6 py-4 flex flex-wrap justify-between items-center shadow-lg">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                <i class="fa-solid font-bold fa-phone-volume"></i>
+            </div>
             <div>
-                <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
-                <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
-            </div>
-            <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                <button id="btn-instalar-app" style="background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
-                <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
-                <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
-            </div>
-        </header>
-
-        <div id="panel-principal" class="panel-view active">
-            <div class="card">
-                <h2>Marcador Telefónico IP</h2>
-                <div class="dialer-screen" id="pantalla-marcador">+58 500-</div>
-
-                <div class="dialer-grid">
-                    <button class="dial-btn" onclick="marcarDigito('1')">1</button>
-                    <button class="dial-btn" onclick="marcarDigito('2')">2</button>
-                    <button class="dial-btn" onclick="marcarDigito('3')">3</button>
-                    <button class="dial-btn" onclick="marcarDigito('4')">4</button>
-                    <button class="dial-btn" onclick="marcarDigito('5')">5</button>
-                    <button class="dial-btn" onclick="marcarDigito('6')">6</button>
-                    <button class="dial-btn" onclick="marcarDigito('7')">7</button>
-                    <button class="dial-btn" onclick="marcarDigito('8')">8</button>
-                    <button class="dial-btn" onclick="marcarDigito('9')">9</button>
-                    <button class="dial-btn" onclick="marcarDigito('*')">*</button>
-                    <button class="dial-btn" onclick="marcarDigito('0')">0</button>
-                    <button class="dial-btn" onclick="borrarDigito()">⌫</button>
-                </div>
-
-                <button class="btn" style="background: var(--accent-green); color: #000;" onclick="iniciarLlamadaReal()">📞 Llamar por Red IP</button>
+                <h1 class="text-xl font-bold tracking-wide text-white">OmniMóvil <span class="text-xs text-sky-400 font-medium px-2 py-0.5 rounded bg-sky-950 border border-sky-800">VoIP + Chat</span></h1>
+                <p class="text-xs text-slate-400">Plataforma Omnicanal WebRTC & Supabase</p>
             </div>
         </div>
 
-        <div id="panel-cliente" class="panel-view">
-            <div class="card" style="padding: 12px; margin-bottom: 10px; border-color: var(--accent);">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
+        <!-- Estado de Registro SIP / WebRTC -->
+        <div class="flex items-center space-x-4 mt-2 sm:mt-0">
+            <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-full border border-slate-700">
+                <span id="sipStatusDot" class="w-3 h-3 rounded-full bg-red-500 inline-block animate-pulse"></span>
+                <span id="sipStatusText" class="text-xs font-semibold text-slate-300">SIP Desconectado</span>
+            </div>
+            <button onclick="toggleSipSettingsModal()" class="text-slate-400 hover:text-sky-400 transition">
+                <i class="fa-solid fa-gear text-lg"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Contenido Principal Grid (Marcador Zoiper + Panel Chat) -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- PANEL IZQUIERDO: Marcador Zoiper VoIP WebRTC (Columna 1 a 5) -->
+        <section class="lg:col-span-5 bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-2xl flex flex-col justify-between">
+            <div>
+                <!-- Encabezado Zoiper Dialpad -->
+                <div class="flex justify-between items-center mb-4 pb-2 border-b border-slate-800">
+                    <span class="text-sm font-semibold text-slate-300 flex items-center gap-2">
+                        <i class="fa-solid fa-headset text-sky-400"></i> Panel de Llamadas Zoiper
+                    </span>
+                    <span id="callDuration" class="text-xs font-mono text-emerald-400 hidden">00:00</span>
+                </div>
+
+                <!-- Pantalla Display Zoiper -->
+                <div class="zoiper-screen rounded-xl p-4 mb-5 border border-slate-700/60 relative">
+                    <div class="text-xs text-slate-400 uppercase tracking-wider mb-1 flex justify-between">
+                        <span>Línea Activa</span>
+                        <span id="sipAccountDisplay" class="text-sky-400 font-mono">Sin registrar</span>
+                    </div>
+                    <input id="phoneNumberInput" type="text" readonly placeholder="Ingresa número o Ext" 
+                           class="w-full bg-transparent text-2xl font-mono text-right text-sky-300 focus:outline-none tracking-widest overflow-x-auto" />
+                </div>
+
+                <!-- Teclado Numérico / Dialpad -->
+                <div class="grid grid-cols-3 gap-3 mb-5">
+                    <button onclick="appendDigit('1')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">1 <span class="text-[9px] text-slate-400 font-normal">~</span></button>
+                    <button onclick="appendDigit('2')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">2 <span class="text-[9px] text-slate-400 font-normal">ABC</span></button>
+                    <button onclick="appendDigit('3')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">3 <span class="text-[9px] text-slate-400 font-normal">DEF</span></button>
+                    <button onclick="appendDigit('4')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">4 <span class="text-[9px] text-slate-400 font-normal">GHI</span></button>
+                    <button onclick="appendDigit('5')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">5 <span class="text-[9px] text-slate-400 font-normal">JKL</span></button>
+                    <button onclick="appendDigit('6')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">6 <span class="text-[9px] text-slate-400 font-normal">MNO</span></button>
+                    <button onclick="appendDigit('7')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">7 <span class="text-[9px] text-slate-400 font-normal">PQRS</span></button>
+                    <button onclick="appendDigit('8')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">8 <span class="text-[9px] text-slate-400 font-normal">TUV</span></button>
+                    <button onclick="appendDigit('9')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">9 <span class="text-[9px] text-slate-400 font-normal">WXYZ</span></button>
+                    <button onclick="appendDigit('*')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl border border-slate-700/50">*</button>
+                    <button onclick="appendDigit('0')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl flex flex-col items-center justify-center border border-slate-700/50">0 <span class="text-[9px] text-slate-400 font-normal">+</span></button>
+                    <button onclick="appendDigit('#')" class="dial-btn bg-slate-800 hover:bg-slate-700 text-white font-semibold py-3.5 rounded-xl text-xl border border-slate-700/50">#</button>
+                </div>
+
+                <!-- Botones de Acción Telefónica (Llamar, Colgar, Silenciar) -->
+                <div class="grid grid-cols-3 gap-3">
+                    <button id="btnCall" onclick="makeCall()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 transition text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/40">
+                        <i class="fa-solid fa-phone"></i> Llamar
+                    </button>
+                    <button id="btnHangup" onclick="hangupCall()" disabled class="bg-red-600/50 hover:bg-red-600 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition cursor-not-allowed">
+                        <i class="fa-solid fa-phone-slash"></i> Colgar
+                    </button>
+                    <button onclick="clearDigit()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-3.5 rounded-xl flex items-center justify-center text-lg border border-slate-700/50">
+                        <i class="fa-solid fa-backspace"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Accesos rápidos / Conexión SIP por defecto -->
+            <div class="mt-6 pt-4 border-t border-slate-800 flex justify-between items-center text-xs text-slate-400">
+                <span>Servidor SIP WebRTC:</span>
+                <span class="font-mono text-sky-400">wss://edge.sip.onsip.com</span>
+            </div>
+        </section>
+
+        <!-- PANEL DERECHO: Mensajería en Tiempo Real / Supabase Chat (Columna 6 a 12) -->
+        <section class="lg:col-span-7 bg-slate-900 border border-slate-800 rounded-2xl flex flex-col shadow-2xl overflow-hidden h-[600px] lg:h-auto">
+            
+            <!-- Header de Chat -->
+            <div class="bg-slate-800/80 px-6 py-4 border-b border-slate-800 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
                     <div>
-                        <strong style="font-size: 0.9rem; color: var(--accent);" id="cliente-num-linea">+58 500-0001</strong>
-                        <span style="font-size: 0.8rem; color: var(--text-muted);"> (<span id="cliente-nombre-actual">Erik</span>)</span>
-                    </div>
-                    <div>
-                        <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
-                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="volverAlPrincipal()">Salir</button>
+                        <h2 class="text-base font-bold text-white">Mensajería OmniMóvil</h2>
+                        <p class="text-xs text-slate-400">Canal activo en línea vía Supabase Realtime</p>
                     </div>
                 </div>
-                <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
-                    <span>Plan Actual: <strong style="color: #fff;" id="linea-plan-nombre">Plan Básico IP ($3.00/mes)</strong></span>
-                    <span>Corte: <strong style="color: var(--accent-orange);" id="linea-fecha-venc">2026-11-22</strong></span>
+                <!-- Identificador del Usuario de Chat -->
+                <div class="text-xs bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700 text-slate-300">
+                    Usuario: <span id="currentChatUser" class="font-mono text-sky-400">+58 500-0001</span>
                 </div>
             </div>
 
-            <div class="client-tabs">
-                <button class="client-tab-btn" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Saldo</button>
-                <button class="client-tab-btn active" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 WhatsApp</button>
-                <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Planes</button>
-                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red</button>
-                <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
-            </div>
-
-            <div id="csec-chat" class="client-section active">
-                <div class="wa-pro-layout">
-                    <div class="wa-chat-list-side mobile-active" id="wa-side-contacts">
-                        <div class="wa-list-header">
-                            <strong style="font-size: 0.85rem;">Conversaciones</strong>
-                            <i class="fa-solid fa-circle-notch" style="color: #54656f;"></i>
-                        </div>
-
-                        <div class="wa-search-bar">
-                            <div class="wa-search-input">
-                                <i class="fa-solid fa-magnifying-glass" style="color: #54656f;"></i>
-                                <input type="text" placeholder="Buscar chat o iniciar uno nuevo">
-                            </div>
-                        </div>
-
-                        <div class="wa-pills">
-                            <button class="wa-pill active">Todos</button>
-                            <button class="wa-pill">No leídos</button>
-                            <button class="wa-pill">Favoritos</button>
-                            <button class="wa-pill">Grupos</button>
-                        </div>
-
-                        <div class="wa-contacts-container" id="lista-contactos-chat">
-                            <div class="wa-contact-card active" onclick="seleccionarContacto('+58 500-0002', 'Maria Gomez')">
-                                <div class="wa-avatar">MG</div>
-                                <div style="flex-grow: 1;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <strong style="font-size: 0.85rem;">Maria Gomez</strong>
-                                        <span style="font-size: 0.65rem; color: #667781;">3:23 p.m.</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: #667781;">+58 500-0002</div>
-                                </div>
-                            </div>
-                            <div class="wa-contact-card" onclick="seleccionarContacto('+58 500-0003', 'Carlos Perez')">
-                                <div class="wa-avatar" style="background: var(--accent-orange);">CP</div>
-                                <div style="flex-grow: 1;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <strong style="font-size: 0.85rem;">Carlos Perez</strong>
-                                        <span style="font-size: 0.65rem; color: #667781;">2:15 p.m.</span>
-                                    </div>
-                                    <div style="font-size: 0.75rem; color: #667781;">+58 500-0003</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="wa-conversation-side mobile-active" id="wa-side-conversation">
-                        <div class="wa-chat-header">
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <div class="wa-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;" id="chat-header-avatar">MG</div>
-                                <div>
-                                    <strong style="font-size: 0.85rem;" id="chat-nombre-receptor">Maria Gomez</strong><br/>
-                                    <span style="font-size: 0.65rem; color: #00a884;" id="chat-numero-receptor">+58 500-0002</span>
-                                </div>
-                            </div>
-                            <div style="display: flex; gap: 12px; color: #54656f; font-size: 0.9rem;">
-                                <i class="fa-solid fa-video" style="cursor: pointer;" onclick="iniciarLlamadaReal()"></i>
-                                <i class="fa-solid fa-phone" style="cursor: pointer;" onclick="iniciarLlamadaReal()"></i>
-                            </div>
-                        </div>
-
-                        <div class="wa-messages-box" id="contenedor-mensajes">
-                            <div style="text-align: center; color: #667781; font-size: 0.75rem;">Comienza a chatear en vivo.</div>
-                        </div>
-
-                        <div class="wa-input-bar">
-                            <i class="fa-regular fa-face-smile" style="color: #54656f; font-size: 1.1rem; cursor: pointer;"></i>
-                            <i class="fa-solid fa-paperclip" style="color: #54656f; font-size: 1.1rem; cursor: pointer;"></i>
-                            <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
-                            <i class="fa-solid fa-paper-plane" style="color: #00a884; font-size: 1.1rem; cursor: pointer;" onclick="enviarMensajeSupabase()"></i>
-                        </div>
-                    </div>
-
-                    <div class="wa-ad-side">
-                        <div class="wa-ad-card">
-                            <strong style="font-size: 0.8rem; color: #0f172a;">DATOS DE SU LÍNEA OMNIMOVIL</strong>
-                            <p style="font-size: 0.7rem; color: #475569; margin-top: 4px;">Usuario: <strong id="ad-nombre-user">Erik</strong></p>
-                            <p style="font-size: 0.7rem; color: #475569;">Número: <strong id="ad-num-user">+58 500-0001</strong></p>
-                            <p style="font-size: 0.75rem; color: #00a884; font-weight: bold; margin-top: 4px;">Saldo: $<span id="ad-saldo-user">5.00</span></p>
-                        </div>
-
-                        <div class="wa-ad-card" style="background: #f0fdf4; border-color: #bbf7d0;">
-                            <i class="fa-solid fa-tv" style="font-size: 1.3rem; color: #16a34a; margin-bottom: 4px;"></i>
-                            <strong style="font-size: 0.75rem; color: #14532d; display: block;">DISFRUTA EN FAMILIA TU PANTALLA</strong>
-                            <p style="font-size: 0.65rem; color: #166534; margin-top: 2px;">Conéctate con PanaXtreaming y disfruta del mejor contenido.</p>
-                        </div>
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div id="csec-billetera" class="client-section">
-                <div class="card" style="text-align: center;">
-                    <h2>Saldo Disponible</h2>
-                    <div style="font-size: 2.2rem; font-weight: bold; color: var(--accent-green);" id="saldo-usuario">$5.00</div>
-                </div>
-                <div class="card">
-                    <h2>Reportar Pago de Mensualidad / Recarga</h2>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Pago Móvil / Zelle / Binance Pay. Al ser verificado se reanudará tu línea.</p>
-                    <input type="number" id="monto-pago" placeholder="Monto pagado en USD ($)" />
-                    <input type="text" id="ref-pago" placeholder="Número de Referencia" />
-                    <button class="btn" onclick="enviarReportePago()">Enviar Solicitud de Renovación</button>
+            <!-- Area de Mensajes Recibidos y Enviados -->
+            <div id="chatContainer" class="flex-1 p-4 overflow-y-auto space-y-3 bg-slate-950/40">
+                <!-- Los mensajes dinámicos de Supabase se renderizarán aquí -->
+                <div class="text-center my-4">
+                    <span class="text-xs bg-slate-800 text-slate-400 px-3 py-1 rounded-full">Iniciando historial de mensajes...</span>
                 </div>
             </div>
 
-            <div id="csec-paquetes" class="client-section">
-                <div class="card">
-                    <h2>Catálogo de Planes Mensuales</h2>
-                    <div class="history-item">
-                        <div><strong>Plan Básico ($3.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">100 Mins IP + Mensajería</span></div>
-                        <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Plan Básico')">Suscribir</button>
-                    </div>
-                    <div class="history-item">
-                        <div><strong>Plan Ilimitado Pro ($5.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">Llamadas IP Ilimitadas + Chat</span></div>
-                        <button class="btn btn-small" style="background: var(--accent);" onclick="comprarPaquete(5.00, 'Plan Ilimitado Pro')">Suscribir</button>
-                    </div>
+            <!-- Input de Entrada de Texto -->
+            <div class="p-4 bg-slate-900 border-t border-slate-800 flex gap-2">
+                <input id="chatInput" type="text" placeholder="Escribe un mensaje en línea..." 
+                       onkeydown="if(event.key === 'Enter') enviarMensajeSupabase()"
+                       class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-sky-500 transition" />
+                <button onclick="enviarMensajeSupabase()" class="bg-sky-600 hover:bg-sky-500 text-white font-semibold px-5 py-3 rounded-xl transition flex items-center justify-center">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Configuración SIP / Credenciales Zoiper -->
+    <div id="sipModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center z-50 p-4">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl p-6 shadow-2xl">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-sky-400"></i> Ajustes Cuenta SIP Zoiper
+                </h3>
+                <button onclick="toggleSipSettingsModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-3 text-sm">
+                <div>
+                    <label class="block text-slate-400 mb-1 text-xs">WebSocket Server WSS</label>
+                    <input id="cfgWss" type="text" value="wss://edge.sip.onsip.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 font-mono text-xs focus:outline-none focus:border-sky-500" />
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 text-xs">Dominio SIP / Realm</label>
+                    <input id="cfgDomain" type="text" value="example.sip.onsip.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 font-mono text-xs focus:outline-none focus:border-sky-500" />
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 text-xs">Usuario SIP / Extensión</label>
+                    <input id="cfgUser" type="text" value="omnimovil_demo" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 text-xs focus:outline-none focus:border-sky-500" />
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1 text-xs">Contraseña SIP</label>
+                    <input id="cfgPass" type="password" value="demo123456" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 text-xs focus:outline-none focus:border-sky-500" />
                 </div>
             </div>
 
-            <div id="csec-llamadas" class="client-section">
-                <div class="card" style="text-align: center;">
-                    <h2>Estado de Conexión a la Red</h2>
-                    <p style="font-size: 0.85rem; color: var(--accent-green);" id="red-estado-texto">🟢 Conectado a Servidor VoIP</p>
-                </div>
-            </div>
-
-            <div id="csec-historial" class="client-section">
-                <div class="card">
-                    <h2>Historial de Suscripciones</h2>
-                    <div class="history-item"><span>Activación de línea inicial (+58 500)</span><span style="color:var(--accent-green); font-size:0.7rem;">Exitosa</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- PANEL DE ADMINISTRADOR MEJORADO -->
-        <div id="panel-admin" class="panel-view">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
-                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
-            </div>
-
-            <!-- RECUADRO ESTÁTICO DE REGISTRO MANUAL DE CLIENTE CON SCROLL -->
-            <div class="card" style="border-color: var(--accent-green);">
-                <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-                <div class="static-scroll-box" style="height: 180px; background: #070913;">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo del Cliente" />
-                        <input type="text" id="admin-reg-cedula" placeholder="Cédula / Identificación (ID)" />
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <input type="text" id="admin-reg-telefono" placeholder="Teléfono de Contacto" />
-                        <select id="admin-reg-plan">
-                            <option value="3.00">Plan Básico ($3.00/mes)</option>
-                            <option value="5.00">Plan Ilimitado Pro ($5.00/mes)</option>
-                        </select>
-                    </div>
-                    <button class="btn" style="background: var(--accent-green); color: #000; font-weight: bold; margin-top: 4px;" onclick="registrarClienteDesdeAdmin()">➕ Registrar Cliente y Generar Línea Automática</button>
-                </div>
-            </div>
-
-            <!-- RECUADRO CON BUSCADOR, FILTROS Y BASE DE DATOS DE CLIENTES -->
-            <div class="card" style="border-color: var(--accent);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes</h2>
-                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
-                </div>
-
-                <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" style="margin-bottom: 8px;" />
-
-                <div class="filter-grid">
-                    <select id="filter-dia" onchange="renderizarAdmin()">
-                        <option value="">Día (Todos)</option>
-                        <script>
-                            for(let i=1; i<=31; i++) {
-                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
-                            }
-                        </script>
-                    </select>
-                    <select id="filter-mes" onchange="renderizarAdmin()">
-                        <option value="">Mes (Todos)</option>
-                        <option value="01">Enero</option>
-                        <option value="02">Febrero</option>
-                        <option value="03">Marzo</option>
-                        <option value="04">Abril</option>
-                        <option value="05">Mayo</option>
-                        <option value="06">Junio</option>
-                        <option value="07">Julio</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Septiembre</option>
-                        <option value="10">Octubre</option>
-                        <option value="11">Noviembre</option>
-                        <option value="12">Diciembre</option>
-                    </select>
-                    <select id="filter-anio" onchange="renderizarAdmin()">
-                        <option value="">Año (Todos)</option>
-                        <option value="2024">2024</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                    </select>
-                </div>
-
-                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 220px;">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
-                </div>
-            </div>
-
-            <div class="card" style="border-color: var(--accent-orange);">
-                <h2 style="color: var(--accent-orange);">Solicitudes de Pagos y Renovación</h2>
-                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Pool de Números Disponibles para Venta</h2>
-                <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
-                <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
-            </div>
-        </div>
-
-        <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green);">
-                <h2 style="color: var(--accent-green); text-align: center;">📲 Comprar Nueva Línea OmniMovil</h2>
-                <div style="background: #1a253f; border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 0.78rem; border: 1px solid #2a3b5f;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span>Costo de Activación + 1er Mes:</span>
-                        <strong style="color: var(--accent-green);">$5.00 USD</strong>
-                    </div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">Incluye asignación inmediata de número + Plan Básico por 30 días.</div>
-                </div>
-                <input type="text" id="reg-nombre" placeholder="Nombre completo" />
-                <input type="password" id="reg-pass" placeholder="Contraseña de cuenta" />
-                <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Activar y Asignar Línea</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
-            </div>
-        </div>
-
-        <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
-                <h2 style="color: var(--accent); text-align: center;">🔑 Acceso a tu Línea</h2>
-                <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
-                <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
-                <button class="btn" style="margin-bottom: 8px;" onclick="ingresarCliente()">Iniciar Sesión</button>
-                <button class="btn" style="background: #1a253f; color: var(--accent); margin-bottom: 8px;" onclick="abrirModalRegistro()">🛒 Comprar / Registrar Nueva Línea</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
-            </div>
-        </div>
-
-        <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
-                <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
-                <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
-                <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel Operadora</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+            <div class="mt-6 flex gap-3">
+                <button onclick="registerSipAccount()" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl transition">
+                    Conectar / Registrar
+                </button>
+                <button onclick="toggleSipSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl transition">
+                    Cancelar
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- SCRIPT PRINCIPAL: Integración Supabase Chat + WebRTC SIP.js Zoiper -->
     <script>
-        let deferredPrompt = null;
-
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-        });
-
-        function instalarPWA() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('App instalada');
-                    }
-                    deferredPrompt = null;
-                });
-            } else {
-                window.location.reload(true);
-            }
-        }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=4').catch(err => console.error(err));
-        }
-
-        const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
-        let supabaseClient = null;
-
-        try {
-            supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        } catch(e) { console.error("Error al iniciar Supabase", e); }
-
-        let miNumeroAsignado = "+58 500-0001";
-        let numeroDestinoActual = "+58 500-0002";
-        let nombreCliente = "Erik";
-        let saldoActual = 5.00;
-        let estadoLineaActual = "Activa";
-        let fechaVencimientoActual = "2026-11-22";
-        let planActualNombre = "Plan Básico IP ($3.00/mes)";
-        let numeroMarcado = "+58 500-";
-
-        let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
+        // ==========================================
+        // 1. CONFIGURACIÓN E INICIALIZACIÓN SUPABASE
+        // ==========================================
+        const SUPABASE_URL = "https://TU-PROYECTO.supabase.co"; // Reemplazar con tu URL de Supabase
+        const SUPABASE_KEY = "TU-ANON-KEY-DE-SUPABASE";        // Reemplazar con tu ANON KEY
         
-        let clientesRegistrados = [
-            { id: 1, nombre: "Erik Sosa", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22" },
-            { id: 2, nombre: "Maria Gomez", cedula: "V-18987654", contacto: "0424-7654321", numero: "+58 500-0002", saldo: 12.50, estado: "Activa", vencimiento: "2026-11-20", fecha: "2026-10-20" },
-            { id: 3, nombre: "Carlos Perez", cedula: "V-15432109", contacto: "0412-5554433", numero: "+58 500-0003", saldo: 0.00, estado: "Suspendida", vencimiento: "2026-09-15", fecha: "2026-08-15" }
-        ];
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        let solicitudesRecarga = [];
+        const currentSender = "+58 500-0001";
+        const currentTarget = "+58 500-0002";
 
-        window.onload = function() {
-            renderizarAdmin();
-            if(supabaseClient) {
-                iniciarSuscripcionRealtime();
-                cargarMensajesSupabase();
-            }
-        };
-
-        function volverAlPrincipal() {
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-principal').classList.add('active');
-        }
-
-        function abrirModalLoginCliente() { document.getElementById('modal-login-cliente').style.display = 'flex'; }
-        function abrirModalRegistro() { 
-            document.getElementById('modal-login-cliente').style.display = 'none';
-            document.getElementById('modal-registro').style.display = 'flex'; 
-        }
-        function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
-        function cerrarModales() {
-            document.getElementById('modal-login-cliente').style.display = 'none';
-            document.getElementById('modal-registro').style.display = 'none';
-            document.getElementById('modal-login-admin').style.display = 'none';
-        }
-
-        // REGISTRO DE CLIENTE DESDE EL PANEL DE ADMINISTRACIÓN
-        function registrarClienteDesdeAdmin() {
-            let nombre = document.getElementById('admin-reg-nombre').value;
-            let cedula = document.getElementById('admin-reg-cedula').value;
-            let telefono = document.getElementById('admin-reg-telefono').value;
-            let montoPlan = parseFloat(document.getElementById('admin-reg-plan').value);
-
-            if(!nombre || !cedula) {
-                alert("Ingresa al menos el Nombre completo y Cédula/ID.");
-                return;
-            }
-
-            if(poolNumeros.length === 0) {
-                alert("No hay números libres en el Pool de Líneas. Añade un número al Pool primero.");
-                return;
-            }
-
-            let numAsignado = poolNumeros.shift();
-            let hoy = new Date();
-            let fechaHoy = hoy.toISOString().split('T')[0];
-            
-            let proximoMes = new Date();
-            proximoMes.setDate(proximoMes.getDate() + 30);
-            let fechaVenc = proximoMes.toISOString().split('T')[0];
-
-            clientesRegistrados.push({
-                id: clientesRegistrados.length + 1,
-                nombre: nombre,
-                cedula: cedula || "N/A",
-                contacto: telefono || "N/A",
-                numero: numAsignado,
-                saldo: montoPlan,
-                estado: "Activa",
-                vencimiento: fechaVenc,
-                fecha: fechaHoy
-            });
-
-            // Limpiar formulario
-            document.getElementById('admin-reg-nombre').value = "";
-            document.getElementById('admin-reg-cedula').value = "";
-            document.getElementById('admin-reg-telefono').value = "";
-
-            renderizarAdmin();
-            alert(`¡Cliente registrado con éxito!\n\nLínea Asignada: ${numAsignado}\nVencimiento: ${fechaVenc}`);
-        }
-
-        function registrarNuevoCliente() {
-            let nombre = document.getElementById('reg-nombre').value;
-            let pass = document.getElementById('reg-pass').value;
-            if(!nombre || !pass) { alert("Ingresa un usuario y contraseña."); return; }
-
-            if(poolNumeros.length === 0) { alert("No hay números libres en el pool."); return; }
-
-            miNumeroAsignado = poolNumeros.shift();
-            nombreCliente = nombre;
-            saldoActual = 5.00;
-            estadoLineaActual = "Activa";
-
-            let hoy = new Date();
-            let fechaHoy = hoy.toISOString().split('T')[0];
-            
-            let proximoMes = new Date();
-            proximoMes.setDate(proximoMes.getDate() + 30);
-            fechaVencimientoActual = proximoMes.toISOString().split('T')[0];
-
-            clientesRegistrados.push({
-                id: clientesRegistrados.length + 1,
-                nombre: nombreCliente,
-                cedula: "Online",
-                contacto: "App Client",
-                numero: miNumeroAsignado,
-                saldo: saldoActual,
-                estado: "Activa",
-                vencimiento: fechaVencimientoActual,
-                fecha: fechaHoy
-            });
-
-            actualizarVistaCliente();
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-            renderizarAdmin();
-            alert(`¡Activación Exitosa! Tu nueva línea asignada es: ${miNumeroAsignado}\nVencimiento de plan: ${fechaVencimientoActual}`);
-        }
-
-        function ingresarCliente() {
-            let user = document.getElementById('login-c-user').value;
-            if(!user) return;
-            
-            let cli = clientesRegistrados.find(c => c.nombre.toLowerCase().includes(user.toLowerCase()));
-            if(cli) {
-                nombreCliente = cli.nombre;
-                miNumeroAsignado = cli.numero;
-                saldoActual = cli.saldo;
-                estadoLineaActual = cli.estado;
-                fechaVencimientoActual = cli.vencimiento;
-            } else {
-                nombreCliente = user;
-            }
-
-            actualizarVistaCliente();
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-        }
-
-        function actualizarVistaCliente() {
-            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
-            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
-            document.getElementById('ad-nombre-user').innerText = nombreCliente;
-            document.getElementById('ad-num-user').innerText = miNumeroAsignado;
-            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
-            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            document.getElementById('linea-fecha-venc').innerText = fechaVencimientoActual;
-
-            let badge = document.getElementById('linea-status-badge');
-            if(estadoLineaActual === "Activa") {
-                badge.className = "status-badge active-line";
-                badge.innerText = "● ACTIVA";
-            } else {
-                badge.className = "status-badge suspended-line";
-                badge.innerText = "● SUSPENDIDA";
-            }
-        }
-
-        function ingresarAdmin() {
-            let u = document.getElementById('login-a-user').value;
-            let p = document.getElementById('login-a-pass').value;
-            if(u === 'admin' && p === 'admin123') {
-                cerrarModales();
-                document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-                document.getElementById('panel-admin').classList.add('active');
-                renderizarAdmin();
-            } else {
-                alert("Credenciales administrativas incorrectas.");
-            }
-        }
-
-        function renderizarAdmin() {
-            let contClientes = document.getElementById('lista-clientes-admin');
-            let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
-            let dia = document.getElementById('filter-dia')?.value || "";
-            let mes = document.getElementById('filter-mes')?.value || "";
-            let anio = document.getElementById('filter-anio')?.value || "";
-
-            let clientesFiltrados = clientesRegistrados.filter(c => {
-                let partes = c.fecha.split("-");
-                let coincideTexto = c.nombre.toLowerCase().includes(busqueda) || 
-                                   (c.cedula && c.cedula.toLowerCase().includes(busqueda)) || 
-                                   c.numero.toLowerCase().includes(busqueda);
-
-                return coincideTexto &&
-                       (anio === "" || partes[0] === anio) &&
-                       (mes === "" || partes[1] === mes) &&
-                       (dia === "" || partes[2] === dia);
-            });
-
-            if(clientesFiltrados.length === 0) {
-                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros para los filtros o búsqueda ingresados.</div>`;
-            } else {
-                contClientes.innerHTML = "";
-                clientesFiltrados.forEach((c, idx) => {
-                    let esActivo = c.estado === "Activa";
-                    contClientes.innerHTML += `
-                        <div class="history-item">
-                            <div>
-                                <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#00e676':'#ff3366'};">[${c.estado}]</span><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • Cédula: ${c.cedula || 'N/A'}</span><br/>
-                                <span style="font-size:0.68rem; color:#8fa3bf;">Corte: ${c.vencimiento} • Reg: ${c.fecha}</span>
-                            </div>
-                            <div style="display:flex; gap:4px; align-items:center;">
-                                <span style="font-weight:bold; color:var(--accent-green); font-size:0.8rem; margin-right:4px;">$${c.saldo.toFixed(2)}</span>
-                                <button class="btn btn-small" style="background:${esActivo ? '#ff3366':'#00e676'}; color:#000;" onclick="alternarEstadoCliente(${idx})">${esActivo ? 'Suspender':'Activar'}</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            let contSolicitudes = document.getElementById('lista-solicitudes-admin');
-            if(solicitudesRecarga.length === 0) {
-                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>`;
-            } else {
-                contSolicitudes.innerHTML = "";
-                solicitudesRecarga.forEach((s, idx) => {
-                    contSolicitudes.innerHTML += `
-                        <div class="history-item">
-                            <div><strong>${s.cliente}</strong> ($${s.monto})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
-                            <div>
-                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Reanudar Plan</button>
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            let contPool = document.getElementById('lista-pool-numeros');
-            contPool.innerHTML = "";
-            if(poolNumeros.length === 0) {
-                contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Sin números en el pool.</div>`;
-            } else {
-                poolNumeros.forEach((num) => {
-                    contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible p/ venta</span></div>`;
-                });
-            }
-        }
-
-        function alternarEstadoCliente(idx) {
-            let cli = clientesRegistrados[idx];
-            cli.estado = cli.estado === "Activa" ? "Suspendida" : "Activa";
-            renderizarAdmin();
-        }
-
-        function exportarClientesCSV() {
-            let csv = "ID,Nombre,Cedula,Contacto,NumeroVoIP,Saldo,Estado,FechaVencimiento,FechaRegistro\n";
-            clientesRegistrados.forEach(c => { 
-                csv += `${c.id},"${c.nombre}","${c.cedula || 'N/A'}","${c.contacto || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.vencimiento}","${c.fecha}"\n`; 
-            });
-            let link = document.createElement("a");
-            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-            link.download = "Base_Clientes_OmniMovil.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function agregarNumeroAlPool() {
-            let input = document.getElementById('nuevo-num-pool');
-            if(input.value) { poolNumeros.push(input.value); input.value = ""; renderizarAdmin(); }
-        }
-
-        function enviarReportePago() {
-            let monto = parseFloat(document.getElementById('monto-pago').value);
-            let ref = document.getElementById('ref-pago').value;
-            if(!monto || !ref) { alert("Completa los datos de pago."); return; }
-
-            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref });
-            document.getElementById('monto-pago').value = "";
-            document.getElementById('ref-pago').value = "";
-            alert("Solicitud de pago enviada al operador para renovación.");
-            renderizarAdmin();
-        }
-
-        function aprobarRecarga(idx) {
-            let sol = solicitudesRecarga[idx];
-            saldoActual += sol.monto;
-            estadoLineaActual = "Activa";
-            
-            let nuevaFecha = new Date();
-            nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-            fechaVencimientoActual = nuevaFecha.toISOString().split('T')[0];
-
-            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
-            if(cli) {
-                cli.saldo += sol.monto;
-                cli.estado = "Activa";
-                cli.vencimiento = fechaVencimientoActual;
-            }
-
-            solicitudesRecarga.splice(idx, 1);
-            actualizarVistaCliente();
-            renderizarAdmin();
-            alert("Renovación de mensualidad aprobada con éxito.");
-        }
-
-        function comprarPaquete(precio, nombre) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Tu línea está suspendida. Reporta tu pago mensual en la sección Saldo.");
-                return;
-            }
-            if(saldoActual >= precio) {
-                saldoActual -= precio;
-                planActualNombre = nombre;
-                document.getElementById('linea-plan-nombre').innerText = nombre;
-                actualizarVistaCliente();
-                alert(`¡Te has suscrito exitosamente al ${nombre}!`);
-            } else {
-                alert("Saldo insuficiente. Reporta un pago en Billetera.");
-            }
-        }
-
-        function cambiarSeccionCliente(seccion) {
-            document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
-
-            document.getElementById(`csec-${seccion}`).classList.add('active');
-            let tabBtn = document.getElementById(`ctab-${seccion === 'billetera'? '1' : seccion === 'paquetes'? '2' : seccion === 'llamadas'? '3' : seccion === 'historial'? '4' : 'chat'}`);
-            if(tabBtn) tabBtn.classList.add('active');
-            if(seccion === 'chat') { cargarMensajesSupabase(); }
-        }
-
-        function marcarDigito(d) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida por falta de pago de mensualidad. Por favor recarga para reanudar el servicio.");
-                return;
-            }
-            numeroMarcado += d;
-            document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-        }
-
-        function borrarDigito() {
-            if(numeroMarcado.length > 8) {
-                numeroMarcado = numeroMarcado.slice(0, -1);
-                document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-            }
-        }
-
-        function iniciarLlamadaReal() { 
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida. Reporta tu pago mensual en el portal del cliente.");
-                return;
-            }
-            alert(`Iniciando llamada HD hacia ${numeroDestinoActual}...`); 
-        }
-
-        function seleccionarContacto(numero, nombre) {
-            numeroDestinoActual = numero;
-            document.getElementById('chat-nombre-receptor').innerText = nombre;
-            document.getElementById('chat-numero-receptor').innerText = numero;
-            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
-            cargarMensajesSupabase();
-        }
-
-        async function enviarMensajeSupabase() {
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida por vencimiento de plan. No puedes enviar mensajes.");
-                return;
-            }
-            let texto = document.getElementById('chat-input-texto').value;
-            if(!texto || !supabaseClient) return;
-
-            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            let { error } = await supabaseClient
-                .from('mensajes')
-                .insert([{
-                    origen: miNumeroAsignado,
-                    destino: numeroDestinoActual,
-                    texto: texto,
-                    hora: horaActual,
-                    estado: 'entregado'
-                }]);
-
-            if(error) {
-                alert("Error al enviar: " + error.message);
-                return;
-            }
-
-            document.getElementById('chat-input-texto').value = "";
-            cargarMensajesSupabase();
-        }
-
+        // Cargar Histórico de Mensajes desde Supabase
         async function cargarMensajesSupabase() {
-            if(!supabaseClient) return;
+            try {
+                const { data, error } = await supabase
+                    .from('mensajes')
+                    .select('*')
+                    .order('created_at', { ascending: true });
 
-            let { data, error } = await supabaseClient
-                .from('mensajes')
-                .select('*')
-                .or(`and(origen.eq.${miNumeroAsignado},destino.eq.${numeroDestinoActual}),and(origen.eq.${numeroDestinoActual},destino.eq.${miNumeroAsignado})`)
-                .order('created_at', { ascending: true });
+                if (error) {
+                    console.error("Error leyendo mensajes:", error);
+                    return;
+                }
 
-            let box = document.getElementById('contenedor-mensajes');
-            box.innerHTML = "";
+                const container = document.getElementById('chatContainer');
+                container.innerHTML = '';
 
-            if(error || !data || data.length === 0) {
-                box.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem;">Comienza tu chat en vivo.</div>`;
-                return;
+                data.forEach(msg => {
+                    appendMessageUI(msg.origen, msg.texto, msg.hora, msg.origen === currentSender);
+                });
+                container.scrollTop = container.scrollHeight;
+            } catch (err) {
+                console.error("Excepción en carga:", err);
             }
-
-            data.forEach(m => {
-                let esMio = m.origen === miNumeroAsignado;
-                box.innerHTML += `
-                    <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
-                        ${m.texto}
-                        <div class="wa-msg-meta">${m.hora} ${esMio ? '<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>' : ''}</div>
-                    </div>
-                `;
-            });
-            box.scrollTop = box.scrollHeight;
         }
 
-        function iniciarSuscripcionRealtime() {
-            if(!supabaseClient) return;
+        // Enviar Mensaje a Supabase
+        async function enviarMensajeSupabase() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
 
-            supabaseClient
-                .channel('public:mensajes')
+            const horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const nuevoMensaje = {
+                origen: currentSender,
+                destino: currentTarget,
+                texto: text,
+                hora: horaActual,
+                estado: 'entregado'
+            };
+
+            input.value = '';
+
+            const { error } = await supabase.from('mensajes').insert([nuevoMensaje]);
+            if (error) {
+                console.error("Error al enviar mensaje:", error);
+            }
+        }
+
+        // Renderizar Mensaje en la Interfaz
+        function appendMessageUI(sender, text, time, isMe) {
+            const container = document.getElementById('chatContainer');
+            const msgWrapper = document.createElement('div');
+            msgWrapper.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+
+            msgWrapper.innerHTML = `
+                <div class="max-w-[80%] rounded-2xl px-4 py-2.5 text-sm ${isMe ? 'bg-sky-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-100 rounded-bl-none border border-slate-700'}">
+                    <p class="leading-relaxed">${text}</p>
+                </div>
+                <span class="text-[10px] text-slate-500 mt-1 px-1">${time}</span>
+            `;
+            container.appendChild(msgWrapper);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Suscripción Realtime Supabase
+        function iniciarSuscripcionRealtime() {
+            supabase
+                .channel('mensajes-en-linea')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
-                    let m = payload.new;
-                    if(m.destino === miNumeroAsignado) {
-                        mostrarBannerNotificacion(m.origen, m.texto);
-                    }
-                    if(m.origen === numeroDestinoActual || m.destino === numeroDestinoActual) {
-                        cargarMensajesSupabase();
-                    }
+                    const msg = payload.new;
+                    appendMessageUI(msg.origen, msg.texto, msg.hora, msg.origen === currentSender);
                 })
                 .subscribe();
         }
 
-        function mostrarBannerNotificacion(remitente, texto) {
-            document.getElementById('notif-sender').innerText = remitente;
-            document.getElementById('notif-body').innerText = texto;
-            let banner = document.getElementById('chat-notification-banner');
-            banner.style.display = 'block';
-            setTimeout(() => { banner.style.display = 'none'; }, 6000);
+        // ==========================================
+        // 2. LÓGICA MARCADOR ZOIPER & WEBRTC (SIP.JS)
+        // ==========================================
+        let simpleUser = null;
+        let isCallActive = false;
+
+        function appendDigit(digit) {
+            const input = document.getElementById('phoneNumberInput');
+            input.value += digit;
         }
 
-        function abrirChatDesdeNotificacion() {
-            document.getElementById('chat-notification-banner').style.display = 'none';
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
+        function clearDigit() {
+            const input = document.getElementById('phoneNumberInput');
+            input.value = input.value.slice(0, -1);
         }
+
+        function toggleSipSettingsModal() {
+            const modal = document.getElementById('sipModal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Registro de Cuenta SIP
+        function registerSipAccount() {
+            const wssServer = document.getElementById('cfgWss').value;
+            const domain = document.getElementById('cfgDomain').value;
+            const username = document.getElementById('cfgUser').value;
+            const password = document.getElementById('cfgPass').value;
+
+            document.getElementById('sipStatusText').innerText = "Conectando SIP...";
+            document.getElementById('sipStatusDot').className = "w-3 h-3 rounded-full bg-yellow-500 inline-block animate-ping";
+
+            const targetAOR = SIP.UserAgent.makeURI(`sip:${username}@${domain}`);
+
+            // Opciones del Agente SIP.js
+            const options = {
+                aor: targetAOR,
+                media: {
+                    constraints: { audio: true, video: false },
+                    remote: { audio: document.getElementById('remoteAudio') }
+                },
+                userAgentOptions: {
+                    displayName: username,
+                    authorizationPassword: password,
+                    authorizationUsername: username,
+                },
+                transportOptions: {
+                    server: wssServer
+                }
+            };
+
+            try {
+                simpleUser = new SIP.Web.SimpleUser(wssServer, options);
+
+                simpleUser.connect()
+                    .then(() => {
+                        return simpleUser.register();
+                    })
+                    .then(() => {
+                        document.getElementById('sipStatusText').innerText = "SIP Registrado (En línea)";
+                        document.getElementById('sipStatusDot').className = "w-3 h-3 rounded-full bg-emerald-500 inline-block";
+                        document.getElementById('sipAccountDisplay').innerText = `${username}@${domain}`;
+                        toggleSipSettingsModal();
+                    })
+                    .catch(err => {
+                        console.error("Error en conexión SIP:", err);
+                        document.getElementById('sipStatusText').innerText = "Error Registro SIP";
+                        document.getElementById('sipStatusDot').className = "w-3 h-3 rounded-full bg-red-500 inline-block";
+                    });
+
+            } catch (e) {
+                console.error("Fallo al inicializar SIP.js:", e);
+                document.getElementById('sipStatusText').innerText = "Fallo de Inicio";
+            }
+        }
+
+        // Iniciar Llamada WebRTC
+        function makeCall() {
+            const targetNum = document.getElementById('phoneNumberInput').value.trim();
+            if (!targetNum) {
+                alert("Por favor ingresa un número o extensión a llamar.");
+                return;
+            }
+
+            if (!simpleUser) {
+                alert("Primero debes registrar tu cuenta SIP desde el ícono de engranaje ⚙️.");
+                toggleSipSettingsModal();
+                return;
+            }
+
+            const domain = document.getElementById('cfgDomain').value;
+            const targetURI = `sip:${targetNum}@${domain}`;
+
+            document.getElementById('btnCall').classList.add('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btnHangup').disabled = false;
+            document.getElementById('btnHangup').classList.remove('opacity-50', 'cursor-not-allowed', 'bg-red-600/50');
+
+            simpleUser.call(targetURI)
+                .then(() => {
+                    isCallActive = true;
+                    document.getElementById('callDuration').classList.remove('hidden');
+                })
+                .catch(err => {
+                    console.error("Fallo la llamada:", err);
+                    hangupCall();
+                });
+        }
+
+        // Colgar / Finalizar Llamada
+        function hangupCall() {
+            if (simpleUser && isCallActive) {
+                simpleUser.hangup();
+            }
+            isCallActive = false;
+            document.getElementById('btnCall').classList.remove('opacity-50', 'cursor-not-allowed');
+            document.getElementById('btnHangup').disabled = true;
+            document.getElementById('btnHangup').classList.add('opacity-50', 'cursor-not-allowed', 'bg-red-600/50');
+            document.getElementById('callDuration').classList.add('hidden');
+        }
+
+        // ==========================================
+        // 3. INICIALIZACIÓN
+        // ==========================================
+        window.addEventListener('DOMContentLoaded', () => {
+            cargarMensajesSupabase();
+            iniciarSuscripcionRealtime();
+        });
     </script>
 </body>
 </html>
