@@ -508,13 +508,10 @@
 
             <strong style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Recientes:</strong>
             <div class="static-scroll-box" style="height: 180px; background: #070913;">
-                <div class="history-item" onclick="verEstadoContacto('Maria Gomez', '¡Conectada desde la Red IP OmniMovil! 🚀')">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div class="wa-avatar status-ring" style="width: 32px; height: 32px; font-size: 0.75rem;">MG</div>
-                        <div>
-                            <strong style="color: white; font-size: 0.8rem;">Maria Gomez</strong><br/>
-                            <span style="font-size: 0.65rem; color: var(--text-muted);">Hoy a las 2:15 p.m.</span>
-                        </div>
+                <div class="history-item">
+                    <div>
+                        <strong style="color: white; font-size: 0.8rem;">Soporte OmniMovil</strong><br/>
+                        <span style="font-size: 0.65rem; color: var(--text-muted);">¡Disfruta de la red IP!</span>
                     </div>
                 </div>
             </div>
@@ -525,7 +522,7 @@
     <div id="modal-call-screen">
         <div style="text-align: center;">
             <div class="wa-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 12px auto; background: var(--accent);" id="call-avatar">MG</div>
-            <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Maria Gomez</h2>
+            <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Contacto</h2>
             <p style="color: var(--accent-green); font-size: 0.9rem; margin-top: 4px;" id="call-status">Conectando llamada HD Red IP...</p>
             <div style="color: var(--text-muted); font-size: 0.8rem;" id="call-timer">00:00</div>
         </div>
@@ -612,8 +609,8 @@
                             <div style="display: flex; align-items: center; gap: 8px;">
                                 <div class="wa-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;" id="chat-header-avatar">MG</div>
                                 <div>
-                                    <strong style="font-size: 0.85rem;" id="chat-nombre-receptor">Maria Gomez</strong><br/>
-                                    <span style="font-size: 0.65rem; color: #00a884;" id="chat-numero-receptor">+58 500-0002</span>
+                                    <strong style="font-size: 0.85rem;" id="chat-nombre-receptor">Soporte</strong><br/>
+                                    <span style="font-size: 0.65rem; color: #00a884;" id="chat-numero-receptor">+58 500-0000</span>
                                 </div>
                             </div>
                             <div style="display: flex; gap: 14px; color: #54656f; font-size: 1rem;">
@@ -688,22 +685,16 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN RED SIP Y SOFTPHONE ESTILO ZOIPER -->
+            <!-- SECCIÓN RED SIP Y SOFTPHONE -->
             <div id="csec-llamadas" class="client-section">
                 <div class="card">
                     <h2>⚙️ Configuración Softphone SIP (Zoiper Integrado)</h2>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
-                        Conecta tu extensión SIP directamente a tu centralita vía WebSockets.
-                    </p>
-                    
                     <input type="text" id="sip-server-ws" placeholder="Servidor WebSocket (Ej: wss://tu-servidor-voip:8089/ws)" value="wss://omnimovil.xo.je:8089/ws" />
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="sip-user" placeholder="Extensión SIP (Ej: 5000001)" value="5000001" />
                         <input type="password" id="sip-pass" placeholder="Contraseña SIP" value="1234" />
                     </div>
-                    
                     <button class="btn" style="background: var(--accent); color: #000; margin-bottom: 10px;" onclick="conectarZoiperSIP()">⚡ Conectar Softphone SIP</button>
-
                     <div style="text-align: center; padding: 10px; background: #0b111e; border-radius: 8px; border: 1px solid #2a3b5f;">
                         <span style="font-size: 0.85rem; color: var(--accent-green);" id="sip-status-text">🔴 Desconectado de Servidor SIP</span>
                     </div>
@@ -724,14 +715,13 @@
             </div>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR CON FILTROS Y EXPORTACIÓN EN CADA FUNCIÓN -->
+        <!-- PANEL DE ADMINISTRADOR -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
                 <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="salirDeAdmin()">Cerrar Panel Admin</button>
             </div>
 
-            <!-- FUNCIÓN 1: REGISTRAR NUEVO CLIENTE -->
             <div class="card" style="border-color: var(--accent-green);">
                 <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
                 <div class="static-scroll-box" style="height: 200px; background: #070913;">
@@ -754,104 +744,34 @@
                 </div>
             </div>
 
-            <!-- FUNCIÓN 2: BASE DE CLIENTES REGISTRADOS (CON FILTROS Y EXPORTAR) -->
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes Registrados</h2>
                     <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar Clientes CSV</button>
                 </div>
-
                 <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" style="margin-bottom: 8px;" />
-
-                <div class="filter-grid">
-                    <select id="filter-cli-dia" onchange="renderizarAdmin()">
-                        <option value="">Día (Todos)</option>
-                        <script>
-                            for(let i=1; i<=31; i++) {
-                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
-                            }
-                        </script>
-                    </select>
-                    <select id="filter-cli-mes" onchange="renderizarAdmin()">
-                        <option value="">Mes (Todos)</option>
-                        <option value="01">Enero</option>
-                        <option value="02">Febrero</option>
-                        <option value="03">Marzo</option>
-                        <option value="04">Abril</option>
-                        <option value="05">Mayo</option>
-                        <option value="06">Junio</option>
-                        <option value="07">Julio</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Septiembre</option>
-                        <option value="10">Octubre</option>
-                        <option value="11">Noviembre</option>
-                        <option value="12">Diciembre</option>
-                    </select>
-                    <select id="filter-cli-anio" onchange="renderizarAdmin()">
-                        <option value="">Año (Todos)</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                    </select>
-                </div>
-
                 <div class="static-scroll-box" id="lista-clientes-admin" style="height: 200px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
                 </div>
             </div>
 
-            <!-- FUNCIÓN 3: SOLICITUDES Y RECARGAS (CON FILTROS Y EXPORTAR) -->
             <div class="card" style="border-color: var(--accent-orange);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales (Aprobadas/Rechazadas)</h2>
+                    <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales</h2>
                     <button class="btn btn-small" style="background: var(--accent-orange); color: #000;" onclick="exportarSolicitudesCSV()">📥 Exportar Recargas CSV</button>
                 </div>
-
-                <div class="filter-grid">
-                    <select id="filter-sol-dia" onchange="renderizarAdmin()">
-                        <option value="">Día (Todos)</option>
-                        <script>
-                            for(let i=1; i<=31; i++) {
-                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
-                            }
-                        </script>
-                    </select>
-                    <select id="filter-sol-mes" onchange="renderizarAdmin()">
-                        <option value="">Mes (Todos)</option>
-                        <option value="01">Enero</option>
-                        <option value="02">Febrero</option>
-                        <option value="03">Marzo</option>
-                        <option value="04">Abril</option>
-                        <option value="05">Mayo</option>
-                        <option value="06">Junio</option>
-                        <option value="07">Julio</option>
-                        <option value="08">Agosto</option>
-                        <option value="09">Septiembre</option>
-                        <option value="10">Octubre</option>
-                        <option value="11">Noviembre</option>
-                        <option value="12">Diciembre</option>
-                    </select>
-                    <select id="filter-sol-anio" onchange="renderizarAdmin()">
-                        <option value="">Año (Todos)</option>
-                        <option value="2025">2025</option>
-                        <option value="2026">2026</option>
-                    </select>
-                </div>
-
                 <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 180px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>
                 </div>
             </div>
 
-            <!-- FUNCIÓN 4: POOL DE NÚMEROS (CON FILTROS Y EXPORTAR) -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2>🔢 Pool de Números Disponibles (Asignación Única)</h2>
+                    <h2>🔢 Pool de Números Disponibles</h2>
                     <button class="btn btn-small" style="background: var(--accent); color: #000;" onclick="exportarPoolCSV()">📥 Exportar Pool CSV</button>
                 </div>
-                
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
                 <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
-                
                 <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
@@ -859,23 +779,17 @@
         <!-- PANTALLA DE BIENVENIDA -->
         <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.96); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
             <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent); box-shadow: 0 0 30px rgba(0,242,254,0.3); text-align: center; padding: 24px;">
-                
-                <!-- LOGO CON TELÉFONO Y ESTRELLA -->
                 <div style="width: 80px; height: 80px; background: #ffffff; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
                     <i class="fa-solid fa-phone" style="font-size: 2.2rem; color: #070913; transform: rotate(-15deg);"></i>
                     <i class="fa-solid fa-star" style="font-size: 1.1rem; color: #ff9800; position: absolute; margin-top: -24px; margin-left: 28px;"></i>
                 </div>
-
                 <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
-                
                 <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">
                     Descarga nuestra app y regístrate y disfruta de la mejor aventura en comunicaciones.
                 </p>
-
                 <button class="btn" style="background: var(--accent-green); color: #000; font-size: 0.9rem; padding: 14px; margin-bottom: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,230,118,0.3);" onclick="mostrarFormularioRegistro()">
                     📲 Descarga nuestra app y regístrate
                 </button>
-
                 <div id="form-registro-container" style="display: none; margin-top: 14px; text-align: left; border-top: 1px solid #1f2d4a; padding-top: 14px;">
                     <h3 style="color: var(--accent-green); font-size: 0.9rem; margin: 0 0 8px 0; text-align: center;">Crea tu Cuenta y Número Único</h3>
                     <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
@@ -883,7 +797,6 @@
                     <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
                     <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 8px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro y Activar Línea</button>
                 </div>
-
                 <div style="text-align: center; border-top: 1px solid #1f2d4a; padding-top: 12px; margin-top: 10px;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">¿Ya tienes una cuenta?</span><br/>
                     <button class="btn btn-small" style="background: transparent; color: var(--accent); font-size: 0.8rem; padding: 4px; border: none; cursor: pointer; text-decoration: underline;" onclick="toggleModoLoginEnInicial()">Iniciar Sesión</button>
@@ -955,28 +868,19 @@
         let sipSession = null;
         let callInterval = null;
         let secondsInCall = 0;
-        let isRecordingAudio = false;
-        let mediaRecorder = null;
-        let audioChunks = [];
 
         let poolNumeros = [
             "+58 500-0004", "+58 500-0005", "+58 500-0006", "+58 500-0007", 
             "+58 500-0008", "+58 500-0009", "+58 500-0010", "+58 500-0011"
         ];
         
-        let clientesRegistrados = [
-            { 
-                id: 1, nombre: "Erik Sosa", usuario: "Erik", pass: "1234", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22",
-                contactosChat: [{ nombre: "Maria Gomez", numero: "+58 500-0002" }],
-                historialTransacciones: [{ id: 101, fecha: "2026-10-22", tipo: "Activación Inicial", descripcion: "Línea activada", monto: 5.00, estado: "Procesado" }]
-            }
-        ];
-
+        let clientesRegistrados = [];
         let solicitudesRecarga = [];
 
-        window.onload = function() {
+        window.onload = async function() {
             obtenerClienteSupabase();
-            renderizarAdmin();
+            await cargarUsuariosDesdeSupabase();
+            
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
@@ -986,6 +890,44 @@
                 abrirModalRegistroInicial();
             }
         };
+
+        // CARGAR USUARIOS GLOBALES DESDE SUPABASE PARA QUE TODOS SE VEAN
+        async function cargarUsuariosDesdeSupabase() {
+            let client = obtenerClienteSupabase();
+            if(!client) {
+                // Datos de respaldo por defecto si no hay conexión inicial
+                clientesRegistrados = [
+                    { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", fecha: "2026-10-22" },
+                    { nombre: "Maria Gomez", usuario: "maria", pass: "1234", numero: "+58 500-0002", saldo: 12.50, estado: "Activa", fecha: "2026-10-20" }
+                ];
+                return;
+            }
+
+            try {
+                let { data, error } = await client.from('usuarios').select('*');
+                if(data && data.length > 0) {
+                    clientesRegistrados = data;
+                } else {
+                    // Si está vacía la tabla, insertamos un usuario inicial por defecto
+                    clientesRegistrados = [
+                        { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", fecha: "2026-10-22" }
+                    ];
+                }
+            } catch(e) {
+                console.warn("Error cargando usuarios remotos:", e);
+            }
+            renderizarAdmin();
+        }
+
+        async function guardarUsuarioEnSupabase(nuevoCli) {
+            let client = obtenerClienteSupabase();
+            if(!client) return;
+            try {
+                await client.from('usuarios').insert([nuevoCli]);
+            } catch(e) {
+                console.warn("Error guardando usuario en BD:", e);
+            }
+        }
 
         function abrirModalRegistroInicial() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
         function mostrarFormularioRegistro() { document.getElementById('form-registro-container').style.display = 'block'; }
@@ -998,12 +940,12 @@
             document.getElementById('modal-registro-inicial').style.display = 'flex';
         }
 
-        function ejecutarRegistroInicialPaso1() {
+        async function ejecutarRegistroInicialPaso1() {
             let nombre = document.getElementById('init-reg-nombre').value.trim();
             let user = document.getElementById('init-reg-user').value.trim();
             let pass = document.getElementById('init-reg-pass').value.trim();
             if(!nombre || !user || !pass) { alert("Completa todos los campos."); return; }
-            if(clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase())) { alert("Usuario ya existe."); return; }
+            if(clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase())) { alert("Este usuario ya existe."); return; }
 
             if(poolNumeros.length === 0) poolNumeros.push(`+58 500-${Math.floor(1000 + Math.random() * 9000)}`);
             let numAsignadoUnico = poolNumeros.shift();
@@ -1012,16 +954,20 @@
             proximoMes.setDate(proximoMes.getDate() + 30);
 
             let nuevoCliente = {
-                id: clientesRegistrados.length + 1,
-                nombre: nombre, usuario: user, pass: pass, cedula: "Registro App", contacto: user,
-                numero: numAsignadoUnico, saldo: 5.00, estado: "Activa", vencimiento: proximoMes.toISOString().split('T')[0], fecha: hoy,
-                contactosChat: [{ nombre: "Soporte OmniMovil", numero: "+58 500-0000" }],
-                historialTransacciones: [{ id: Date.now(), fecha: hoy, tipo: "Registro App Inicial", descripcion: `Línea ${numAsignadoUnico}`, monto: 5.00, estado: "Procesado" }]
+                nombre: nombre, 
+                usuario: user, 
+                pass: pass, 
+                numero: numAsignadoUnico, 
+                saldo: 5.00, 
+                estado: "Activa", 
+                vencimiento: proximoMes.toISOString().split('T')[0], 
+                fecha: hoy
             };
 
             clientesRegistrados.push(nuevoCliente);
+            await guardarUsuarioEnSupabase(nuevoCliente);
             vincularSesionCliente(nuevoCliente);
-            alert(`¡Bienvenido!\nTu número asignado único es: ${numAsignadoUnico}`);
+            alert(`¡Bienvenido a la aventura en comunicaciones!\nTu número asignado único es: ${numAsignadoUnico}`);
         }
 
         function ejecutarLoginExistente() {
@@ -1080,12 +1026,12 @@
 
         function realizarLlamadaSIP() {
             let num = document.getElementById('sip-dial-number').value;
-            if(!num || !ua) { alert("Ingresa un número y asegúrate de estar conectado."); return; }
-            abrirPantallaLlamada(false);
+            if(!num || !ua) { alert("Ingresa un número y conéctate al servidor SIP."); return; }
+            abrirPantallaLlamada();
             sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, { mediaConstraints: { audio: true, video: false } });
         }
 
-        function abrirPantallaLlamada(esVideo) {
+        function abrirPantallaLlamada() {
             if(estadoLineaActual !== "Activa") { alert("Línea suspendida."); return; }
             document.getElementById('call-name').innerText = document.getElementById('chat-nombre-receptor').innerText || "Llamada IP";
             document.getElementById('modal-call-screen').style.display = 'flex';
@@ -1128,68 +1074,170 @@
             } else { alert("Credenciales incorrectas."); }
         }
 
-        // RENDERIZAR PANEL ADMIN CON FILTROS Y EXPORTACIÓN INDEPENDIENTE
+        // MOSTRAR CONTACTOS REGISTRADOS DINÁMICAMENTE EN EL MODAL DE CHAT
+        function abrirModalNuevoChat() {
+            let container = document.getElementById('modal-lista-contactos');
+            container.innerHTML = "";
+            
+            if(clientesRegistrados.length === 0) {
+                container.innerHTML = `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:10px;">No hay otros usuarios en la red aún.</div>`;
+            }
+
+            clientesRegistrados.forEach(c => {
+                if(c.numero !== miNumeroAsignado) {
+                    container.innerHTML += `
+                        <div class="history-item" style="cursor:pointer;" onclick="seleccionarContactoDeModal('${c.numero}', '${c.nombre}')">
+                            <div>
+                                <strong style="color:var(--accent);">${c.nombre}</strong><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero}</span>
+                            </div>
+                            <span style="color:var(--accent-green); font-size:0.75rem;">➕ Agregar</span>
+                        </div>
+                    `;
+                }
+            });
+            document.getElementById('modal-select-contact').style.display = 'flex';
+        }
+
+        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
+
+        function seleccionarContactoDeModal(numero, nombre) {
+            document.getElementById('input-nuevo-nombre-contacto').value = nombre;
+            document.getElementById('input-nuevo-numero-chat').value = numero;
+        }
+
+        function guardarNuevoContactoChat() {
+            let nombre = document.getElementById('input-nuevo-nombre-contacto').value;
+            let num = document.getElementById('input-nuevo-numero-chat').value;
+            if(!nombre || !num) { alert("Ingresa nombre y número."); return; }
+
+            if(clienteAutenticado) {
+                if(!clienteAutenticado.contactosChat) clienteAutenticado.contactosChat = [];
+                if(!clienteAutenticado.contactosChat.find(c => c.numero === num)) {
+                    clienteAutenticado.contactosChat.push({ nombre: nombre, numero: num });
+                }
+            }
+            cerrarModalNuevoChat();
+            renderizarContactosCliente();
+            seleccionarContacto(num, nombre);
+        }
+
+        function renderizarContactosCliente() {
+            let cont = document.getElementById('lista-contactos-chat');
+            cont.innerHTML = "";
+            let lista = (clienteAutenticado && clienteAutenticado.contactosChat) ? clienteAutenticado.contactosChat : [];
+            
+            if(lista.length === 0) {
+                cont.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem; padding: 20px;">Sin contactos guardados. Toca ➕ para agregar.</div>`;
+                return;
+            }
+
+            lista.forEach((c, idx) => {
+                let iniciales = c.nombre.split(" ").map(n=>n[0]).join("");
+                let esActivo = c.numero === numeroDestinoActual;
+                cont.innerHTML += `
+                    <div class="wa-contact-card ${esActivo ? 'active':''}" onclick="seleccionarContacto('${c.numero}', '${c.nombre}')">
+                        <div class="wa-avatar">${iniciales}</div>
+                        <div style="flex-grow: 1;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <strong style="font-size: 0.85rem;" class="contact-name-text">${c.nombre}</strong>
+                            </div>
+                            <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">${c.numero}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function seleccionarContacto(numero, nombre) {
+            numeroDestinoActual = numero;
+            document.getElementById('chat-nombre-receptor').innerText = nombre;
+            document.getElementById('chat-numero-receptor').innerText = numero;
+            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
+            renderizarContactosCliente();
+            cargarMensajesSupabase();
+        }
+
+        // CHAT EN TIEMPO REAL CON SUPABASE
+        async function enviarMensajeSupabaseConContenido(contenidoHTML) {
+            if(estadoLineaActual !== "Activa") { alert("Línea suspendida."); return; }
+            let client = obtenerClienteSupabase();
+            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            if(client) {
+                try {
+                    await client.from('mensajes').insert([{
+                        origen: miNumeroAsignado,
+                        destino: numeroDestinoActual,
+                        texto: contenidoHTML,
+                        hora: horaActual,
+                        estado: 'entregado'
+                    }]);
+                } catch(e) { console.warn("Error enviando mensaje:", e); }
+            }
+            renderizarMensajeEnPantalla(miNumeroAsignado, contenidoHTML, horaActual);
+        }
+
+        async function enviarMensajeSupabase() {
+            let texto = document.getElementById('chat-input-texto').value;
+            if(!texto) return;
+            document.getElementById('chat-input-texto').value = "";
+            await enviarMensajeSupabaseConContenido(texto);
+        }
+
+        function renderizarMensajeEnPantalla(origen, texto, hora) {
+            let box = document.getElementById('contenedor-mensajes');
+            if(box.innerText.includes("Comienza a chatear")) box.innerHTML = "";
+            let esMio = origen === miNumeroAsignado;
+            box.innerHTML += `
+                <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
+                    ${texto}
+                    <div class="wa-msg-meta">${hora} ${esMio ? '<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>' : ''}</div>
+                </div>
+            `;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function cargarMensajesSupabase() {
+            let client = obtenerClienteSupabase();
+            if(!client) return;
+            try {
+                let { data } = await client
+                    .from('mensajes')
+                    .select('*')
+                    .or(`and(origen.eq.${miNumeroAsignado},destino.eq.${numeroDestinoActual}),and(origen.eq.${numeroDestinoActual},destino.eq.${miNumeroAsignado})`)
+                    .order('created_at', { ascending: true });
+
+                if(data && data.length > 0) {
+                    let box = document.getElementById('contenedor-mensajes');
+                    box.innerHTML = "";
+                    data.forEach(m => renderizarMensajeEnPantalla(m.origen, m.texto, m.hora));
+                }
+            } catch(e) { console.log(e); }
+        }
+
+        // RENDERIZAR PANEL ADMIN
         function renderizarAdmin() {
-            // 1. Clientes
             let contClientes = document.getElementById('lista-clientes-admin');
             let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
-            let dCli = document.getElementById('filter-cli-dia')?.value || "";
-            let mCli = document.getElementById('filter-cli-mes')?.value || "";
-            let aCli = document.getElementById('filter-cli-anio')?.value || "";
-
-            let cliFiltrados = clientesRegistrados.filter(c => {
-                let partes = c.fecha.split("-");
-                let coincide = c.nombre.toLowerCase().includes(busqueda) || c.numero.toLowerCase().includes(busqueda);
-                return coincide && (aCli === "" || partes[0] === aCli) && (mCli === "" || partes[1] === mCli) && (dCli === "" || partes[2] === dCli);
-            });
+            let cliFiltrados = clientesRegistrados.filter(c => c.nombre.toLowerCase().includes(busqueda) || c.numero.toLowerCase().includes(busqueda));
 
             contClientes.innerHTML = cliFiltrados.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">Sin registros.</div>` : "";
-            cliFiltrados.forEach((c, idx) => {
+            cliFiltrados.forEach((c) => {
                 contClientes.innerHTML += `
                     <div class="history-item">
                         <div>
                             <strong style="color:var(--accent);">${c.nombre}</strong> [${c.estado}]<br/>
-                            <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Reg: ${c.fecha}</span>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Usuario: ${c.usuario}</span>
                         </div>
                         <span style="color:var(--accent-green);">$${c.saldo.toFixed(2)}</span>
                     </div>`;
             });
-
-            // 2. Solicitudes / Recargas
-            let contSol = document.getElementById('lista-solicitudes-admin');
-            let dSol = document.getElementById('filter-sol-dia')?.value || "";
-            let mSol = document.getElementById('filter-sol-mes')?.value || "";
-            let aSol = document.getElementById('filter-sol-anio')?.value || "";
-
-            let solFiltradas = solicitudesRecarga.filter(s => {
-                let partes = (s.fecha || new Date().toISOString().split('T')[0]).split("-");
-                return (aSol === "" || partes[0] === aSol) && (mSol === "" || partes[1] === mSol) && (dSol === "" || partes[2] === dSol);
-            });
-
-            contSol.innerHTML = solFiltradas.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">No hay solicitudes.</div>` : "";
-            solFiltradas.forEach((s, idx) => {
-                contSol.innerHTML += `
-                    <div class="history-item">
-                        <div>
-                            <strong>${s.cliente}</strong> ($${s.monto.toFixed(2)}) <span class="st-tag">${s.estado}</span><br/>
-                            <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref} • ${s.fecha}</span>
-                        </div>
-                        ${s.estado === 'Pendiente' ? `<button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>` : ''}
-                    </div>`;
-            });
-
-            // 3. Pool de Números
-            let contPool = document.getElementById('lista-pool-numeros');
-            contPool.innerHTML = "";
-            poolNumeros.forEach(num => {
-                contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span></div>`;
-            });
         }
 
-        // FUNCIONES DE EXPORTACIÓN A CSV
         function exportarClientesCSV() {
-            let csv = "ID,Nombre,Usuario,Cedula,Numero,Saldo,Estado,Fecha\n";
-            clientesRegistrados.forEach(c => { csv += `${c.id},"${c.nombre}","${c.usuario}","${c.cedula}","${c.numero}",${c.saldo},"${c.estado}","${c.fecha}"\n`; });
+            let csv = "Nombre,Usuario,Numero,Saldo,Estado,Fecha\n";
+            clientesRegistrados.forEach(c => { csv += `"${c.nombre}","${c.usuario}","${c.numero}",${c.saldo},"${c.estado}","${c.fecha}"\n`; });
             descargarCSV(csv, "Clientes_OmniMovil.csv");
         }
 
@@ -1231,12 +1279,6 @@
             alert("Solicitud enviada con éxito.");
         }
 
-        function aprobarRecarga(idx) {
-            solicitudesRecarga[idx].estado = "Procesado";
-            renderizarAdmin();
-            alert("Recarga aprobada.");
-        }
-
         function actualizarVistaCliente() {
             document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
             document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
@@ -1244,20 +1286,27 @@
             document.getElementById('ad-num-user').innerText = miNumeroAsignado;
             document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            renderizarContactosCliente();
         }
 
         function cambiarSeccionCliente(seccion) {
             document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
             document.getElementById(`csec-${seccion}`).classList.add('active');
+            if(seccion === 'chat') cargarMensajesSupabase();
         }
 
-        function abrirModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'flex'; }
-        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-        function abrirModalEstados() { document.getElementById('modal-status-screen').style.display = 'flex'; }
-        function cerrarModalEstados() { document.getElementById('modal-status-screen').style.display = 'none'; }
-        function subirNuevoEstado() { alert("Estado publicado."); cerrarModalEstados(); }
-        function verEstadoContacto(n, t) { alert(`${n}: ${t}`); }
+        function insertarEmoji(e) {
+            let input = document.getElementById('chat-input-texto');
+            input.value += e;
+            document.getElementById('emoji-picker').style.display = 'none';
+            input.focus();
+        }
+
+        function toggleEmojiPicker() {
+            let picker = document.getElementById('emoji-picker');
+            picker.style.display = picker.style.display === 'grid' ? 'none' : 'grid';
+        }
     </script>
 </body>
 </html>
