@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>OmniMovil - Red IP y Mensajería Global</title>
+    <title>OmniMovil - La Aventura en Comunicaciones</title>
     
     <!-- Configuración PWA Optimizada -->
     <meta name="theme-color" content="#070913">
@@ -149,42 +149,6 @@
             border: 1px solid #2a3b5f;
             border-radius: 10px;
             padding: 10px;
-        }
-
-        .dialer-screen {
-            background: #0b111e;
-            border: 1px solid #2a3b5f;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 1.2rem;
-            text-align: center;
-            letter-spacing: 1px;
-            margin-bottom: 12px;
-            color: #fff;
-            word-break: break-all;
-        }
-
-        .dialer-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 12px;
-        }
-
-        .dial-btn {
-            background: #1a253f;
-            border: 1px solid #2a3b5f;
-            border-radius: 50%;
-            width: 55px;
-            height: 55px;
-            margin: 0 auto;
-            color: white;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .client-tabs {
@@ -594,35 +558,11 @@
             </div>
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <button id="btn-instalar-app" style="background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
-                <button class="login-top-btn" onclick="abrirModalRegistroInicial()">🔑 Mi Cuenta</button>
                 <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
             </div>
         </header>
 
-        <div id="panel-principal" class="panel-view active">
-            <div class="card">
-                <h2>Marcador Telefónico IP</h2>
-                <div class="dialer-screen" id="pantalla-marcador">+58 500-</div>
-
-                <div class="dialer-grid">
-                    <button class="dial-btn" onclick="marcarDigito('1')">1</button>
-                    <button class="dial-btn" onclick="marcarDigito('2')">2</button>
-                    <button class="dial-btn" onclick="marcarDigito('3')">3</button>
-                    <button class="dial-btn" onclick="marcarDigito('4')">4</button>
-                    <button class="dial-btn" onclick="marcarDigito('5')">5</button>
-                    <button class="dial-btn" onclick="marcarDigito('6')">6</button>
-                    <button class="dial-btn" onclick="marcarDigito('7')">7</button>
-                    <button class="dial-btn" onclick="marcarDigito('8')">8</button>
-                    <button class="dial-btn" onclick="marcarDigito('9')">9</button>
-                    <button class="dial-btn" onclick="marcarDigito('*')">*</button>
-                    <button class="dial-btn" onclick="marcarDigito('0')">0</button>
-                    <button class="dial-btn" onclick="borrarDigito()">⌫</button>
-                </div>
-
-                <button class="btn" style="background: var(--accent-green); color: #000;" onclick="iniciarLlamadaVozHD()">📞 Llamar por Red IP</button>
-            </div>
-        </div>
-
+        <!-- PANEL DE CLIENTE -->
         <div id="panel-cliente" class="panel-view">
             <div class="card" style="padding: 12px; margin-bottom: 10px; border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px;">
@@ -632,7 +572,7 @@
                     </div>
                     <div>
                         <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
-                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="cerrarSesionCliente()">Salir</button>
+                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="cerrarSesionCliente()">Cerrar Sesión</button>
                     </div>
                 </div>
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
@@ -810,7 +750,7 @@
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
-                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="volverAlPrincipal()">Cerrar Sesión</button>
+                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="salirDeAdmin()">Cerrar Panel Admin</button>
             </div>
 
             <div class="card" style="border-color: var(--accent-green);">
@@ -895,43 +835,63 @@
             </div>
         </div>
 
-        <!-- MODAL REGISTRO INICIAL OBLIGATORIO AL DESCARGAR LA APP (PASO 1) -->
-        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green); box-shadow: 0 0 25px rgba(0,242,254,0.3);">
-                <h2 style="color: var(--accent-green); text-align: center; font-size: 1.1rem; margin-bottom: 4px;">📲 Paso 1: Crea tu Cuenta</h2>
-                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 14px;">Ingresa tus datos de acceso. El sistema te asignará de forma automática un número de teléfono único e irrepetible.</p>
+        <!-- PANTALLA DE BIENVENIDA CON TU LOGO Y BOTÓN SOLICITADO -->
+        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.96); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
+            <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent); box-shadow: 0 0 30px rgba(0,242,254,0.3); text-align: center; padding: 24px;">
                 
-                <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
-                <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
-                <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
+                <!-- LOGO CON TELÉFONO Y ESTRELLA -->
+                <div style="width: 80px; height: 80px; background: #ffffff; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+                    <i class="fa-solid fa-phone" style="font-size: 2.2rem; color: #070913; transform: rotate(-15deg);"></i>
+                    <i class="fa-solid fa-star" style="font-size: 1.1rem; color: #ff9800; position: absolute; margin-top: -24px; margin-left: 28px;"></i>
+                </div>
+
+                <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
                 
-                <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 10px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Registrarse y Activar Línea</button>
-                
-                <div style="text-align: center; border-top: 1px solid #1f2d4a; padding-top: 10px; margin-top: 6px;">
-                    <span style="font-size: 0.72rem; color: var(--text-muted);">¿Ya tienes una cuenta registrada?</span><br/>
-                    <button class="btn btn-small" style="background: transparent; color: var(--accent); font-size: 0.8rem; padding: 4px; border: none; cursor: pointer; text-decoration: underline;" onclick="toggleModoLoginEnInicial()">Iniciar Sesión con mi Usuario</button>
+                <!-- ESLOGAN / TEXTO DE AVENTURA EN COMUNICACIONES -->
+                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">
+                    Descarga nuestra app y regístrate y disfruta de la mejor aventura en comunicaciones.
+                </p>
+
+                <!-- BOTÓN PRINCIPAL DE ACCIÓN -->
+                <button class="btn" style="background: var(--accent-green); color: #000; font-size: 0.9rem; padding: 14px; margin-bottom: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,230,118,0.3);" onclick="mostrarFormularioRegistro()">
+                    📲 Descarga nuestra app y regístrate
+                </button>
+
+                <div id="form-registro-container" style="display: none; margin-top: 14px; text-align: left; border-top: 1px solid #1f2d4a; padding-top: 14px;">
+                    <h3 style="color: var(--accent-green); font-size: 0.9rem; margin: 0 0 8px 0; text-align: center;">Crea tu Cuenta y Número Único</h3>
+                    <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                    <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
+                    <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
+                    <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 8px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro y Activar Línea</button>
+                </div>
+
+                <div style="text-align: center; border-top: 1px solid #1f2d4a; padding-top: 12px; margin-top: 10px;">
+                    <span style="font-size: 0.75rem; color: var(--text-muted);">¿Ya tienes una cuenta?</span><br/>
+                    <button class="btn btn-small" style="background: transparent; color: var(--accent); font-size: 0.8rem; padding: 4px; border: none; cursor: pointer; text-decoration: underline;" onclick="toggleModoLoginEnInicial()">Iniciar Sesión</button>
                 </div>
             </div>
         </div>
 
-        <!-- MODAL ALTERNATIVO INICIAR SESIÓN CUANDO YA TIENE USUARIO -->
-        <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 330px; border-color: var(--accent);">
-                <h2 style="color: var(--accent); text-align: center;">🔑 Iniciar Sesión</h2>
-                <input type="text" id="login-sec-user" placeholder="Usuario" />
-                <input type="password" id="login-sec-pass" placeholder="Contraseña" />
+        <!-- MODAL ALTERNATIVO INICIAR SESIÓN -->
+        <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.95); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 340px; border-color: var(--accent); text-align: center;">
+                <h2 style="color: var(--accent); margin-bottom: 6px;">🔑 Iniciar Sesión</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">Ingresa a tu panel de cliente</p>
+                <input type="text" id="login-sec-user" placeholder="Usuario" style="text-align: left;" />
+                <input type="password" id="login-sec-pass" placeholder="Contraseña" style="text-align: left;" />
                 <button class="btn" style="margin-bottom: 8px;" onclick="ejecutarLoginExistente()">Entrar a mi Cuenta</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalesIniciales()">Volver al Registro</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalesIniciales()">Volver al Inicio</button>
             </div>
         </div>
 
+        <!-- MODAL ACCESO ADMIN -->
         <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
                 <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
                 <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
                 <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel Operadora</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalAdmin()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -957,7 +917,7 @@
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=11').catch(err => console.error(err));
+            navigator.serviceWorker.register('./sw.js?v=13').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -1070,7 +1030,7 @@
             renderizarAdmin();
             iniciarSuscripcionRealtime();
             
-            // VERIFICAR SI YA ESTÁ REGISTRADO EN ESTE DISPOSITIVO
+            // VERIFICAR SESIÓN ACTIVA EN EL DISPOSITIVO (AUTO-LOGIN PERMANENTE)
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
@@ -1088,6 +1048,10 @@
             document.getElementById('modal-registro-inicial').style.display = 'flex';
         }
 
+        function mostrarFormularioRegistro() {
+            document.getElementById('form-registro-container').style.display = 'block';
+        }
+
         function toggleModoLoginEnInicial() {
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('modal-login-secundario').style.display = 'flex';
@@ -1098,7 +1062,7 @@
             document.getElementById('modal-registro-inicial').style.display = 'flex';
         }
 
-        // PASO 1: REGISTRO CON USUARIO Y CONTRASEÑA E ASIGNACIÓN DE NÚMERO ÚNICO E IRREPETIBLE
+        // EJECUTAR REGISTRO Y ASIGNACIÓN DE NÚMERO ÚNICO E IRREPETIBLE
         function ejecutarRegistroInicialPaso1() {
             let nombre = document.getElementById('init-reg-nombre').value.trim();
             let user = document.getElementById('init-reg-user').value.trim();
@@ -1109,14 +1073,12 @@
                 return;
             }
 
-            // Validar que el usuario no exista
             let existe = clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase());
             if(existe) {
-                alert("Este nombre de usuario ya está registrado. Por favor elige otro.");
+                alert("Este nombre de usuario ya está registrado. Elige otro.");
                 return;
             }
 
-            // Asignación de Número Único del Pool
             if(poolNumeros.length === 0) {
                 let nuevoNumGenerado = `+58 500-${String(Math.floor(1000 + Math.random() * 9000))}`;
                 poolNumeros.push(nuevoNumGenerado);
@@ -1150,13 +1112,12 @@
                 ]
             };
 
-            // Almacenamiento en la Base de Datos Centralizada
             clientesRegistrados.push(nuevoCliente);
             vincularSesionCliente(nuevoCliente);
             
             document.getElementById('modal-registro-inicial').style.display = 'none';
             renderizarAdmin();
-            alert(`¡Registro Exitoso!\n\nTu cuenta ha sido creada.\nNúmero Asignado Único: ${numAsignadoUnico}`);
+            alert(`¡Bienvenido a la aventura en comunicaciones!\n\nTu número asignado único es: ${numAsignadoUnico}`);
         }
 
         function ejecutarLoginExistente() {
@@ -1191,7 +1152,9 @@
             }
 
             actualizarVistaCliente();
-            cerrarModales();
+            
+            document.getElementById('modal-registro-inicial').style.display = 'none';
+            document.getElementById('modal-login-secundario').style.display = 'none';
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
@@ -1200,7 +1163,7 @@
         function cerrarSesionCliente() {
             localStorage.removeItem('omnimovil_usuario_activo');
             clienteAutenticado = null;
-            volverAlPrincipal();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             abrirModalRegistroInicial();
         }
 
@@ -1234,7 +1197,6 @@
                 ua.on('registered', () => {
                     document.getElementById('sip-status-text').innerText = `🟢 Registrado Exitosamente como Extension ${user}`;
                     document.getElementById('sip-status-text').style.color = "var(--accent-green)";
-                    document.getElementById('red-estado-texto').innerText = `🟢 Registrado en Centralita SIP (${user})`;
                 });
 
                 ua.on('registrationFailed', (e) => {
@@ -1288,20 +1250,16 @@
             sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, options);
         }
 
-        function volverAlPrincipal() {
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-principal').classList.add('active');
-        }
-
-        function abrirModalRegistro() { 
-            document.getElementById('modal-login-secundario').style.display = 'none';
-            document.getElementById('modal-registro-inicial').style.display = 'flex'; 
-        }
-
         function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
+        function cerrarModalAdmin() { document.getElementById('modal-login-admin').style.display = 'none'; }
         
-        function cerrarModales() {
-            document.getElementById('modal-login-admin').style.display = 'none';
+        function salirDeAdmin() {
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            if(clienteAutenticado) {
+                document.getElementById('panel-cliente').classList.add('active');
+            } else {
+                abrirModalRegistroInicial();
+            }
         }
 
         function abrirModalNuevoChat() {
@@ -1692,7 +1650,7 @@
             let u = document.getElementById('login-a-user').value;
             let p = document.getElementById('login-a-pass').value;
             if(u === 'admin' && p === 'admin123') {
-                cerrarModales();
+                cerrarModalAdmin();
                 document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
                 document.getElementById('panel-admin').classList.add('active');
                 renderizarAdmin();
@@ -1917,22 +1875,6 @@
             if(tabBtn) tabBtn.classList.add('active');
             if(seccion === 'chat') { cargarMensajesSupabase(); }
             if(seccion === 'historial') { renderizarHistorialPersonal(); }
-        }
-
-        function marcarDigito(d) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida por falta de pago.");
-                return;
-            }
-            numeroMarcado += d;
-            document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-        }
-
-        function borrarDigito() {
-            if(numeroMarcado.length > 8) {
-                numeroMarcado = numeroMarcado.slice(0, -1);
-                document.getElementById('pantalla-marcador').innerText = numeroMarcado;
-            }
         }
 
         function seleccionarContacto(numero, nombre) {
