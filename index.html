@@ -11,7 +11,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
     
-    <!-- Manifest PWA con iconos oficiales -->
+    <!-- Manifest PWA -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22OmniMovil Red IP y Mensajeria%22,
         %22short_name%22: %22OmniMovil%22,
@@ -34,6 +34,8 @@
     }">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Librería JsSIP para Softphone estilo Zoiper vía WebRTC -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jssip/3.10.0/jssip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -493,6 +495,10 @@
 </head>
 <body>
 
+    <!-- Elementos de audio de llamada WebRTC -->
+    <audio id="remoteAudio" autoplay></audio>
+    <audio id="localAudio" autoplay muted></audio>
+
     <div id="chat-notification-banner" onclick="abrirChatDesdeNotificacion()">
         <div style="display: flex; align-items: center; justify-content: space-between;">
             <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
@@ -561,7 +567,7 @@
         </div>
     </div>
 
-    <!-- MODAL LLAMADA EN VIVO -->
+    <!-- MODAL LLAMADA EN VIVO WEBRTC / SIP -->
     <div id="modal-call-screen">
         <div style="text-align: center;">
             <div class="wa-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 12px auto; background: var(--accent);" id="call-avatar">MG</div>
@@ -639,7 +645,7 @@
                 <button class="client-tab-btn" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Saldo</button>
                 <button class="client-tab-btn active" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 WhatsApp</button>
                 <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Planes</button>
-                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red</button>
+                <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red SIP</button>
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
@@ -764,10 +770,31 @@
                 </div>
             </div>
 
+            <!-- SECCIÓN RED SIP Y SOFTPHONE ESTILO ZOIPER PROPIO -->
             <div id="csec-llamadas" class="client-section">
+                <div class="card">
+                    <h2>⚙️ Configuración Softphone SIP (Zoiper Integrado)</h2>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
+                        Conecta tu extensión SIP directamente a tu centralita Asterisk/FreePBX vía WebSockets.
+                    </p>
+                    
+                    <input type="text" id="sip-server-ws" placeholder="Servidor WebSocket (Ej: wss://tu-servidor-voip:8089/ws)" value="wss://omnimovil.xo.je:8089/ws" />
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                        <input type="text" id="sip-user" placeholder="Extensión SIP (Ej: 5000001)" value="5000001" />
+                        <input type="password" id="sip-pass" placeholder="Contraseña SIP" value="1234" />
+                    </div>
+                    
+                    <button class="btn" style="background: var(--accent); color: #000; margin-bottom: 10px;" onclick="conectarZoiperSIP()">⚡ Conectar Softphone SIP</button>
+
+                    <div style="text-align: center; padding: 10px; background: #0b111e; border-radius: 8px; border: 1px solid #2a3b5f;">
+                        <span style="font-size: 0.85rem; color: var(--accent-green);" id="sip-status-text">🔴 Desconectado de Servidor SIP</span>
+                    </div>
+                </div>
+
                 <div class="card" style="text-align: center;">
-                    <h2>Estado de Conexión a la Red</h2>
-                    <p style="font-size: 0.85rem; color: var(--accent-green);" id="red-estado-texto">🟢 Conectado a Servidor VoIP</p>
+                    <h2>☎️ Marcador Directo SIP WebRTC</h2>
+                    <input type="text" id="sip-dial-number" placeholder="Ingresa número o extensión destino" style="text-align: center; font-size: 1.1rem; font-weight: bold;" />
+                    <button class="btn" style="background: var(--accent-green); color: #000;" onclick="realizarLlamadaSIP()">📞 Iniciar Llamada SIP HD</button>
                 </div>
             </div>
 
@@ -929,7 +956,7 @@
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=8').catch(err => console.error(err));
+            navigator.serviceWorker.register('./sw.js?v=9').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -956,6 +983,10 @@
         let fechaVencimientoActual = "2026-11-22";
         let planActualNombre = "Plan Básico IP ($3.00/mes)";
         let numeroMarcado = "+58 500-";
+
+        // VARIABLES Y PROTOCOLO ZOIPER/SIP WEBRTC
+        let ua = null;
+        let sipSession = null;
 
         let callInterval = null;
         let secondsInCall = 0;
@@ -1034,6 +1065,90 @@
             renderizarAdmin();
             iniciarSuscripcionRealtime();
         };
+
+        // INTEGRACIÓN SOFTPHONE ZOIPER / SIP (JsSIP)
+        function conectarZoiperSIP() {
+            let wsServer = document.getElementById('sip-server-ws').value;
+            let user = document.getElementById('sip-user').value;
+            let pass = document.getElementById('sip-pass').value;
+
+            if(!wsServer || !user || !pass) {
+                alert("Completa todos los campos del servidor SIP.");
+                return;
+            }
+
+            document.getElementById('sip-status-text').innerText = "🟡 Conectando al servidor SIP...";
+            document.getElementById('sip-status-text').style.color = "var(--accent-orange)";
+
+            let socket = new JsSIP.WebSocketInterface(wsServer);
+            let domain = wsServer.replace('wss://', '').replace('ws://', '').split(':')[0];
+
+            let configuration = {
+                sockets: [socket],
+                uri: `sip:${user}@${domain}`,
+                password: pass
+            };
+
+            try {
+                ua = new JsSIP.UA(configuration);
+                ua.start();
+
+                ua.on('registered', () => {
+                    document.getElementById('sip-status-text').innerText = `🟢 Registrado Exitosamente como Extension ${user}`;
+                    document.getElementById('sip-status-text').style.color = "var(--accent-green)";
+                    document.getElementById('red-estado-texto').innerText = `🟢 Registrado en Centralita SIP (${user})`;
+                });
+
+                ua.on('registrationFailed', (e) => {
+                    document.getElementById('sip-status-text').innerText = `🔴 Fallo de Registro: ${e.cause}`;
+                    document.getElementById('sip-status-text').style.color = "var(--accent-red)";
+                });
+
+                ua.on('newRTCSession', (data) => {
+                    sipSession = data.session;
+                    if (sipSession.direction === 'incoming') {
+                        let caller = sipSession.remote_identity.uri.user;
+                        if(confirm(`📞 Llamada Entrante de ${caller}. ¿Deseas contestar?`)) {
+                            abrirPantallaLlamada(false);
+                            sipSession.answer({
+                                mediaConstraints: { audio: true, video: false }
+                            });
+                        } else {
+                            sipSession.terminate();
+                        }
+                    }
+                });
+            } catch(err) {
+                alert("Error al iniciar cliente SIP: " + err.message);
+            }
+        }
+
+        function realizarLlamadaSIP() {
+            let num = document.getElementById('sip-dial-number').value;
+            if(!num) { alert("Ingresa un número o extensión."); return; }
+            if(!ua) {
+                alert("Primero debes registrar tu extensión SIP en las opciones de arriba.");
+                return;
+            }
+
+            abrirPantallaLlamada(false);
+            let eventHandlers = {
+                'progress': () => { document.getElementById('call-status').innerText = "🔔 Timbrando..."; },
+                'failed': (e) => { 
+                    document.getElementById('call-status').innerText = `❌ Falló: ${e.cause}`;
+                    setTimeout(finalizarLlamada, 2000);
+                },
+                'confirmed': () => { document.getElementById('call-status').innerText = "🟢 En Comunicación SIP HD"; },
+                'ended': () => { finalizarLlamada(); }
+            };
+
+            let options = {
+                'eventHandlers': eventHandlers,
+                'mediaConstraints': { 'audio': true, 'video': false }
+            };
+
+            sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, options);
+        }
 
         function volverAlPrincipal() {
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
@@ -1258,6 +1373,10 @@
         }
 
         function finalizarLlamada() {
+            if(sipSession) {
+                sipSession.terminate();
+                sipSession = null;
+            }
             clearInterval(callInterval);
             document.getElementById('modal-call-screen').style.display = 'none';
         }
