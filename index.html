@@ -594,7 +594,7 @@
             </div>
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
                 <button id="btn-instalar-app" style="background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
-                <button class="login-top-btn" onclick="abrirModalLoginCliente()">👤 Cliente</button>
+                <button class="login-top-btn" onclick="abrirModalRegistroInicial()">🔑 Mi Cuenta</button>
                 <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
             </div>
         </header>
@@ -632,7 +632,7 @@
                     </div>
                     <div>
                         <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
-                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="volverAlPrincipal()">Salir</button>
+                        <button class="login-top-btn" style="background: var(--accent-red); color: white; padding: 4px 8px; margin-left: 6px;" onclick="cerrarSesionCliente()">Salir</button>
                     </div>
                 </div>
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
@@ -837,7 +837,7 @@
 
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes</h2>
+                    <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes Registrados</h2>
                     <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
                 </div>
 
@@ -881,46 +881,47 @@
             </div>
 
             <div class="card" style="border-color: var(--accent-orange);">
-                <h2 style="color: var(--accent-orange);">Solicitudes de Pagos y Renovación</h2>
-                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 140px;">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>
+                <h2 style="color: var(--accent-orange);">Historial Completo de Solicitudes, Recargas Aprobadas y Rechazadas</h2>
+                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 180px;">
+                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>
                 </div>
             </div>
 
             <div class="card">
-                <h2>Pool de Números Disponibles para Venta</h2>
+                <h2>Pool de Números Disponibles para Venta (Asignación Única)</h2>
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
                 <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
                 <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
 
-        <div id="modal-registro" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1100; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green);">
-                <h2 style="color: var(--accent-green); text-align: center;">📲 Comprar Nueva Línea OmniMovil</h2>
-                <div style="background: #1a253f; border-radius: 8px; padding: 10px; margin-bottom: 12px; font-size: 0.78rem; border: 1px solid #2a3b5f;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-                        <span>Costo de Activación + 1er Mes:</span>
-                        <strong style="color: var(--accent-green);">$5.00 USD</strong>
-                    </div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);">Incluye asignación inmediata de número + Plan Básico por 30 días.</div>
+        <!-- MODAL REGISTRO INICIAL OBLIGATORIO AL DESCARGAR LA APP (PASO 1) -->
+        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 360px; border-color: var(--accent-green); box-shadow: 0 0 25px rgba(0,242,254,0.3);">
+                <h2 style="color: var(--accent-green); text-align: center; font-size: 1.1rem; margin-bottom: 4px;">📲 Paso 1: Crea tu Cuenta</h2>
+                <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-bottom: 14px;">Ingresa tus datos de acceso. El sistema te asignará de forma automática un número de teléfono único e irrepetible.</p>
+                
+                <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
+                <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
+                
+                <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 10px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Registrarse y Activar Línea</button>
+                
+                <div style="text-align: center; border-top: 1px solid #1f2d4a; padding-top: 10px; margin-top: 6px;">
+                    <span style="font-size: 0.72rem; color: var(--text-muted);">¿Ya tienes una cuenta registrada?</span><br/>
+                    <button class="btn btn-small" style="background: transparent; color: var(--accent); font-size: 0.8rem; padding: 4px; border: none; cursor: pointer; text-decoration: underline;" onclick="toggleModoLoginEnInicial()">Iniciar Sesión con mi Usuario</button>
                 </div>
-                <input type="text" id="reg-nombre" placeholder="Nombre completo" />
-                <input type="text" id="reg-user" placeholder="Nombre de usuario" />
-                <input type="password" id="reg-pass" placeholder="Contraseña de cuenta" />
-                <button class="btn" style="background: var(--accent-green); margin-bottom: 8px;" onclick="registrarNuevoCliente()">Activar y Asignar Línea</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
             </div>
         </div>
 
-        <div id="modal-login-cliente" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent);">
-                <h2 style="color: var(--accent); text-align: center;">🔑 Acceso a tu Línea</h2>
-                <input type="text" id="login-c-user" placeholder="Usuario" value="Erik" />
-                <input type="password" id="login-c-pass" placeholder="Contraseña" value="1234" />
-                <button class="btn" style="margin-bottom: 8px;" onclick="ingresarCliente()">Iniciar Sesión</button>
-                <button class="btn" style="background: #1a253f; color: var(--accent); margin-bottom: 8px;" onclick="abrirModalRegistro()">🛒 Comprar / Registrar Nueva Línea</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModales()">Cancelar</button>
+        <!-- MODAL ALTERNATIVO INICIAR SESIÓN CUANDO YA TIENE USUARIO -->
+        <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
+            <div class="card" style="width: 100%; max-width: 330px; border-color: var(--accent);">
+                <h2 style="color: var(--accent); text-align: center;">🔑 Iniciar Sesión</h2>
+                <input type="text" id="login-sec-user" placeholder="Usuario" />
+                <input type="password" id="login-sec-pass" placeholder="Contraseña" />
+                <button class="btn" style="margin-bottom: 8px;" onclick="ejecutarLoginExistente()">Entrar a mi Cuenta</button>
+                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalesIniciales()">Volver al Registro</button>
             </div>
         </div>
 
@@ -956,7 +957,7 @@
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=9').catch(err => console.error(err));
+            navigator.serviceWorker.register('./sw.js?v=11').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -984,7 +985,7 @@
         let planActualNombre = "Plan Básico IP ($3.00/mes)";
         let numeroMarcado = "+58 500-";
 
-        // VARIABLES Y PROTOCOLO ZOIPER/SIP WEBRTC
+        // PROTOCOLO ZOIPER/SIP WEBRTC
         let ua = null;
         let sipSession = null;
 
@@ -994,7 +995,11 @@
         let mediaRecorder = null;
         let audioChunks = [];
 
-        let poolNumeros = ["+58 500-0002", "+58 500-0003", "+58 500-0004", "+58 500-0005"];
+        // POOL DE NÚMEROS ÚNICOS QUE JAMÁS SE REPITEN
+        let poolNumeros = [
+            "+58 500-0004", "+58 500-0005", "+58 500-0006", "+58 500-0007", 
+            "+58 500-0008", "+58 500-0009", "+58 500-0010", "+58 500-0011"
+        ];
         
         let clientesRegistrados = [
             { 
@@ -1064,7 +1069,140 @@
             obtenerClienteSupabase();
             renderizarAdmin();
             iniciarSuscripcionRealtime();
+            
+            // VERIFICAR SI YA ESTÁ REGISTRADO EN ESTE DISPOSITIVO
+            let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
+            if(usuarioGuardado) {
+                let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
+                if(cli) {
+                    vincularSesionCliente(cli);
+                } else {
+                    abrirModalRegistroInicial();
+                }
+            } else {
+                abrirModalRegistroInicial();
+            }
         };
+
+        function abrirModalRegistroInicial() {
+            document.getElementById('modal-registro-inicial').style.display = 'flex';
+        }
+
+        function toggleModoLoginEnInicial() {
+            document.getElementById('modal-registro-inicial').style.display = 'none';
+            document.getElementById('modal-login-secundario').style.display = 'flex';
+        }
+
+        function cerrarModalesIniciales() {
+            document.getElementById('modal-login-secundario').style.display = 'none';
+            document.getElementById('modal-registro-inicial').style.display = 'flex';
+        }
+
+        // PASO 1: REGISTRO CON USUARIO Y CONTRASEÑA E ASIGNACIÓN DE NÚMERO ÚNICO E IRREPETIBLE
+        function ejecutarRegistroInicialPaso1() {
+            let nombre = document.getElementById('init-reg-nombre').value.trim();
+            let user = document.getElementById('init-reg-user').value.trim();
+            let pass = document.getElementById('init-reg-pass').value.trim();
+
+            if(!nombre || !user || !pass) {
+                alert("Por favor completa tu Nombre, Usuario y Contraseña.");
+                return;
+            }
+
+            // Validar que el usuario no exista
+            let existe = clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase());
+            if(existe) {
+                alert("Este nombre de usuario ya está registrado. Por favor elige otro.");
+                return;
+            }
+
+            // Asignación de Número Único del Pool
+            if(poolNumeros.length === 0) {
+                let nuevoNumGenerado = `+58 500-${String(Math.floor(1000 + Math.random() * 9000))}`;
+                poolNumeros.push(nuevoNumGenerado);
+            }
+
+            let numAsignadoUnico = poolNumeros.shift();
+            let hoy = new Date().toISOString().split('T')[0];
+            
+            let proximoMes = new Date();
+            proximoMes.setDate(proximoMes.getDate() + 30);
+            let fechaVenc = proximoMes.toISOString().split('T')[0];
+
+            let nuevoCliente = {
+                id: clientesRegistrados.length + 1,
+                nombre: nombre,
+                usuario: user,
+                pass: pass,
+                cedula: "Registro App",
+                contacto: user,
+                numero: numAsignadoUnico,
+                saldo: 5.00,
+                estado: "Activa",
+                vencimiento: fechaVenc,
+                fecha: hoy,
+                contactosChat: [
+                    { nombre: "Maria Gomez", numero: "+58 500-0002" },
+                    { nombre: "Carlos Perez", numero: "+58 500-0003" }
+                ],
+                historialTransacciones: [
+                    { id: Date.now(), fecha: hoy, tipo: "Registro App Inicial", descripcion: `Asignación de número ${numAsignadoUnico}`, monto: 5.00, estado: "Procesado" }
+                ]
+            };
+
+            // Almacenamiento en la Base de Datos Centralizada
+            clientesRegistrados.push(nuevoCliente);
+            vincularSesionCliente(nuevoCliente);
+            
+            document.getElementById('modal-registro-inicial').style.display = 'none';
+            renderizarAdmin();
+            alert(`¡Registro Exitoso!\n\nTu cuenta ha sido creada.\nNúmero Asignado Único: ${numAsignadoUnico}`);
+        }
+
+        function ejecutarLoginExistente() {
+            let u = document.getElementById('login-sec-user').value.trim();
+            let p = document.getElementById('login-sec-pass').value.trim();
+
+            if(!u || !p) { alert("Ingresa usuario y contraseña."); return; }
+
+            let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === u.toLowerCase() && c.pass === p);
+            if(cli) {
+                vincularSesionCliente(cli);
+                document.getElementById('modal-login-secundario').style.display = 'none';
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
+        }
+
+        function vincularSesionCliente(cli) {
+            clienteAutenticado = cli;
+            nombreCliente = cli.nombre;
+            miNumeroAsignado = cli.numero;
+            saldoActual = cli.saldo;
+            estadoLineaActual = cli.estado;
+            fechaVencimientoActual = cli.vencimiento;
+
+            localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
+
+            if(cli.contactosChat && cli.contactosChat.length > 0) {
+                numeroDestinoActual = cli.contactosChat[0].numero;
+                document.getElementById('chat-nombre-receptor').innerText = cli.contactosChat[0].nombre;
+                document.getElementById('chat-numero-receptor').innerText = cli.contactosChat[0].numero;
+            }
+
+            actualizarVistaCliente();
+            cerrarModales();
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-cliente').classList.add('active');
+            cambiarSeccionCliente('chat');
+        }
+
+        function cerrarSesionCliente() {
+            localStorage.removeItem('omnimovil_usuario_activo');
+            clienteAutenticado = null;
+            volverAlPrincipal();
+            abrirModalRegistroInicial();
+        }
 
         // INTEGRACIÓN SOFTPHONE ZOIPER / SIP (JsSIP)
         function conectarZoiperSIP() {
@@ -1155,15 +1293,14 @@
             document.getElementById('panel-principal').classList.add('active');
         }
 
-        function abrirModalLoginCliente() { document.getElementById('modal-login-cliente').style.display = 'flex'; }
         function abrirModalRegistro() { 
-            document.getElementById('modal-login-cliente').style.display = 'none';
-            document.getElementById('modal-registro').style.display = 'flex'; 
+            document.getElementById('modal-login-secundario').style.display = 'none';
+            document.getElementById('modal-registro-inicial').style.display = 'flex'; 
         }
+
         function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
+        
         function cerrarModales() {
-            document.getElementById('modal-login-cliente').style.display = 'none';
-            document.getElementById('modal-registro').style.display = 'none';
             document.getElementById('modal-login-admin').style.display = 'none';
         }
 
@@ -1468,8 +1605,7 @@
             if(poolNumeros.length === 0) { alert("No hay números en el Pool."); return; }
 
             let numAsignado = poolNumeros.shift();
-            let hoy = new Date();
-            let fechaHoy = hoy.toISOString().split('T')[0];
+            let hoy = new Date().toISOString().split('T')[0];
             
             let proximoMes = new Date();
             proximoMes.setDate(proximoMes.getDate() + 30);
@@ -1486,10 +1622,10 @@
                 saldo: montoPlan,
                 estado: "Activa",
                 vencimiento: fechaVenc,
-                fecha: fechaHoy,
+                fecha: hoy,
                 contactosChat: [],
                 historialTransacciones: [
-                    { id: Date.now(), fecha: fechaHoy, tipo: "Registro Admin", descripcion: `Asignación de línea ${numAsignado}`, monto: montoPlan, estado: "Procesado" }
+                    { id: Date.now(), fecha: hoy, tipo: "Registro Admin", descripcion: `Asignación de línea ${numAsignado}`, monto: montoPlan, estado: "Procesado" }
                 ]
             });
 
@@ -1501,88 +1637,6 @@
 
             renderizarAdmin();
             alert(`¡Cliente registrado con éxito!\n\nUsuario: ${user}\nLínea: ${numAsignado}\nVencimiento: ${fechaVenc}`);
-        }
-
-        function registrarNuevoCliente() {
-            let nombre = document.getElementById('reg-nombre').value;
-            let user = document.getElementById('reg-user').value;
-            let pass = document.getElementById('reg-pass').value;
-            if(!nombre || !user || !pass) { alert("Ingresa nombre, usuario y contraseña."); return; }
-            if(poolNumeros.length === 0) { alert("No hay números libres en el pool."); return; }
-
-            miNumeroAsignado = poolNumeros.shift();
-            nombreCliente = nombre;
-            saldoActual = 5.00;
-            estadoLineaActual = "Activa";
-
-            let hoy = new Date();
-            let fechaHoy = hoy.toISOString().split('T')[0];
-            
-            let proximoMes = new Date();
-            proximoMes.setDate(proximoMes.getDate() + 30);
-            fechaVencimientoActual = proximoMes.toISOString().split('T')[0];
-
-            let nuevoCli = {
-                id: clientesRegistrados.length + 1,
-                nombre: nombreCliente,
-                usuario: user,
-                pass: pass,
-                cedula: "Online",
-                contacto: "App Client",
-                numero: miNumeroAsignado,
-                saldo: saldoActual,
-                estado: "Activa",
-                vencimiento: fechaVencimientoActual,
-                fecha: fechaHoy,
-                contactosChat: [
-                    { nombre: "Soporte OmniMovil", numero: "+58 500-0002" }
-                ],
-                historialTransacciones: [
-                    { id: Date.now(), fecha: fechaHoy, tipo: "Compra de Línea", descripcion: `Asignación de línea ${miNumeroAsignado}`, monto: 5.00, estado: "Procesado" }
-                ]
-            };
-
-            clientesRegistrados.push(nuevoCli);
-            clienteAutenticado = nuevoCli;
-
-            actualizarVistaCliente();
-            cerrarModales();
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-            renderizarAdmin();
-            alert(`¡Activación Exitosa! Tu nueva línea es: ${miNumeroAsignado}\nUsuario: ${user}`);
-        }
-
-        function ingresarCliente() {
-            let user = document.getElementById('login-c-user').value.trim();
-            let pass = document.getElementById('login-c-pass').value.trim();
-            if(!user || !pass) { alert("Ingresa usuario y contraseña."); return; }
-            
-            let cli = clientesRegistrados.find(c => (c.usuario && c.usuario.toLowerCase() === user.toLowerCase() && c.pass === pass) || (c.nombre.toLowerCase().includes(user.toLowerCase()) && pass === "1234"));
-            
-            if(cli) {
-                clienteAutenticado = cli;
-                nombreCliente = cli.nombre;
-                miNumeroAsignado = cli.numero;
-                saldoActual = cli.saldo;
-                estadoLineaActual = cli.estado;
-                fechaVencimientoActual = cli.vencimiento;
-
-                if(cli.contactosChat && cli.contactosChat.length > 0) {
-                    numeroDestinoActual = cli.contactosChat[0].numero;
-                    document.getElementById('chat-nombre-receptor').innerText = cli.contactosChat[0].nombre;
-                    document.getElementById('chat-numero-receptor').innerText = cli.contactosChat[0].numero;
-                }
-
-                actualizarVistaCliente();
-                cerrarModales();
-                document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-                document.getElementById('panel-cliente').classList.add('active');
-                cambiarSeccionCliente('chat');
-            } else {
-                alert("Usuario o contraseña incorrectos.");
-            }
         }
 
         function actualizarVistaCliente() {
@@ -1676,7 +1730,7 @@
                         <div class="history-item">
                             <div>
                                 <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#00e676':'#ff3366'};">[${c.estado}]</span><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • User: ${c.usuario || 'N/A'}</span><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea Única: <strong>${c.numero}</strong> • User: ${c.usuario || 'N/A'}</span><br/>
                                 <span style="font-size:0.68rem; color:#8fa3bf;">Corte: ${c.vencimiento} • Reg: ${c.fecha}</span>
                             </div>
                             <div style="display:flex; gap:4px; align-items:center;">
@@ -1690,16 +1744,23 @@
 
             let contSolicitudes = document.getElementById('lista-solicitudes-admin');
             if(solicitudesRecarga.length === 0) {
-                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes pendientes.</div>`;
+                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>`;
             } else {
                 contSolicitudes.innerHTML = "";
                 solicitudesRecarga.forEach((s, idx) => {
+                    let esPendiente = s.estado === "Pendiente";
+                    let badgeClass = esPendiente ? 'st-pendiente' : s.estado === 'Procesado' ? 'st-procesado' : 'st-rechazado';
                     contSolicitudes.innerHTML += `
                         <div class="history-item">
-                            <div><strong>${s.cliente}</strong> ($${s.monto.toFixed(2)})<br/><span style="font-size:0.7rem;">Ref: ${s.ref}</span></div>
+                            <div>
+                                <strong>${s.cliente}</strong> ($${s.monto.toFixed(2)}) <span class="st-tag ${badgeClass}">${s.estado}</span><br/>
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref}</span>
+                            </div>
                             <div style="display:flex; gap:4px;">
-                                <button class="btn btn-small" style="background:var(--accent-green); color:#000;" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
-                                <button class="btn btn-small" style="background:var(--accent-red); color:#fff;" onclick="rechazarRecarga(${idx})">✗ Rechazar</button>
+                                ${esPendiente ? `
+                                    <button class="btn btn-small" style="background:var(--accent-green); color:#000;" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
+                                    <button class="btn btn-small" style="background:var(--accent-red); color:#fff;" onclick="rechazarRecarga(${idx})">✗ Rechazar</button>
+                                ` : `<span style="font-size:0.75rem; color:var(--text-muted);">Auditado</span>`}
                             </div>
                         </div>
                     `;
@@ -1709,7 +1770,7 @@
             let contPool = document.getElementById('lista-pool-numeros');
             contPool.innerHTML = "";
             if(poolNumeros.length === 0) {
-                contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Sin números en el pool.</div>`;
+                contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Pool vacío. Se generarán automáticamente.</div>`;
             } else {
                 poolNumeros.forEach((num) => {
                     contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible p/ venta</span></div>`;
@@ -1747,8 +1808,9 @@
             if(!monto || !ref) { alert("Completa los datos de pago."); return; }
 
             let hoy = new Date().toISOString().split('T')[0];
+            let itemId = Date.now();
             let itemHistorial = {
-                id: Date.now(),
+                id: itemId,
                 fecha: hoy,
                 tipo: "Reporte de Pago",
                 descripcion: `Pago Móvil / Zelle Ref #${ref}`,
@@ -1761,7 +1823,7 @@
                 clienteAutenticado.historialTransacciones.unshift(itemHistorial);
             }
 
-            solicitudesRecarga.push({ cliente: nombreCliente, monto: monto, ref: ref, itemId: itemHistorial.id });
+            solicitudesRecarga.unshift({ cliente: nombreCliente, monto: monto, ref: ref, itemId: itemId, estado: "Pendiente" });
             document.getElementById('monto-pago').value = "";
             document.getElementById('ref-pago').value = "";
             
@@ -1772,26 +1834,29 @@
 
         function aprobarRecarga(idx) {
             let sol = solicitudesRecarga[idx];
-            saldoActual += sol.monto;
-            estadoLineaActual = "Activa";
+            sol.estado = "Procesado";
             
-            let nuevaFecha = new Date();
-            nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-            fechaVencimientoActual = nuevaFecha.toISOString().split('T')[0];
-
             let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
             if(cli) {
                 cli.saldo += sol.monto;
                 cli.estado = "Activa";
-                cli.vencimiento = fechaVencimientoActual;
+                
+                let nuevaFecha = new Date();
+                nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+                cli.vencimiento = nuevaFecha.toISOString().split('T')[0];
                 
                 if(cli.historialTransacciones) {
                     let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
                     if(h) h.estado = "Procesado";
                 }
+
+                if(clienteAutenticado && clienteAutenticado.nombre === cli.nombre) {
+                    saldoActual = cli.saldo;
+                    estadoLineaActual = cli.estado;
+                    fechaVencimientoActual = cli.vencimiento;
+                }
             }
 
-            solicitudesRecarga.splice(idx, 1);
             actualizarVistaCliente();
             renderizarAdmin();
             alert("Renovación de mensualidad aprobada con éxito.");
@@ -1799,16 +1864,17 @@
 
         function rechazarRecarga(idx) {
             let sol = solicitudesRecarga[idx];
+            sol.estado = "Rechazado";
+
             let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
             if(cli && cli.historialTransacciones) {
                 let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
                 if(h) h.estado = "Rechazado";
             }
 
-            solicitudesRecarga.splice(idx, 1);
             actualizarVistaCliente();
             renderizarAdmin();
-            alert("Solicitud rechazada.");
+            alert("Solicitud de recarga rechazada.");
         }
 
         function comprarPaquete(precio, nombre) {
