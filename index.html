@@ -5,20 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>OmniMovil - La Aventura en Comunicaciones</title>
     
-    <!-- Configuración PWA Optimizada -->
-    <meta name="theme-color" content="#070913">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
     
-    <!-- Manifest PWA -->
     <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
         %22name%22: %22OmniMovil Red IP y Mensajeria%22,
         %22short_name%22: %22OmniMovil%22,
         %22start_url%22: %22.%22,
         %22display%22: %22standalone%22,
-        %22background_color%22: %22%23070913%22,
-        %22theme_color%22: %22%2300f2fe%22,
+        %22background_color%22: %22%23ffffff%22,
+        %22theme_color%22: %22%230284c7%22,
         %22icons%22: [
             {
                 %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22,
@@ -39,14 +37,14 @@
 
     <style>
         :root {
-            --bg-dark: #070913;
-            --card-bg: #101728;
-            --accent: #00f2fe;
-            --accent-green: #00e676;
-            --accent-red: #ff3366;
-            --accent-orange: #ff9800;
-            --text-main: #ffffff;
-            --text-muted: #8fa3bf;
+            --bg-dark: #f4f6f9;
+            --card-bg: #ffffff;
+            --accent: #0284c7;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f59e0b;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
         }
 
         * { box-sizing: border-box; }
@@ -60,10 +58,7 @@
             padding-bottom: 40px;
         }
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1100px; margin: 0 auto; }
 
         .main-header {
             display: flex;
@@ -73,14 +68,15 @@
             padding: 12px 16px;
             border-radius: 12px;
             margin-bottom: 16px;
-            border: 1px solid #1f2d4a;
+            border: 1px solid #e2e8f0;
             flex-wrap: wrap;
             gap: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .login-top-btn {
             background: var(--accent);
-            color: #000;
+            color: #fff;
             border: none;
             padding: 8px 12px;
             border-radius: 8px;
@@ -97,8 +93,8 @@
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 14px;
-            border: 1px solid #1f2d4a;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
 
         .card h2 {
@@ -110,19 +106,20 @@
 
         input, select {
             width: 100%;
-            background: #1a253f;
-            border: 1px solid #2a3b5f;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
             border-radius: 8px;
             padding: 10px;
-            color: white;
+            color: var(--text-main);
             margin-bottom: 10px;
             font-size: 0.9rem;
         }
+        input:focus, select:focus { outline: none; border-color: var(--accent); background: #fff; }
 
         .btn {
             width: 100%;
             background: var(--accent-green);
-            color: #000;
+            color: #fff;
             border: none;
             padding: 12px;
             border-radius: 8px;
@@ -144,8 +141,8 @@
         .static-scroll-box {
             height: 200px;
             overflow-y: auto;
-            background: #0b111e;
-            border: 1px solid #2a3b5f;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
             border-radius: 10px;
             padding: 10px;
         }
@@ -158,7 +155,8 @@
             border-radius: 12px;
             padding: 6px;
             margin-bottom: 14px;
-            border: 1px solid #1f2d4a;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
         .client-tab-btn {
@@ -172,13 +170,13 @@
             cursor: pointer;
             text-align: center;
         }
-        .client-tab-btn.active { background: var(--accent); color: #000; }
+        .client-tab-btn.active { background: var(--accent); color: #fff; }
 
         .client-section { display: none; }
         .client-section.active { display: block; }
 
         .history-item {
-            background: #1a253f;
+            background: #f8fafc;
             padding: 10px;
             border-radius: 8px;
             margin-bottom: 6px;
@@ -186,6 +184,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border: 1px solid #e2e8f0;
         }
 
         .filter-grid {
@@ -199,11 +198,11 @@
             display: grid;
             grid-template-columns: 280px 1fr 260px;
             gap: 10px;
-            background: #f0f2f5;
+            background: #f8fafc;
             border-radius: 12px;
             overflow: hidden;
             height: 540px;
-            border: 1px solid #1f2d4a;
+            border: 1px solid #e2e8f0;
             color: #111b21;
             position: relative;
         }
@@ -221,244 +220,50 @@
             .wa-conversation-side.mobile-active { display: flex; }
         }
 
-        .wa-chat-list-side {
-            background: #ffffff;
-            border-right: 1px solid #e9edef;
-            display: flex;
-            flex-direction: column;
-        }
+        .wa-chat-list-side { background: #ffffff; border-right: 1px solid #e9edef; display: flex; flex-direction: column; }
+        .wa-list-header { background: #f8fafc; padding: 10px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .wa-search-bar { padding: 8px; background: #fff; border-bottom: 1px solid #e2e8f0; }
+        .wa-search-input { background: #f1f5f9; border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 8px; }
+        .wa-search-input input { border: none; background: transparent; margin: 0; padding: 0; color: #111b21; font-size: 0.8rem; width: 100%; }
 
-        .wa-list-header {
-            background: #f0f2f5;
-            padding: 10px 12px;
-            border-bottom: 1px solid #e9edef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .wa-contacts-container { flex-grow: 1; overflow-y: auto; }
+        .wa-contact-card { display: flex; align-items: center; gap: 10px; padding: 10px; cursor: pointer; border-bottom: 1px solid #f8fafc; transition: background 0.15s; }
+        .wa-contact-card:hover, .wa-contact-card.active { background: #f1f5f9; }
 
-        .wa-search-bar {
-            padding: 8px;
-            background: #fff;
-            border-bottom: 1px solid #e9edef;
-        }
+        .wa-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; flex-shrink: 0; }
+        .wa-conversation-side { background: #ffffff; display: flex; flex-direction: column; position: relative; }
+        .wa-chat-header { background: #f8fafc; padding: 8px 12px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .wa-messages-box { flex-grow: 1; padding: 12px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #fdfdfd; }
 
-        .wa-search-input {
-            background: #f0f2f5;
-            border-radius: 8px;
-            padding: 6px 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .wa-msg { max-width: 75%; padding: 8px 12px; border-radius: 8px; font-size: 0.85rem; line-height: 1.3; box-shadow: 0 1px 2px rgba(0,0,0,0.05); word-break: break-word; }
+        .wa-msg-out { align-self: flex-end; background: #e0f2fe; color: #0f172a; border-top-right-radius: 0; }
+        .wa-msg-in { align-self: flex-start; background: #f1f5f9; color: #0f172a; border-top-left-radius: 0; }
+        .wa-msg-meta { font-size: 0.65rem; color: #64748b; text-align: right; margin-top: 2px; }
 
-        .wa-search-input input {
-            border: none;
-            background: transparent;
-            margin: 0;
-            padding: 0;
-            color: #111b21;
-            font-size: 0.8rem;
-            width: 100%;
-        }
+        .wa-input-bar { background: #f8fafc; padding: 8px 12px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #e2e8f0; position: relative; }
+        .wa-input-bar input { margin-bottom: 0; background: white; color: #0f172a; border: 1px solid #cbd5e1; padding: 8px 12px; font-size: 0.85rem; border-radius: 8px; }
 
-        .wa-pills {
-            display: flex;
-            gap: 4px;
-            padding: 6px 8px;
-            border-bottom: 1px solid #e9edef;
-            overflow-x: auto;
-        }
+        .wa-ad-side { background: #ffffff; border-left: 1px solid #e2e8f0; padding: 12px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+        .wa-ad-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; text-align: center; }
 
-        .wa-pill {
-            background: #e9edef;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            color: #54656f;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .wa-pill.active { background: #d9fdd3; color: #008069; font-weight: bold; }
-
-        .wa-contacts-container {
-            flex-grow: 1;
-            overflow-y: auto;
-        }
-
-        .wa-contact-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 1px solid #f5f6f6;
-            transition: background 0.15s;
-        }
-        .wa-contact-card:hover, .wa-contact-card.active { background: #f0f2f5; }
-
-        .wa-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #00a884;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .status-ring {
-            border: 2px solid #00a884;
-            padding: 2px;
-        }
-
-        .wa-conversation-side {
-            background: #efeae2;
-            display: flex;
-            flex-direction: column;
-            background-image: radial-gradient(#cbd5e1 1px, transparent 0);
-            background-size: 16px 16px;
-            position: relative;
-        }
-
-        .wa-chat-header {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            border-bottom: 1px solid #e9edef;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .wa-messages-box {
-            flex-grow: 1;
-            padding: 12px 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .wa-msg {
-            max-width: 75%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            line-height: 1.3;
-            box-shadow: 0 1px 0.5px rgba(11,20,26,0.13);
-            word-break: break-word;
-        }
-        .wa-msg-out { align-self: flex-end; background: #d9fdd3; color: #111b21; border-top-right-radius: 0; }
-        .wa-msg-in { align-self: flex-start; background: #ffffff; color: #111b21; border-top-left-radius: 0; }
-
-        .wa-msg-meta {
-            font-size: 0.65rem;
-            color: #667781;
-            text-align: right;
-            margin-top: 2px;
-        }
-
-        .wa-input-bar {
-            background: #f0f2f5;
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border-top: 1px solid #e9edef;
-            position: relative;
-        }
-
-        .wa-input-bar input {
-            margin-bottom: 0;
-            background: white;
-            color: #111b21;
-            border: none;
-            padding: 8px 12px;
-            font-size: 0.85rem;
-            border-radius: 8px;
-        }
-
-        .wa-ad-side {
-            background: #ffffff;
-            border-left: 1px solid #e9edef;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            overflow-y: auto;
-        }
-
-        .wa-ad-card {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-        }
-
-        .emoji-picker-box {
-            display: none;
-            position: absolute;
-            bottom: 50px;
-            left: 10px;
-            background: white;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            z-index: 100;
-            width: 240px;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-            font-size: 1.2rem;
-            text-align: center;
-        }
+        .emoji-picker-box { display: none; position: absolute; bottom: 50px; left: 10px; background: white; border: 1px solid #cbd5e1; border-radius: 10px; padding: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); z-index: 100; width: 240px; grid-template-columns: repeat(6, 1fr); gap: 6px; font-size: 1.2rem; text-align: center; }
         .emoji-item { cursor: pointer; border-radius: 4px; padding: 2px; }
         .emoji-item:hover { background: #f1f5f9; }
 
-        #modal-call-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(7, 9, 19, 0.95);
-            z-index: 4000;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 40px 20px;
-        }
+        #modal-call-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 4000; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 20px; }
 
-        .status-badge {
-            display: inline-block;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.7rem;
-            font-weight: bold;
-        }
+        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
         .status-badge.active-line { background: #dcfce7; color: #15803d; }
         .status-badge.suspended-line { background: #fee2e2; color: #b91c1c; }
 
-        .st-tag {
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.65rem;
-            font-weight: bold;
-        }
+        .st-tag { padding: 2px 6px; border-radius: 4px; font-size: 0.65rem; font-weight: bold; }
         .st-procesado { background: #dcfce7; color: #15803d; }
         .st-pendiente { background: #fef3c7; color: #d97706; }
         .st-rechazado { background: #fee2e2; color: #b91c1c; }
-        .st-enviado { background: #e0f2fe; color: #0369a1; }
     </style>
 </head>
 <body>
 
-    <!-- Elementos de audio de llamada WebRTC -->
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
 
@@ -467,73 +272,38 @@
             <strong style="color: var(--accent-green); font-size: 0.85rem;">💬 Nuevo Mensaje de <span id="notif-sender">+58 500-0000</span></strong>
             <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para abrir</span>
         </div>
-        <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
+        <div id="notif-body" style="font-size: 0.8rem; margin-top: 4px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Mensaje recibido...</div>
     </div>
 
     <!-- MODAL AGREGAR CONTACTO / NUEVO CHAT -->
-    <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
-        <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent-green);">
+    <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--accent-green); margin: 0;">➕ Agregar Contacto / Nuevo Chat</h2>
-                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #8fa3bf;" onclick="cerrarModalNuevoChat()"></i>
+                <h2 style="color: var(--accent); margin: 0;">➕ Agregar Contacto / Nuevo OmniChat</h2>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; color: var(--text-muted);" onclick="cerrarModalNuevoChat()"></i>
             </div>
             
             <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px;">Añadir nuevo contacto a tu lista:</p>
             <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre del Contacto" />
             <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-0004)" />
-            <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 12px; font-size: 0.85rem;" onclick="guardarNuevoContactoChat()">Guardar e Iniciar Chat</button>
+            <button class="btn" style="background: var(--accent); color: #fff; margin-bottom: 12px; font-size: 0.85rem;" onclick="guardarNuevoContactoChat()">Guardar e Iniciar Chat</button>
             
-            <strong style="font-size: 0.8rem; color: #fff; display: block; margin-bottom: 6px;">Contactos Registrados en la Red:</strong>
-            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 140px; background: #070913;"></div>
+            <strong style="font-size: 0.8rem; color: var(--text-main); display: block; margin-bottom: 6px;">Contactos Registrados en la Red:</strong>
+            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 140px;"></div>
         </div>
     </div>
 
-    <!-- MODAL DE ESTADOS / HISTORIAS -->
-    <div id="modal-status-screen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2600; justify-content: center; align-items: center; padding: 20px;">
-        <div class="card" style="width: 100%; max-width: 400px; border-color: var(--accent);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="color: var(--accent); margin: 0;">⭕ Estados de Contactos</h2>
-                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #8fa3bf;" onclick="cerrarModalEstados()"></i>
-            </div>
-
-            <div style="display: flex; align-items: center; gap: 10px; padding: 8px; background: #1a253f; border-radius: 8px; margin-bottom: 12px; cursor: pointer;" onclick="subirNuevoEstado()">
-                <div class="wa-avatar status-ring" style="background: var(--accent-orange);">
-                    <i class="fa-solid fa-plus" style="font-size: 0.8rem;"></i>
-                </div>
-                <div>
-                    <strong style="font-size: 0.85rem; color: white;">Mi Estado</strong><br/>
-                    <span style="font-size: 0.7rem; color: var(--text-muted);">Toca para añadir una actualización</span>
-                </div>
-            </div>
-
-            <strong style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 8px;">Recientes:</strong>
-            <div class="static-scroll-box" style="height: 180px; background: #070913;">
-                <div class="history-item">
-                    <div>
-                        <strong style="color: white; font-size: 0.8rem;">Soporte OmniMovil</strong><br/>
-                        <span style="font-size: 0.65rem; color: var(--text-muted);">¡Disfruta de la red IP!</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL LLAMADA EN VIVO WEBRTC / SIP -->
+    <!-- MODAL LLAMADA EN VIVO -->
     <div id="modal-call-screen">
         <div style="text-align: center;">
             <div class="wa-avatar" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 12px auto; background: var(--accent);" id="call-avatar">MG</div>
             <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Contacto</h2>
             <p style="color: var(--accent-green); font-size: 0.9rem; margin-top: 4px;" id="call-status">Conectando llamada HD Red IP...</p>
-            <div style="color: var(--text-muted); font-size: 0.8rem;" id="call-timer">00:00</div>
+            <div style="color: #94a3b8; font-size: 0.8rem;" id="call-timer">00:00</div>
         </div>
-
-        <div style="width: 100%; max-width: 320px; height: 180px; background: #1a253f; border-radius: 12px; display: flex; justify-content: center; align-items: center; border: 1px solid #2a3b5f;" id="call-video-container">
-            <i class="fa-solid fa-video-slash" style="font-size: 2.5rem; color: #54656f;" id="call-video-icon"></i>
-        </div>
-
         <div style="display: flex; gap: 20px;">
-            <button class="dial-btn" style="background: #2a3b5f;" onclick="toggleMuteCall()"><i class="fa-solid fa-microphone-slash" id="mute-icon"></i></button>
-            <button class="dial-btn" style="background: var(--accent-red);" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
+            <button class="btn" style="background: #334155; width: 60px; height: 60px; border-radius: 50%;" onclick="toggleMuteCall()"><i class="fa-solid fa-microphone-slash" id="mute-icon"></i></button>
+            <button class="btn" style="background: var(--accent-red); width: 60px; height: 60px; border-radius: 50%;" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
         </div>
     </div>
 
@@ -544,8 +314,8 @@
                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
             <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-                <button id="btn-instalar-app" style="background: var(--accent-green); color: #000; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
-                <button class="login-top-btn" style="background: var(--accent-orange);" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
+                <button id="btn-instalar-app" style="background: var(--accent-green); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
+                <button class="login-top-btn" style="background: var(--accent-orange); color:#fff;" onclick="abrirModalLoginAdmin()">⚙️ Admin</button>
             </div>
         </header>
 
@@ -563,42 +333,35 @@
                     </div>
                 </div>
                 <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 6px; display: flex; justify-content: space-between;">
-                    <span>Plan Actual: <strong style="color: #fff;" id="linea-plan-nombre">Plan Básico IP ($3.00/mes)</strong></span>
+                    <span>Plan Actual: <strong style="color: var(--text-main);" id="linea-plan-nombre">Plan Básico IP ($3.00/mes)</strong></span>
                     <span>Corte: <strong style="color: var(--accent-orange);" id="linea-fecha-venc">2026-11-22</strong></span>
                 </div>
             </div>
 
             <div class="client-tabs">
                 <button class="client-tab-btn" id="ctab-1" onclick="cambiarSeccionCliente('billetera')">💳 Saldo</button>
-                <button class="client-tab-btn active" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 WhatsApp</button>
+                <button class="client-tab-btn active" id="ctab-chat" onclick="cambiarSeccionCliente('chat')">💬 OmniChat</button>
                 <button class="client-tab-btn" id="ctab-2" onclick="cambiarSeccionCliente('paquetes')">📦 Planes</button>
                 <button class="client-tab-btn" id="ctab-3" onclick="cambiarSeccionCliente('llamadas')">📞 Red SIP</button>
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
+            <!-- SECCIÓN OMNICHAT -->
             <div id="csec-chat" class="client-section active">
                 <div class="wa-pro-layout">
-                    
                     <div class="wa-chat-list-side mobile-active" id="wa-side-contacts">
                         <div class="wa-list-header">
-                            <strong style="font-size: 0.85rem;">Conversaciones</strong>
-                            <div style="display: flex; gap: 12px; color: #54656f; font-size: 1rem;">
-                                <i class="fa-solid fa-circle-notch" style="cursor: pointer;" title="Ver Estados" onclick="abrirModalEstados()"></i>
+                            <strong style="font-size: 0.85rem;">OmniChat - Conversaciones</strong>
+                            <div style="display: flex; gap: 12px; color: var(--accent); font-size: 1rem;">
                                 <i class="fa-solid fa-plus" style="cursor: pointer;" title="Agregar Contacto / Nuevo Chat" onclick="abrirModalNuevoChat()"></i>
                             </div>
                         </div>
 
                         <div class="wa-search-bar">
                             <div class="wa-search-input">
-                                <i class="fa-solid fa-magnifying-glass" style="color: #54656f;"></i>
-                                <input type="text" id="wa-contact-search-input" placeholder="Buscar contacto o número..." onkeyup="filtrarContactosChat()">
+                                <i class="fa-solid fa-magnifying-glass" style="color: var(--text-muted);"></i>
+                                <input type="text" id="wa-contact-search-input" placeholder="Buscar contacto..." onkeyup="filtrarContactosChat()">
                             </div>
-                        </div>
-
-                        <div class="wa-pills">
-                            <button class="wa-pill active">Todos</button>
-                            <button class="wa-pill">No leídos</button>
-                            <button class="wa-pill">Favoritos</button>
                         </div>
 
                         <div class="wa-contacts-container" id="lista-contactos-chat"></div>
@@ -607,20 +370,19 @@
                     <div class="wa-conversation-side mobile-active" id="wa-side-conversation">
                         <div class="wa-chat-header">
                             <div style="display: flex; align-items: center; gap: 8px;">
-                                <div class="wa-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;" id="chat-header-avatar">MG</div>
+                                <div class="wa-avatar" style="width: 32px; height: 32px; font-size: 0.8rem;" id="chat-header-avatar">S</div>
                                 <div>
                                     <strong style="font-size: 0.85rem;" id="chat-nombre-receptor">Soporte</strong><br/>
-                                    <span style="font-size: 0.65rem; color: #00a884;" id="chat-numero-receptor">+58 500-0000</span>
+                                    <span style="font-size: 0.65rem; color: var(--accent-green);" id="chat-numero-receptor">+58 500-0000</span>
                                 </div>
                             </div>
-                            <div style="display: flex; gap: 14px; color: #54656f; font-size: 1rem;">
-                                <i class="fa-solid fa-video" style="cursor: pointer;" title="Videollamada HD" onclick="iniciarVideollamadaHD()"></i>
+                            <div style="display: flex; gap: 14px; color: var(--accent); font-size: 1rem;">
                                 <i class="fa-solid fa-phone" style="cursor: pointer;" title="Llamada de Voz HD" onclick="iniciarLlamadaVozHD()"></i>
                             </div>
                         </div>
 
                         <div class="wa-messages-box" id="contenedor-mensajes">
-                            <div style="text-align: center; color: #667781; font-size: 0.75rem;">Comienza a chatear en vivo.</div>
+                            <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Comienza a chatear en OmniChat.</div>
                         </div>
 
                         <div class="emoji-picker-box" id="emoji-picker">
@@ -633,28 +395,21 @@
                         </div>
 
                         <div class="wa-input-bar">
-                            <i class="fa-regular fa-face-smile" style="color: #54656f; font-size: 1.2rem; cursor: pointer;" onclick="toggleEmojiPicker()"></i>
-                            <i class="fa-solid fa-paperclip" style="color: #54656f; font-size: 1.2rem; cursor: pointer;" title="Adjuntar Imagen" onclick="document.getElementById('file-input-image').click()"></i>
-                            <input type="file" id="file-input-image" accept="image/*" style="display: none;" onchange="enviarImagenAdjunta(this)" />
-                            
-                            <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
-                            
-                            <i class="fa-solid fa-microphone" id="mic-btn-icon" style="color: #54656f; font-size: 1.2rem; cursor: pointer;" title="Grabar Nota de Voz" onclick="toggleGrabarAudio()"></i>
-                            <i class="fa-solid fa-paper-plane" style="color: #00a884; font-size: 1.2rem; cursor: pointer;" onclick="enviarMensajeSupabase()"></i>
+                            <i class="fa-regular fa-face-smile" style="color: var(--text-muted); font-size: 1.2rem; cursor: pointer;" onclick="toggleEmojiPicker()"></i>
+                            <input type="text" id="chat-input-texto" placeholder="Escribe un mensaje en OmniChat" onkeypress="if(event.key === 'Enter') enviarMensajeSupabase()" />
+                            <i class="fa-solid fa-paper-plane" style="color: var(--accent); font-size: 1.2rem; cursor: pointer;" onclick="enviarMensajeSupabase()"></i>
                         </div>
                     </div>
 
                     <div class="wa-ad-side">
                         <div class="wa-ad-card">
-                            <strong style="font-size: 0.8rem; color: #0f172a;">DATOS DE SU LÍNEA OMNIMOVIL</strong>
-                            <p style="font-size: 0.7rem; color: #475569; margin-top: 4px;">Usuario: <strong id="ad-nombre-user">Erik</strong></p>
-                            <p style="font-size: 0.7rem; color: #475569;">Número: <strong id="ad-num-user">+58 500-0001</strong></p>
-                            <p style="font-size: 0.75rem; color: #00a884; font-weight: bold; margin-top: 4px;">Saldo: $<span id="ad-saldo-user">5.00</span></p>
+                            <strong style="font-size: 0.8rem; color: var(--text-main);">DATOS DE SU LÍNEA</strong>
+                            <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 4px;">Usuario: <strong id="ad-nombre-user">Erik</strong></p>
+                            <p style="font-size: 0.7rem; color: var(--text-muted);">Número: <strong id="ad-num-user">+58 500-0001</strong></p>
+                            <p style="font-size: 0.75rem; color: var(--accent-green); font-weight: bold; margin-top: 4px;">Saldo: $<span id="ad-saldo-user">5.00</span></p>
                         </div>
                     </div>
-
                 </div>
-
             </div>
 
             <div id="csec-billetera" class="client-section">
@@ -664,7 +419,7 @@
                 </div>
                 <div class="card">
                     <h2>Reportar Pago de Mensualidad / Recarga</h2>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Pago Móvil / Zelle / Binance Pay. Al ser verificado se reanudará tu línea.</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Pago Móvil / Zelle / Binance Pay.</p>
                     <input type="number" id="monto-pago" placeholder="Monto pagado en USD ($)" />
                     <input type="text" id="ref-pago" placeholder="Número de Referencia" />
                     <button class="btn" onclick="enviarReportePago()">Enviar Solicitud de Renovación</button>
@@ -675,56 +430,50 @@
                 <div class="card">
                     <h2>Catálogo de Planes Mensuales</h2>
                     <div class="history-item">
-                        <div><strong>Plan Básico ($3.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">100 Mins IP + Mensajería</span></div>
+                        <div><strong>Plan Básico ($3.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">100 Mins IP + OmniChat</span></div>
                         <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Plan Básico')">Suscribir</button>
                     </div>
                     <div class="history-item">
-                        <div><strong>Plan Ilimitado Pro ($5.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">Llamadas IP Ilimitadas + Chat</span></div>
+                        <div><strong>Plan Ilimitado Pro ($5.00/mes)</strong><br/><span style="font-size:0.7rem; color: var(--text-muted);">Llamadas IP Ilimitadas + OmniChat</span></div>
                         <button class="btn btn-small" style="background: var(--accent);" onclick="comprarPaquete(5.00, 'Plan Ilimitado Pro')">Suscribir</button>
                     </div>
                 </div>
             </div>
 
-            <!-- SECCIÓN RED SIP Y SOFTPHONE -->
             <div id="csec-llamadas" class="client-section">
                 <div class="card">
-                    <h2>⚙️ Configuración Softphone SIP (Zoiper Integrado)</h2>
-                    <input type="text" id="sip-server-ws" placeholder="Servidor WebSocket (Ej: wss://tu-servidor-voip:8089/ws)" value="wss://omnimovil.xo.je:8089/ws" />
+                    <h2>⚙️ Configuración Softphone SIP</h2>
+                    <input type="text" id="sip-server-ws" placeholder="Servidor WebSocket" value="wss://omnimovil.xo.je:8089/ws" />
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <input type="text" id="sip-user" placeholder="Extensión SIP (Ej: 5000001)" value="5000001" />
-                        <input type="password" id="sip-pass" placeholder="Contraseña SIP" value="1234" />
+                        <input type="text" id="sip-user" placeholder="Extensión" value="5000001" />
+                        <input type="password" id="sip-pass" placeholder="Contraseña" value="1234" />
                     </div>
-                    <button class="btn" style="background: var(--accent); color: #000; margin-bottom: 10px;" onclick="conectarZoiperSIP()">⚡ Conectar Softphone SIP</button>
-                    <div style="text-align: center; padding: 10px; background: #0b111e; border-radius: 8px; border: 1px solid #2a3b5f;">
-                        <span style="font-size: 0.85rem; color: var(--accent-green);" id="sip-status-text">🔴 Desconectado de Servidor SIP</span>
+                    <button class="btn" style="background: var(--accent); color: #fff; margin-bottom: 10px;" onclick="conectarZoiperSIP()">⚡ Conectar Softphone SIP</button>
+                    <div style="text-align: center; padding: 10px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <span style="font-size: 0.85rem; color: var(--accent-red);" id="sip-status-text">🔴 Desconectado de Servidor SIP</span>
                     </div>
-                </div>
-
-                <div class="card" style="text-align: center;">
-                    <h2>☎️ Marcador Directo SIP WebRTC</h2>
-                    <input type="text" id="sip-dial-number" placeholder="Ingresa número o extensión destino" style="text-align: center; font-size: 1.1rem; font-weight: bold;" />
-                    <button class="btn" style="background: var(--accent-green); color: #000;" onclick="realizarLlamadaSIP()">📞 Iniciar Llamada SIP HD</button>
                 </div>
             </div>
 
             <div id="csec-historial" class="client-section">
                 <div class="card">
-                    <h2>Historial Personal de Transacciones y Actividad</h2>
-                    <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px; background: #070913;"></div>
+                    <h2>Historial Personal de Transacciones</h2>
+                    <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px;"></div>
                 </div>
             </div>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR -->
+        <!-- PANEL DE ADMINISTRADOR CON TODAS LAS FUNCIONES, FILTROS Y EXPORTACIONES -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
-                <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="salirDeAdmin()">Cerrar Panel Admin</button>
+                <button class="login-top-btn" style="background: var(--card-bg); color: var(--text-main); border: 1px solid #e2e8f0;" onclick="salirDeAdmin()">Cerrar Panel Admin</button>
             </div>
 
+            <!-- FUNCIÓN 1: REGISTRAR NUEVO CLIENTE -->
             <div class="card" style="border-color: var(--accent-green);">
                 <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-                <div class="static-scroll-box" style="height: 200px; background: #070913;">
+                <div class="static-scroll-box" style="height: 200px;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo del Cliente" />
                         <input type="text" id="admin-reg-cedula" placeholder="Cédula / Identificación (ID)" />
@@ -740,64 +489,136 @@
                             <option value="5.00">Plan Ilimitado Pro ($5.00/mes)</option>
                         </select>
                     </div>
-                    <button class="btn" style="background: var(--accent-green); color: #000; font-weight: bold; margin-top: 4px;" onclick="registrarClienteDesdeAdmin()">➕ Registrar Cliente y Generar Línea Automática</button>
+                    <button class="btn" style="background: var(--accent-green); color: #fff; font-weight: bold; margin-top: 4px;" onclick="registrarClienteDesdeAdmin()">➕ Registrar Cliente y Generar Línea Automática</button>
                 </div>
             </div>
 
+            <!-- FUNCIÓN 2: BASE DE CLIENTES CON FILTROS Y EXPORTAR -->
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes Registrados</h2>
-                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar Clientes CSV</button>
+                    <button class="btn btn-small" style="background: var(--accent-green); color: #fff;" onclick="exportarClientesCSV()">📥 Exportar Clientes CSV</button>
                 </div>
+
                 <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" style="margin-bottom: 8px;" />
-                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 200px;">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
+
+                <div class="filter-grid">
+                    <select id="filter-cli-dia" onchange="renderizarAdmin()">
+                        <option value="">Día (Todos)</option>
+                        <script>
+                            for(let i=1; i<=31; i++) {
+                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                    <select id="filter-cli-mes" onchange="renderizarAdmin()">
+                        <option value="">Mes (Todos)</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select id="filter-cli-anio" onchange="renderizarAdmin()">
+                        <option value="">Año (Todos)</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
                 </div>
+
+                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 200px;"></div>
             </div>
 
+            <!-- FUNCIÓN 3: SOLICITUDES Y RECARGAS CON FILTROS Y EXPORTAR -->
             <div class="card" style="border-color: var(--accent-orange);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales</h2>
-                    <button class="btn btn-small" style="background: var(--accent-orange); color: #000;" onclick="exportarSolicitudesCSV()">📥 Exportar Recargas CSV</button>
+                    <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales (Aprobadas/Rechazadas)</h2>
+                    <button class="btn btn-small" style="background: var(--accent-orange); color: #fff;" onclick="exportarSolicitudesCSV()">📥 Exportar Recargas CSV</button>
                 </div>
-                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 180px;">
-                    <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>
+
+                <div class="filter-grid">
+                    <select id="filter-sol-dia" onchange="renderizarAdmin()">
+                        <option value="">Día (Todos)</option>
+                        <script>
+                            for(let i=1; i<=31; i++) {
+                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                    <select id="filter-sol-mes" onchange="renderizarAdmin()">
+                        <option value="">Mes (Todos)</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select id="filter-sol-anio" onchange="renderizarAdmin()">
+                        <option value="">Año (Todos)</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
                 </div>
+
+                <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 180px;"></div>
             </div>
 
+            <!-- FUNCIÓN 4: POOL DE NÚMEROS CON EXPORTAR -->
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <h2>🔢 Pool de Números Disponibles</h2>
-                    <button class="btn btn-small" style="background: var(--accent); color: #000;" onclick="exportarPoolCSV()">📥 Exportar Pool CSV</button>
+                    <h2>🔢 Pool de Números Disponibles (Asignación Única)</h2>
+                    <button class="btn btn-small" style="background: var(--accent); color: #fff;" onclick="exportarPoolCSV()">📥 Exportar Pool CSV</button>
                 </div>
+                
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
+                <button class="btn" style="background: var(--accent-orange); color: #fff; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
+                
                 <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
 
-        <!-- PANTALLA DE BIENVENIDA -->
-        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.96); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
-            <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent); box-shadow: 0 0 30px rgba(0,242,254,0.3); text-align: center; padding: 24px;">
-                <div style="width: 80px; height: 80px; background: #ffffff; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
-                    <i class="fa-solid fa-phone" style="font-size: 2.2rem; color: #070913; transform: rotate(-15deg);"></i>
-                    <i class="fa-solid fa-star" style="font-size: 1.1rem; color: #ff9800; position: absolute; margin-top: -24px; margin-left: 28px;"></i>
+        <!-- PANTALLA DE BIENVENIDA / DESCARGA INICIAL -->
+        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
+            <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent); box-shadow: 0 10px 25px rgba(0,0,0,0.15); text-align: center; padding: 24px;">
+                
+                <div style="width: 80px; height: 80px; background: #0f172a; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <i class="fa-solid fa-phone" style="font-size: 2.2rem; color: #ffffff; transform: rotate(-15deg);"></i>
+                    <i class="fa-solid fa-star" style="font-size: 1.1rem; color: #f59e0b; position: absolute; margin-top: -24px; margin-left: 28px;"></i>
                 </div>
+
                 <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
-                <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">
+                
+                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px;">
                     Descarga nuestra app y regístrate y disfruta de la mejor aventura en comunicaciones.
                 </p>
-                <button class="btn" style="background: var(--accent-green); color: #000; font-size: 0.9rem; padding: 14px; margin-bottom: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,230,118,0.3);" onclick="mostrarFormularioRegistro()">
+
+                <button class="btn" style="background: var(--accent-green); color: #fff; font-size: 0.9rem; padding: 14px; margin-bottom: 12px; font-weight: bold;" onclick="mostrarFormularioRegistro()">
                     📲 Descarga nuestra app y regístrate
                 </button>
-                <div id="form-registro-container" style="display: none; margin-top: 14px; text-align: left; border-top: 1px solid #1f2d4a; padding-top: 14px;">
-                    <h3 style="color: var(--accent-green); font-size: 0.9rem; margin: 0 0 8px 0; text-align: center;">Crea tu Cuenta y Número Único</h3>
+
+                <div id="form-registro-container" style="display: none; margin-top: 14px; text-align: left; border-top: 1px solid #e2e8f0; padding-top: 14px;">
+                    <h3 style="color: var(--accent); font-size: 0.9rem; margin: 0 0 8px 0; text-align: center;">Crea tu Cuenta y Número Único</h3>
                     <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
                     <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
                     <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
-                    <button class="btn" style="background: var(--accent-green); color: #000; margin-bottom: 8px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro y Activar Línea</button>
+                    <button class="btn" style="background: var(--accent-green); color: #fff; margin-bottom: 8px; font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro y Activar Línea</button>
                 </div>
-                <div style="text-align: center; border-top: 1px solid #1f2d4a; padding-top: 12px; margin-top: 10px;">
+
+                <div style="text-align: center; border-top: 1px solid #e2e8f0; padding-top: 12px; margin-top: 10px;">
                     <span style="font-size: 0.75rem; color: var(--text-muted);">¿Ya tienes una cuenta?</span><br/>
                     <button class="btn btn-small" style="background: transparent; color: var(--accent); font-size: 0.8rem; padding: 4px; border: none; cursor: pointer; text-decoration: underline;" onclick="toggleModoLoginEnInicial()">Iniciar Sesión</button>
                 </div>
@@ -805,24 +626,24 @@
         </div>
 
         <!-- MODAL INICIAR SESIÓN -->
-        <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.95); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
+        <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 340px; border-color: var(--accent); text-align: center;">
                 <h2 style="color: var(--accent); margin-bottom: 6px;">🔑 Iniciar Sesión</h2>
                 <input type="text" id="login-sec-user" placeholder="Usuario" style="text-align: left;" />
                 <input type="password" id="login-sec-pass" placeholder="Contraseña" style="text-align: left;" />
-                <button class="btn" style="margin-bottom: 8px;" onclick="ejecutarLoginExistente()">Entrar a mi Cuenta</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalesIniciales()">Volver al Inicio</button>
+                <button class="btn" style="background: var(--accent); color: #fff; margin-bottom: 8px;" onclick="ejecutarLoginExistente()">Entrar a mi Cuenta</button>
+                <button class="btn" style="background: #cbd5e1; color: #0f172a;" onclick="cerrarModalesIniciales()">Volver al Inicio</button>
             </div>
         </div>
 
         <!-- MODAL ACCESO ADMIN -->
-        <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
+        <div id="modal-login-admin" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 320px; border-color: var(--accent-orange);">
                 <h2 style="color: var(--accent-orange); text-align: center;">⚙️ Acceso Administrador</h2>
                 <input type="text" id="login-a-user" placeholder="Admin" value="admin" />
                 <input type="password" id="login-a-pass" placeholder="Password" value="admin123" />
-                <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar al Panel Operadora</button>
-                <button class="btn" style="background: #2a3b5f; color: white;" onclick="cerrarModalAdmin()">Cancelar</button>
+                <button class="btn" style="background: var(--accent-orange); color: #fff; margin-bottom: 8px;" onclick="ingresarAdmin()">Entrar</button>
+                <button class="btn" style="background: #cbd5e1; color: #0f172a;" onclick="cerrarModalAdmin()">Cancelar</button>
             </div>
         </div>
     </div>
@@ -858,7 +679,7 @@
 
         let clienteAutenticado = null;
         let miNumeroAsignado = "+58 500-0001";
-        let numeroDestinoActual = "+58 500-0002";
+        let numeroDestinoActual = "+58 500-0000";
         let nombreCliente = "Erik";
         let saldoActual = 5.00;
         let estadoLineaActual = "Activa";
@@ -870,8 +691,7 @@
         let secondsInCall = 0;
 
         let poolNumeros = [
-            "+58 500-0004", "+58 500-0005", "+58 500-0006", "+58 500-0007", 
-            "+58 500-0008", "+58 500-0009", "+58 500-0010", "+58 500-0011"
+            "+58 500-0004", "+58 500-0005", "+58 500-0006", "+58 500-0007"
         ];
         
         let clientesRegistrados = [];
@@ -891,31 +711,25 @@
             }
         };
 
-        // CARGAR USUARIOS GLOBALES DESDE SUPABASE PARA QUE TODOS SE VEAN
         async function cargarUsuariosDesdeSupabase() {
             let client = obtenerClienteSupabase();
             if(!client) {
-                // Datos de respaldo por defecto si no hay conexión inicial
                 clientesRegistrados = [
-                    { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", fecha: "2026-10-22" },
-                    { nombre: "Maria Gomez", usuario: "maria", pass: "1234", numero: "+58 500-0002", saldo: 12.50, estado: "Activa", fecha: "2026-10-20" }
+                    { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22" }
                 ];
                 return;
             }
 
             try {
-                let { data, error } = await client.from('usuarios').select('*');
+                let { data } = await client.from('usuarios').select('*');
                 if(data && data.length > 0) {
                     clientesRegistrados = data;
                 } else {
-                    // Si está vacía la tabla, insertamos un usuario inicial por defecto
                     clientesRegistrados = [
-                        { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", fecha: "2026-10-22" }
+                        { nombre: "Erik Sosa", usuario: "Erik", pass: "1234", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22" }
                     ];
                 }
-            } catch(e) {
-                console.warn("Error cargando usuarios remotos:", e);
-            }
+            } catch(e) { console.warn(e); }
             renderizarAdmin();
         }
 
@@ -924,9 +738,7 @@
             if(!client) return;
             try {
                 await client.from('usuarios').insert([nuevoCli]);
-            } catch(e) {
-                console.warn("Error guardando usuario en BD:", e);
-            }
+            } catch(e) { console.warn(e); }
         }
 
         function abrirModalRegistroInicial() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
@@ -954,14 +766,8 @@
             proximoMes.setDate(proximoMes.getDate() + 30);
 
             let nuevoCliente = {
-                nombre: nombre, 
-                usuario: user, 
-                pass: pass, 
-                numero: numAsignadoUnico, 
-                saldo: 5.00, 
-                estado: "Activa", 
-                vencimiento: proximoMes.toISOString().split('T')[0], 
-                fecha: hoy
+                nombre: nombre, usuario: user, pass: pass, cedula: "Registro App", contacto: user,
+                numero: numAsignadoUnico, saldo: 5.00, estado: "Activa", vencimiento: proximoMes.toISOString().split('T')[0], fecha: hoy
             };
 
             clientesRegistrados.push(nuevoCliente);
@@ -1003,7 +809,6 @@
             abrirModalRegistroInicial();
         }
 
-        // LLAMADAS Y SOFTPHONE SIP
         function conectarZoiperSIP() {
             let wsServer = document.getElementById('sip-server-ws').value;
             let user = document.getElementById('sip-user').value;
@@ -1019,21 +824,11 @@
                 document.getElementById('sip-status-text').innerText = `🟢 Conectado SIP (${user})`;
                 document.getElementById('sip-status-text').style.color = "var(--accent-green)";
             });
-            ua.on('registrationFailed', (e) => {
-                document.getElementById('sip-status-text').innerText = `🔴 Error SIP: ${e.cause}`;
-            });
         }
 
-        function realizarLlamadaSIP() {
-            let num = document.getElementById('sip-dial-number').value;
-            if(!num || !ua) { alert("Ingresa un número y conéctate al servidor SIP."); return; }
-            abrirPantallaLlamada();
-            sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, { mediaConstraints: { audio: true, video: false } });
-        }
-
-        function abrirPantallaLlamada() {
+        function iniciarLlamadaVozHD() {
             if(estadoLineaActual !== "Activa") { alert("Línea suspendida."); return; }
-            document.getElementById('call-name').innerText = document.getElementById('chat-nombre-receptor').innerText || "Llamada IP";
+            document.getElementById('call-name').innerText = document.getElementById('chat-nombre-receptor').innerText;
             document.getElementById('modal-call-screen').style.display = 'flex';
             secondsInCall = 0;
             callInterval = setInterval(() => {
@@ -1045,7 +840,6 @@
         }
 
         function finalizarLlamada() {
-            if(sipSession) { sipSession.terminate(); sipSession = null; }
             clearInterval(callInterval);
             document.getElementById('modal-call-screen').style.display = 'none';
         }
@@ -1074,15 +868,9 @@
             } else { alert("Credenciales incorrectas."); }
         }
 
-        // MOSTRAR CONTACTOS REGISTRADOS DINÁMICAMENTE EN EL MODAL DE CHAT
         function abrirModalNuevoChat() {
             let container = document.getElementById('modal-lista-contactos');
             container.innerHTML = "";
-            
-            if(clientesRegistrados.length === 0) {
-                container.innerHTML = `<div style="color:var(--text-muted); font-size:0.75rem; text-align:center; padding:10px;">No hay otros usuarios en la red aún.</div>`;
-            }
-
             clientesRegistrados.forEach(c => {
                 if(c.numero !== miNumeroAsignado) {
                     container.innerHTML += `
@@ -1100,7 +888,6 @@
         }
 
         function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-
         function seleccionarContactoDeModal(numero, nombre) {
             document.getElementById('input-nuevo-nombre-contacto').value = nombre;
             document.getElementById('input-nuevo-numero-chat').value = numero;
@@ -1128,21 +915,19 @@
             let lista = (clienteAutenticado && clienteAutenticado.contactosChat) ? clienteAutenticado.contactosChat : [];
             
             if(lista.length === 0) {
-                cont.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem; padding: 20px;">Sin contactos guardados. Toca ➕ para agregar.</div>`;
+                cont.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 20px;">Sin contactos. Toca ➕</div>`;
                 return;
             }
 
-            lista.forEach((c, idx) => {
+            lista.forEach((c) => {
                 let iniciales = c.nombre.split(" ").map(n=>n[0]).join("");
                 let esActivo = c.numero === numeroDestinoActual;
                 cont.innerHTML += `
                     <div class="wa-contact-card ${esActivo ? 'active':''}" onclick="seleccionarContacto('${c.numero}', '${c.nombre}')">
                         <div class="wa-avatar">${iniciales}</div>
                         <div style="flex-grow: 1;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong style="font-size: 0.85rem;" class="contact-name-text">${c.nombre}</strong>
-                            </div>
-                            <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">${c.numero}</div>
+                            <strong style="font-size: 0.85rem;">${c.nombre}</strong>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">${c.numero}</div>
                         </div>
                     </div>
                 `;
@@ -1158,7 +943,6 @@
             cargarMensajesSupabase();
         }
 
-        // CHAT EN TIEMPO REAL CON SUPABASE
         async function enviarMensajeSupabaseConContenido(contenidoHTML) {
             if(estadoLineaActual !== "Activa") { alert("Línea suspendida."); return; }
             let client = obtenerClienteSupabase();
@@ -1173,7 +957,7 @@
                         hora: horaActual,
                         estado: 'entregado'
                     }]);
-                } catch(e) { console.warn("Error enviando mensaje:", e); }
+                } catch(e) { console.warn(e); }
             }
             renderizarMensajeEnPantalla(miNumeroAsignado, contenidoHTML, horaActual);
         }
@@ -1192,7 +976,7 @@
             box.innerHTML += `
                 <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
                     ${texto}
-                    <div class="wa-msg-meta">${hora} ${esMio ? '<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>' : ''}</div>
+                    <div class="wa-msg-meta">${hora}</div>
                 </div>
             `;
             box.scrollTop = box.scrollHeight;
@@ -1216,28 +1000,136 @@
             } catch(e) { console.log(e); }
         }
 
-        // RENDERIZAR PANEL ADMIN
+        function registrarClienteDesdeAdmin() {
+            let nombre = document.getElementById('admin-reg-nombre').value;
+            let cedula = document.getElementById('admin-reg-cedula').value;
+            let user = document.getElementById('admin-reg-user').value;
+            let pass = document.getElementById('admin-reg-pass').value;
+            let telefono = document.getElementById('admin-reg-telefono').value;
+            let montoPlan = parseFloat(document.getElementById('admin-reg-plan').value);
+
+            if(!nombre || !cedula || !user || !pass) { alert("Ingresa Nombre, Cédula, Usuario y Contraseña."); return; }
+            if(poolNumeros.length === 0) poolNumeros.push(`+58 500-${Math.floor(1000 + Math.random() * 9000)}`);
+            
+            let numAsignado = poolNumeros.shift();
+            let hoy = new Date().toISOString().split('T')[0];
+            let proximoMes = new Date();
+            proximoMes.setDate(proximoMes.getDate() + 30);
+
+            let nuevo = {
+                nombre: nombre, usuario: user, pass: pass, cedula: cedula, contacto: telefono || "N/A",
+                numero: numAsignado, saldo: montoPlan, estado: "Activa", vencimiento: proximoMes.toISOString().split('T')[0], fecha: hoy
+            };
+
+            clientesRegistrados.push(nuevo);
+            guardarUsuarioEnSupabase(nuevo);
+            
+            document.getElementById('admin-reg-nombre').value = "";
+            document.getElementById('admin-reg-cedula').value = "";
+            document.getElementById('admin-reg-user').value = "";
+            document.getElementById('admin-reg-pass').value = "";
+            document.getElementById('admin-reg-telefono').value = "";
+
+            renderizarAdmin();
+            alert(`¡Cliente registrado con éxito!\nLínea: ${numAsignado}`);
+        }
+
+        // RENDERIZAR ADMIN CON FILTROS COMPLETOS (DÍA, MES, AÑO)
         function renderizarAdmin() {
+            // 1. Clientes
             let contClientes = document.getElementById('lista-clientes-admin');
             let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
-            let cliFiltrados = clientesRegistrados.filter(c => c.nombre.toLowerCase().includes(busqueda) || c.numero.toLowerCase().includes(busqueda));
+            let dCli = document.getElementById('filter-cli-dia')?.value || "";
+            let mCli = document.getElementById('filter-cli-mes')?.value || "";
+            let aCli = document.getElementById('filter-cli-anio')?.value || "";
 
-            contClientes.innerHTML = cliFiltrados.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">Sin registros.</div>` : "";
-            cliFiltrados.forEach((c) => {
+            let cliFiltrados = clientesRegistrados.filter(c => {
+                let partes = (c.fecha || "").split("-");
+                let coincide = c.nombre.toLowerCase().includes(busqueda) || (c.cedula && c.cedula.toLowerCase().includes(busqueda)) || c.numero.toLowerCase().includes(busqueda);
+                return coincide && (aCli === "" || partes[0] === aCli) && (mCli === "" || partes[1] === mCli) && (dCli === "" || partes[2] === dCli);
+            });
+
+            contClientes.innerHTML = cliFiltrados.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">Sin registros para los filtros.</div>` : "";
+            cliFiltrados.forEach((c, idx) => {
+                let esActivo = c.estado === "Activa";
                 contClientes.innerHTML += `
                     <div class="history-item">
                         <div>
-                            <strong style="color:var(--accent);">${c.nombre}</strong> [${c.estado}]<br/>
-                            <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Usuario: ${c.usuario}</span>
+                            <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#10b981':'#ef4444'};">[${c.estado}]</span><br/>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">Línea: <strong>${c.numero}</strong> • User: ${c.usuario}</span><br/>
+                            <span style="font-size:0.68rem; color:var(--text-muted);">Corte: ${c.vencimiento || 'N/A'} • Reg: ${c.fecha || 'N/A'}</span>
                         </div>
-                        <span style="color:var(--accent-green);">$${c.saldo.toFixed(2)}</span>
+                        <div style="display:flex; gap:4px; align-items:center;">
+                            <span style="font-weight:bold; color:var(--accent-green); font-size:0.8rem; margin-right:4px;">$${(c.saldo||0).toFixed(2)}</span>
+                            <button class="btn btn-small" style="background:${esActivo ? '#ef4444':'#10b981'}; color:#fff;" onclick="alternarEstadoCliente(${idx})">${esActivo ? 'Suspender':'Activar'}</button>
+                        </div>
                     </div>`;
+            });
+
+            // 2. Solicitudes y Recargas
+            let contSol = document.getElementById('lista-solicitudes-admin');
+            let dSol = document.getElementById('filter-sol-dia')?.value || "";
+            let mSol = document.getElementById('filter-sol-mes')?.value || "";
+            let aSol = document.getElementById('filter-sol-anio')?.value || "";
+
+            let solFiltradas = solicitudesRecarga.filter(s => {
+                let partes = (s.fecha || new Date().toISOString().split('T')[0]).split("-");
+                return (aSol === "" || partes[0] === aSol) && (mSol === "" || partes[1] === mSol) && (dSol === "" || partes[2] === dSol);
+            });
+
+            contSol.innerHTML = solFiltradas.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">No hay solicitudes registradas.</div>` : "";
+            solFiltradas.forEach((s, idx) => {
+                let esPendiente = s.estado === "Pendiente";
+                let badgeClass = esPendiente ? 'st-pendiente' : s.estado === 'Procesado' ? 'st-procesado' : 'st-rechazado';
+                contSol.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <strong>${s.cliente}</strong> ($${s.monto.toFixed(2)}) <span class="st-tag ${badgeClass}">${s.estado}</span><br/>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref} • Fecha: ${s.fecha}</span>
+                        </div>
+                        <div style="display:flex; gap:4px;">
+                            ${esPendiente ? `
+                                <button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
+                                <button class="btn btn-small" style="background:var(--accent-red);" onclick="rechazarRecarga(${idx})">✗</button>
+                            ` : `<span style="font-size:0.75rem; color:var(--text-muted);">Auditado</span>`}
+                        </div>
+                    </div>`;
+            });
+
+            // 3. Pool
+            let contPool = document.getElementById('lista-pool-numeros');
+            contPool.innerHTML = "";
+            poolNumeros.forEach(num => {
+                contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span></div>`;
             });
         }
 
+        function alternarEstadoCliente(idx) {
+            clientesRegistrados[idx].estado = clientesRegistrados[idx].estado === "Activa" ? "Suspendida" : "Activa";
+            renderizarAdmin();
+        }
+
+        function aprobarRecarga(idx) {
+            let sol = solicitudesRecarga[idx];
+            sol.estado = "Procesado";
+            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
+            if(cli) {
+                cli.saldo = (cli.saldo || 0) + sol.monto;
+                cli.estado = "Activa";
+            }
+            renderizarAdmin();
+            alert("Recarga aprobada con éxito.");
+        }
+
+        function rechazarRecarga(idx) {
+            solicitudesRecarga[idx].estado = "Rechazado";
+            renderizarAdmin();
+        }
+
+        // EXPORTACIONES A CSV
         function exportarClientesCSV() {
-            let csv = "Nombre,Usuario,Numero,Saldo,Estado,Fecha\n";
-            clientesRegistrados.forEach(c => { csv += `"${c.nombre}","${c.usuario}","${c.numero}",${c.saldo},"${c.estado}","${c.fecha}"\n`; });
+            let csv = "Nombre,Usuario,Cedula,Numero,Saldo,Estado,Fecha\n";
+            clientesRegistrados.forEach(c => { csv += `"${c.nombre}","${c.usuario}","${c.cedula || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.fecha}"\n`; });
             descargarCSV(csv, "Clientes_OmniMovil.csv");
         }
 
