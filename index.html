@@ -34,7 +34,6 @@
     }">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Librería JsSIP para Softphone estilo Zoiper vía WebRTC -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jssip/3.10.0/jssip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -518,15 +517,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="history-item" onclick="verEstadoContacto('Carlos Perez', 'Disfrutando la mejor cobertura VoIP.')">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <div class="wa-avatar status-ring" style="width: 32px; height: 32px; font-size: 0.75rem; background: var(--accent-orange);">CP</div>
-                        <div>
-                            <strong style="color: white; font-size: 0.8rem;">Carlos Perez</strong><br/>
-                            <span style="font-size: 0.65rem; color: var(--text-muted);">Hoy a las 11:30 a.m.</span>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -643,12 +633,6 @@
                             <span class="emoji-item" onclick="insertarEmoji('❤️')">❤️</span>
                             <span class="emoji-item" onclick="insertarEmoji('🔥')">🔥</span>
                             <span class="emoji-item" onclick="insertarEmoji('🙏')">🙏</span>
-                            <span class="emoji-item" onclick="insertarEmoji('🎉')">🎉</span>
-                            <span class="emoji-item" onclick="insertarEmoji('😎')">😎</span>
-                            <span class="emoji-item" onclick="insertarEmoji('📞')">📞</span>
-                            <span class="emoji-item" onclick="insertarEmoji('📲')">📲</span>
-                            <span class="emoji-item" onclick="insertarEmoji('✅')">✅</span>
-                            <span class="emoji-item" onclick="insertarEmoji('👋')">👋</span>
                         </div>
 
                         <div class="wa-input-bar">
@@ -669,12 +653,6 @@
                             <p style="font-size: 0.7rem; color: #475569; margin-top: 4px;">Usuario: <strong id="ad-nombre-user">Erik</strong></p>
                             <p style="font-size: 0.7rem; color: #475569;">Número: <strong id="ad-num-user">+58 500-0001</strong></p>
                             <p style="font-size: 0.75rem; color: #00a884; font-weight: bold; margin-top: 4px;">Saldo: $<span id="ad-saldo-user">5.00</span></p>
-                        </div>
-
-                        <div class="wa-ad-card" style="background: #f0fdf4; border-color: #bbf7d0;">
-                            <i class="fa-solid fa-tv" style="font-size: 1.3rem; color: #16a34a; margin-bottom: 4px;"></i>
-                            <strong style="font-size: 0.75rem; color: #14532d; display: block;">DISFRUTA EN FAMILIA TU PANTALLA</strong>
-                            <p style="font-size: 0.65rem; color: #166534; margin-top: 2px;">Conéctate con PanaXtreaming y disfruta del mejor contenido.</p>
                         </div>
                     </div>
 
@@ -710,12 +688,12 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN RED SIP Y SOFTPHONE ESTILO ZOIPER PROPIO -->
+            <!-- SECCIÓN RED SIP Y SOFTPHONE ESTILO ZOIPER -->
             <div id="csec-llamadas" class="client-section">
                 <div class="card">
                     <h2>⚙️ Configuración Softphone SIP (Zoiper Integrado)</h2>
                     <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">
-                        Conecta tu extensión SIP directamente a tu centralita Asterisk/FreePBX vía WebSockets.
+                        Conecta tu extensión SIP directamente a tu centralita vía WebSockets.
                     </p>
                     
                     <input type="text" id="sip-server-ws" placeholder="Servidor WebSocket (Ej: wss://tu-servidor-voip:8089/ws)" value="wss://omnimovil.xo.je:8089/ws" />
@@ -746,16 +724,17 @@
             </div>
         </div>
 
-        <!-- PANEL DE ADMINISTRADOR -->
+        <!-- PANEL DE ADMINISTRADOR CON FILTROS Y EXPORTACIÓN EN CADA FUNCIÓN -->
         <div id="panel-admin" class="panel-view">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="font-size: 0.95rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora</h2>
                 <button class="login-top-btn" style="background: var(--card-bg); color: white; border: 1px solid #1f2d4a;" onclick="salirDeAdmin()">Cerrar Panel Admin</button>
             </div>
 
+            <!-- FUNCIÓN 1: REGISTRAR NUEVO CLIENTE -->
             <div class="card" style="border-color: var(--accent-green);">
                 <h2 style="color: var(--accent-green); margin-bottom: 8px;">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-                <div class="static-scroll-box" style="height: 220px; background: #070913;">
+                <div class="static-scroll-box" style="height: 200px; background: #070913;">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo del Cliente" />
                         <input type="text" id="admin-reg-cedula" placeholder="Cédula / Identificación (ID)" />
@@ -775,16 +754,17 @@
                 </div>
             </div>
 
+            <!-- FUNCIÓN 2: BASE DE CLIENTES REGISTRADOS (CON FILTROS Y EXPORTAR) -->
             <div class="card" style="border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
                     <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes Registrados</h2>
-                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar CSV</button>
+                    <button class="btn btn-small" style="background: var(--accent-green); color: #000;" onclick="exportarClientesCSV()">📥 Exportar Clientes CSV</button>
                 </div>
 
                 <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" style="margin-bottom: 8px;" />
 
                 <div class="filter-grid">
-                    <select id="filter-dia" onchange="renderizarAdmin()">
+                    <select id="filter-cli-dia" onchange="renderizarAdmin()">
                         <option value="">Día (Todos)</option>
                         <script>
                             for(let i=1; i<=31; i++) {
@@ -792,7 +772,7 @@
                             }
                         </script>
                     </select>
-                    <select id="filter-mes" onchange="renderizarAdmin()">
+                    <select id="filter-cli-mes" onchange="renderizarAdmin()">
                         <option value="">Mes (Todos)</option>
                         <option value="01">Enero</option>
                         <option value="02">Febrero</option>
@@ -807,35 +787,76 @@
                         <option value="11">Noviembre</option>
                         <option value="12">Diciembre</option>
                     </select>
-                    <select id="filter-anio" onchange="renderizarAdmin()">
+                    <select id="filter-cli-anio" onchange="renderizarAdmin()">
                         <option value="">Año (Todos)</option>
-                        <option value="2024">2024</option>
                         <option value="2025">2025</option>
                         <option value="2026">2026</option>
                     </select>
                 </div>
 
-                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 220px;">
+                <div class="static-scroll-box" id="lista-clientes-admin" style="height: 200px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Cargando registros...</div>
                 </div>
             </div>
 
+            <!-- FUNCIÓN 3: SOLICITUDES Y RECARGAS (CON FILTROS Y EXPORTAR) -->
             <div class="card" style="border-color: var(--accent-orange);">
-                <h2 style="color: var(--accent-orange);">Historial Completo de Solicitudes, Recargas Aprobadas y Rechazadas</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales (Aprobadas/Rechazadas)</h2>
+                    <button class="btn btn-small" style="background: var(--accent-orange); color: #000;" onclick="exportarSolicitudesCSV()">📥 Exportar Recargas CSV</button>
+                </div>
+
+                <div class="filter-grid">
+                    <select id="filter-sol-dia" onchange="renderizarAdmin()">
+                        <option value="">Día (Todos)</option>
+                        <script>
+                            for(let i=1; i<=31; i++) {
+                                document.write(`<option value="${i < 10 ? '0'+i : i}">${i}</option>`);
+                            }
+                        </script>
+                    </select>
+                    <select id="filter-sol-mes" onchange="renderizarAdmin()">
+                        <option value="">Mes (Todos)</option>
+                        <option value="01">Enero</option>
+                        <option value="02">Febrero</option>
+                        <option value="03">Marzo</option>
+                        <option value="04">Abril</option>
+                        <option value="05">Mayo</option>
+                        <option value="06">Junio</option>
+                        <option value="07">Julio</option>
+                        <option value="08">Agosto</option>
+                        <option value="09">Septiembre</option>
+                        <option value="10">Octubre</option>
+                        <option value="11">Noviembre</option>
+                        <option value="12">Diciembre</option>
+                    </select>
+                    <select id="filter-sol-anio" onchange="renderizarAdmin()">
+                        <option value="">Año (Todos)</option>
+                        <option value="2025">2025</option>
+                        <option value="2026">2026</option>
+                    </select>
+                </div>
+
                 <div class="static-scroll-box" id="lista-solicitudes-admin" style="height: 180px;">
                     <div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>
                 </div>
             </div>
 
+            <!-- FUNCIÓN 4: POOL DE NÚMEROS (CON FILTROS Y EXPORTAR) -->
             <div class="card">
-                <h2>Pool de Números Disponibles para Venta (Asignación Única)</h2>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <h2>🔢 Pool de Números Disponibles (Asignación Única)</h2>
+                    <button class="btn btn-small" style="background: var(--accent); color: #000;" onclick="exportarPoolCSV()">📥 Exportar Pool CSV</button>
+                </div>
+                
                 <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
                 <button class="btn" style="background: var(--accent-orange); color: #000; margin-bottom: 12px;" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
+                
                 <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px;"></div>
             </div>
         </div>
 
-        <!-- PANTALLA DE BIENVENIDA CON TU LOGO Y BOTÓN SOLICITADO -->
+        <!-- PANTALLA DE BIENVENIDA -->
         <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.96); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
             <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent); box-shadow: 0 0 30px rgba(0,242,254,0.3); text-align: center; padding: 24px;">
                 
@@ -847,12 +868,10 @@
 
                 <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
                 
-                <!-- ESLOGAN / TEXTO DE AVENTURA EN COMUNICACIONES -->
                 <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">
                     Descarga nuestra app y regístrate y disfruta de la mejor aventura en comunicaciones.
                 </p>
 
-                <!-- BOTÓN PRINCIPAL DE ACCIÓN -->
                 <button class="btn" style="background: var(--accent-green); color: #000; font-size: 0.9rem; padding: 14px; margin-bottom: 12px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,230,118,0.3);" onclick="mostrarFormularioRegistro()">
                     📲 Descarga nuestra app y regístrate
                 </button>
@@ -872,11 +891,10 @@
             </div>
         </div>
 
-        <!-- MODAL ALTERNATIVO INICIAR SESIÓN -->
+        <!-- MODAL INICIAR SESIÓN -->
         <div id="modal-login-secundario" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(7,9,19,0.95); z-index: 10001; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 340px; border-color: var(--accent); text-align: center;">
                 <h2 style="color: var(--accent); margin-bottom: 6px;">🔑 Iniciar Sesión</h2>
-                <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 12px;">Ingresa a tu panel de cliente</p>
                 <input type="text" id="login-sec-user" placeholder="Usuario" style="text-align: left;" />
                 <input type="password" id="login-sec-pass" placeholder="Contraseña" style="text-align: left;" />
                 <button class="btn" style="margin-bottom: 8px;" onclick="ejecutarLoginExistente()">Entrar a mi Cuenta</button>
@@ -898,7 +916,6 @@
 
     <script>
         let deferredPrompt = null;
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -907,17 +924,10 @@
         function instalarPWA() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') { console.log('App instalada'); }
-                    deferredPrompt = null;
-                });
+                deferredPrompt.userChoice.then((choiceResult) => { deferredPrompt = null; });
             } else {
                 window.location.reload(true);
             }
-        }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./sw.js?v=13').catch(err => console.error(err));
         }
 
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
@@ -927,10 +937,8 @@
         function obtenerClienteSupabase() {
             if (!supabaseClient && typeof supabase !== 'undefined') {
                 try {
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
-                        auth: { persistSession: false }
-                    });
-                } catch(e) { console.error("Error al reconectar con Supabase", e); }
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+                } catch(e) { console.error(e); }
             }
             return supabaseClient;
         }
@@ -942,20 +950,15 @@
         let saldoActual = 5.00;
         let estadoLineaActual = "Activa";
         let fechaVencimientoActual = "2026-11-22";
-        let planActualNombre = "Plan Básico IP ($3.00/mes)";
-        let numeroMarcado = "+58 500-";
 
-        // PROTOCOLO ZOIPER/SIP WEBRTC
         let ua = null;
         let sipSession = null;
-
         let callInterval = null;
         let secondsInCall = 0;
         let isRecordingAudio = false;
         let mediaRecorder = null;
         let audioChunks = [];
 
-        // POOL DE NÚMEROS ÚNICOS QUE JAMÁS SE REPITEN
         let poolNumeros = [
             "+58 500-0004", "+58 500-0005", "+58 500-0006", "+58 500-0007", 
             "+58 500-0008", "+58 500-0009", "+58 500-0010", "+58 500-0011"
@@ -963,63 +966,9 @@
         
         let clientesRegistrados = [
             { 
-                id: 1, 
-                nombre: "Erik Sosa", 
-                usuario: "Erik",
-                pass: "1234",
-                cedula: "V-20123456", 
-                contacto: "0414-1234567", 
-                numero: "+58 500-0001", 
-                saldo: 5.00, 
-                estado: "Activa", 
-                vencimiento: "2026-11-22", 
-                fecha: "2026-10-22",
-                contactosChat: [
-                    { nombre: "Maria Gomez", numero: "+58 500-0002" },
-                    { nombre: "Carlos Perez", numero: "+58 500-0003" }
-                ],
-                historialTransacciones: [
-                    { id: 101, fecha: "2026-10-22", tipo: "Activación Inicial", descripcion: "Línea activada (+58 500-0001)", monto: 5.00, estado: "Procesado" },
-                    { id: 102, fecha: "2026-10-23", tipo: "Suscripción Plan", descripcion: "Plan Básico IP ($3.00/mes)", monto: -3.00, estado: "Procesado" }
-                ]
-            },
-            { 
-                id: 2, 
-                nombre: "Maria Gomez", 
-                usuario: "maria",
-                pass: "1234",
-                cedula: "V-18987654", 
-                contacto: "0424-7654321", 
-                numero: "+58 500-0002", 
-                saldo: 12.50, 
-                estado: "Activa", 
-                vencimiento: "2026-11-20", 
-                fecha: "2026-10-20",
-                contactosChat: [
-                    { nombre: "Erik Sosa", numero: "+58 500-0001" }
-                ],
-                historialTransacciones: [
-                    { id: 201, fecha: "2026-10-20", tipo: "Recarga Saldo", descripcion: "Pago Móvil Ref #88412", monto: 12.50, estado: "Procesado" }
-                ]
-            },
-            { 
-                id: 3, 
-                nombre: "Carlos Perez", 
-                usuario: "carlos",
-                pass: "1234",
-                cedula: "V-15432109", 
-                contacto: "0412-5554433", 
-                numero: "+58 500-0003", 
-                saldo: 0.00, 
-                estado: "Suspendida", 
-                vencimiento: "2026-09-15", 
-                fecha: "2026-08-15",
-                contactosChat: [
-                    { nombre: "Erik Sosa", numero: "+58 500-0001" }
-                ],
-                historialTransacciones: [
-                    { id: 301, fecha: "2026-08-15", tipo: "Reporte de Pago", descripcion: "Referencia #4410", monto: 5.00, estado: "Rechazado" }
-                ]
+                id: 1, nombre: "Erik Sosa", usuario: "Erik", pass: "1234", cedula: "V-20123456", contacto: "0414-1234567", numero: "+58 500-0001", saldo: 5.00, estado: "Activa", vencimiento: "2026-11-22", fecha: "2026-10-22",
+                contactosChat: [{ nombre: "Maria Gomez", numero: "+58 500-0002" }],
+                historialTransacciones: [{ id: 101, fecha: "2026-10-22", tipo: "Activación Inicial", descripcion: "Línea activada", monto: 5.00, estado: "Procesado" }]
             }
         ];
 
@@ -1028,111 +977,61 @@
         window.onload = function() {
             obtenerClienteSupabase();
             renderizarAdmin();
-            iniciarSuscripcionRealtime();
-            
-            // VERIFICAR SESIÓN ACTIVA EN EL DISPOSITIVO (AUTO-LOGIN PERMANENTE)
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
-                if(cli) {
-                    vincularSesionCliente(cli);
-                } else {
-                    abrirModalRegistroInicial();
-                }
+                if(cli) vincularSesionCliente(cli);
+                else abrirModalRegistroInicial();
             } else {
                 abrirModalRegistroInicial();
             }
         };
 
-        function abrirModalRegistroInicial() {
-            document.getElementById('modal-registro-inicial').style.display = 'flex';
-        }
-
-        function mostrarFormularioRegistro() {
-            document.getElementById('form-registro-container').style.display = 'block';
-        }
-
+        function abrirModalRegistroInicial() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
+        function mostrarFormularioRegistro() { document.getElementById('form-registro-container').style.display = 'block'; }
         function toggleModoLoginEnInicial() {
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('modal-login-secundario').style.display = 'flex';
         }
-
         function cerrarModalesIniciales() {
             document.getElementById('modal-login-secundario').style.display = 'none';
             document.getElementById('modal-registro-inicial').style.display = 'flex';
         }
 
-        // EJECUTAR REGISTRO Y ASIGNACIÓN DE NÚMERO ÚNICO E IRREPETIBLE
         function ejecutarRegistroInicialPaso1() {
             let nombre = document.getElementById('init-reg-nombre').value.trim();
             let user = document.getElementById('init-reg-user').value.trim();
             let pass = document.getElementById('init-reg-pass').value.trim();
+            if(!nombre || !user || !pass) { alert("Completa todos los campos."); return; }
+            if(clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase())) { alert("Usuario ya existe."); return; }
 
-            if(!nombre || !user || !pass) {
-                alert("Por favor completa tu Nombre, Usuario y Contraseña.");
-                return;
-            }
-
-            let existe = clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase());
-            if(existe) {
-                alert("Este nombre de usuario ya está registrado. Elige otro.");
-                return;
-            }
-
-            if(poolNumeros.length === 0) {
-                let nuevoNumGenerado = `+58 500-${String(Math.floor(1000 + Math.random() * 9000))}`;
-                poolNumeros.push(nuevoNumGenerado);
-            }
-
+            if(poolNumeros.length === 0) poolNumeros.push(`+58 500-${Math.floor(1000 + Math.random() * 9000)}`);
             let numAsignadoUnico = poolNumeros.shift();
             let hoy = new Date().toISOString().split('T')[0];
-            
             let proximoMes = new Date();
             proximoMes.setDate(proximoMes.getDate() + 30);
-            let fechaVenc = proximoMes.toISOString().split('T')[0];
 
             let nuevoCliente = {
                 id: clientesRegistrados.length + 1,
-                nombre: nombre,
-                usuario: user,
-                pass: pass,
-                cedula: "Registro App",
-                contacto: user,
-                numero: numAsignadoUnico,
-                saldo: 5.00,
-                estado: "Activa",
-                vencimiento: fechaVenc,
-                fecha: hoy,
-                contactosChat: [
-                    { nombre: "Maria Gomez", numero: "+58 500-0002" },
-                    { nombre: "Carlos Perez", numero: "+58 500-0003" }
-                ],
-                historialTransacciones: [
-                    { id: Date.now(), fecha: hoy, tipo: "Registro App Inicial", descripcion: `Asignación de número ${numAsignadoUnico}`, monto: 5.00, estado: "Procesado" }
-                ]
+                nombre: nombre, usuario: user, pass: pass, cedula: "Registro App", contacto: user,
+                numero: numAsignadoUnico, saldo: 5.00, estado: "Activa", vencimiento: proximoMes.toISOString().split('T')[0], fecha: hoy,
+                contactosChat: [{ nombre: "Soporte OmniMovil", numero: "+58 500-0000" }],
+                historialTransacciones: [{ id: Date.now(), fecha: hoy, tipo: "Registro App Inicial", descripcion: `Línea ${numAsignadoUnico}`, monto: 5.00, estado: "Procesado" }]
             };
 
             clientesRegistrados.push(nuevoCliente);
             vincularSesionCliente(nuevoCliente);
-            
-            document.getElementById('modal-registro-inicial').style.display = 'none';
-            renderizarAdmin();
-            alert(`¡Bienvenido a la aventura en comunicaciones!\n\nTu número asignado único es: ${numAsignadoUnico}`);
+            alert(`¡Bienvenido!\nTu número asignado único es: ${numAsignadoUnico}`);
         }
 
         function ejecutarLoginExistente() {
             let u = document.getElementById('login-sec-user').value.trim();
             let p = document.getElementById('login-sec-pass').value.trim();
-
-            if(!u || !p) { alert("Ingresa usuario y contraseña."); return; }
-
             let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === u.toLowerCase() && c.pass === p);
             if(cli) {
                 vincularSesionCliente(cli);
                 document.getElementById('modal-login-secundario').style.display = 'none';
-            } else {
-                alert("Usuario o contraseña incorrectos.");
-            }
+            } else { alert("Usuario o contraseña incorrectos."); }
         }
 
         function vincularSesionCliente(cli) {
@@ -1142,19 +1041,10 @@
             saldoActual = cli.saldo;
             estadoLineaActual = cli.estado;
             fechaVencimientoActual = cli.vencimiento;
-
             localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
 
-            if(cli.contactosChat && cli.contactosChat.length > 0) {
-                numeroDestinoActual = cli.contactosChat[0].numero;
-                document.getElementById('chat-nombre-receptor').innerText = cli.contactosChat[0].nombre;
-                document.getElementById('chat-numero-receptor').innerText = cli.contactosChat[0].numero;
-            }
-
             actualizarVistaCliente();
-            
             document.getElementById('modal-registro-inicial').style.display = 'none';
-            document.getElementById('modal-login-secundario').style.display = 'none';
             document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
@@ -1167,483 +1057,64 @@
             abrirModalRegistroInicial();
         }
 
-        // INTEGRACIÓN SOFTPHONE ZOIPER / SIP (JsSIP)
+        // LLAMADAS Y SOFTPHONE SIP
         function conectarZoiperSIP() {
             let wsServer = document.getElementById('sip-server-ws').value;
             let user = document.getElementById('sip-user').value;
             let pass = document.getElementById('sip-pass').value;
-
-            if(!wsServer || !user || !pass) {
-                alert("Completa todos los campos del servidor SIP.");
-                return;
-            }
-
-            document.getElementById('sip-status-text').innerText = "🟡 Conectando al servidor SIP...";
-            document.getElementById('sip-status-text').style.color = "var(--accent-orange)";
+            if(!wsServer || !user || !pass) { alert("Completa los campos SIP."); return; }
 
             let socket = new JsSIP.WebSocketInterface(wsServer);
             let domain = wsServer.replace('wss://', '').replace('ws://', '').split(':')[0];
+            ua = new JsSIP.UA({ sockets: [socket], uri: `sip:${user}@${domain}`, password: pass });
+            ua.start();
 
-            let configuration = {
-                sockets: [socket],
-                uri: `sip:${user}@${domain}`,
-                password: pass
-            };
-
-            try {
-                ua = new JsSIP.UA(configuration);
-                ua.start();
-
-                ua.on('registered', () => {
-                    document.getElementById('sip-status-text').innerText = `🟢 Registrado Exitosamente como Extension ${user}`;
-                    document.getElementById('sip-status-text').style.color = "var(--accent-green)";
-                });
-
-                ua.on('registrationFailed', (e) => {
-                    document.getElementById('sip-status-text').innerText = `🔴 Fallo de Registro: ${e.cause}`;
-                    document.getElementById('sip-status-text').style.color = "var(--accent-red)";
-                });
-
-                ua.on('newRTCSession', (data) => {
-                    sipSession = data.session;
-                    if (sipSession.direction === 'incoming') {
-                        let caller = sipSession.remote_identity.uri.user;
-                        if(confirm(`📞 Llamada Entrante de ${caller}. ¿Deseas contestar?`)) {
-                            abrirPantallaLlamada(false);
-                            sipSession.answer({
-                                mediaConstraints: { audio: true, video: false }
-                            });
-                        } else {
-                            sipSession.terminate();
-                        }
-                    }
-                });
-            } catch(err) {
-                alert("Error al iniciar cliente SIP: " + err.message);
-            }
+            ua.on('registered', () => {
+                document.getElementById('sip-status-text').innerText = `🟢 Conectado SIP (${user})`;
+                document.getElementById('sip-status-text').style.color = "var(--accent-green)";
+            });
+            ua.on('registrationFailed', (e) => {
+                document.getElementById('sip-status-text').innerText = `🔴 Error SIP: ${e.cause}`;
+            });
         }
 
         function realizarLlamadaSIP() {
             let num = document.getElementById('sip-dial-number').value;
-            if(!num) { alert("Ingresa un número o extensión."); return; }
-            if(!ua) {
-                alert("Primero debes registrar tu extensión SIP en las opciones de arriba.");
-                return;
-            }
-
+            if(!num || !ua) { alert("Ingresa un número y asegúrate de estar conectado."); return; }
             abrirPantallaLlamada(false);
-            let eventHandlers = {
-                'progress': () => { document.getElementById('call-status').innerText = "🔔 Timbrando..."; },
-                'failed': (e) => { 
-                    document.getElementById('call-status').innerText = `❌ Falló: ${e.cause}`;
-                    setTimeout(finalizarLlamada, 2000);
-                },
-                'confirmed': () => { document.getElementById('call-status').innerText = "🟢 En Comunicación SIP HD"; },
-                'ended': () => { finalizarLlamada(); }
-            };
-
-            let options = {
-                'eventHandlers': eventHandlers,
-                'mediaConstraints': { 'audio': true, 'video': false }
-            };
-
-            sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, options);
+            sipSession = ua.call(`sip:${num}@${ua.configuration.uri.host}`, { mediaConstraints: { audio: true, video: false } });
         }
-
-        function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
-        function cerrarModalAdmin() { document.getElementById('modal-login-admin').style.display = 'none'; }
-        
-        function salirDeAdmin() {
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            if(clienteAutenticado) {
-                document.getElementById('panel-cliente').classList.add('active');
-            } else {
-                abrirModalRegistroInicial();
-            }
-        }
-
-        function abrirModalNuevoChat() {
-            let container = document.getElementById('modal-lista-contactos');
-            container.innerHTML = "";
-            clientesRegistrados.forEach(c => {
-                if(c.numero !== miNumeroAsignado) {
-                    container.innerHTML += `
-                        <div class="history-item" style="cursor:pointer;" onclick="seleccionarContactoDeModal('${c.numero}', '${c.nombre}')">
-                            <div>
-                                <strong style="color:var(--accent);">${c.nombre}</strong><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero}</span>
-                            </div>
-                            <span style="color:var(--accent-green); font-size:0.75rem;">➕ Agregar</span>
-                        </div>
-                    `;
-                }
-            });
-            document.getElementById('modal-select-contact').style.display = 'flex';
-        }
-
-        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-
-        function seleccionarContactoDeModal(numero, nombre) {
-            document.getElementById('input-nuevo-nombre-contacto').value = nombre;
-            document.getElementById('input-nuevo-numero-chat').value = numero;
-        }
-
-        function guardarNuevoContactoChat() {
-            let nombre = document.getElementById('input-nuevo-nombre-contacto').value;
-            let num = document.getElementById('input-nuevo-numero-chat').value;
-            if(!nombre || !num) { alert("Ingresa nombre y número."); return; }
-
-            if(clienteAutenticado) {
-                if(!clienteAutenticado.contactosChat) clienteAutenticado.contactosChat = [];
-                let existe = clienteAutenticado.contactosChat.find(c => c.numero === num);
-                if(!existe) {
-                    clienteAutenticado.contactosChat.push({ nombre: nombre, numero: num });
-                }
-            }
-
-            cerrarModalNuevoChat();
-            renderizarContactosCliente();
-            seleccionarContacto(num, nombre);
-        }
-
-        function renderizarContactosCliente() {
-            let cont = document.getElementById('lista-contactos-chat');
-            cont.innerHTML = "";
-            
-            let lista = (clienteAutenticado && clienteAutenticado.contactosChat) ? clienteAutenticado.contactosChat : [];
-            if(lista.length === 0) {
-                cont.innerHTML = `<div style="text-align: center; color: #667781; font-size: 0.75rem; padding: 20px;">Sin contactos guardados. Toca ➕ para agregar.</div>`;
-                return;
-            }
-
-            lista.forEach((c, idx) => {
-                let iniciales = c.nombre.split(" ").map(n=>n[0]).join("");
-                let esActivo = c.numero === numeroDestinoActual;
-                cont.innerHTML += `
-                    <div class="wa-contact-card ${esActivo ? 'active':''}" onclick="seleccionarContacto('${c.numero}', '${c.nombre}')">
-                        <div class="wa-avatar" style="${idx % 2 === 1 ? 'background:var(--accent-orange);':''}">${iniciales}</div>
-                        <div style="flex-grow: 1;">
-                            <div style="display: flex; justify-content: space-between;">
-                                <strong style="font-size: 0.85rem;" class="contact-name-text">${c.nombre}</strong>
-                                <span style="font-size: 0.65rem; color: #667781;">En línea</span>
-                            </div>
-                            <div style="font-size: 0.75rem; color: #667781;" class="contact-num-text">${c.numero}</div>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        function abrirModalEstados() { document.getElementById('modal-status-screen').style.display = 'flex'; }
-        function cerrarModalEstados() { document.getElementById('modal-status-screen').style.display = 'none'; }
-
-        function subirNuevoEstado() {
-            let estadoTexto = prompt("Escribe tu actualización de estado para las próximas 24h:");
-            if(estadoTexto) {
-                alert("¡Estado publicado con éxito!");
-                cerrarModalEstados();
-            }
-        }
-
-        function verEstadoContacto(nombre, texto) {
-            alert(`Estado de ${nombre}:\n\n"${texto}"`);
-        }
-
-        function filtrarContactosChat() {
-            let term = document.getElementById('wa-contact-search-input').value.toLowerCase();
-            let cards = document.querySelectorAll('#lista-contactos-chat .wa-contact-card');
-            cards.forEach(card => {
-                let name = card.querySelector('.contact-name-text')?.innerText.toLowerCase() || "";
-                let num = card.querySelector('.contact-num-text')?.innerText.toLowerCase() || "";
-                if(name.includes(term) || num.includes(term)) {
-                    card.style.display = "flex";
-                } else {
-                    card.style.display = "none";
-                }
-            });
-        }
-
-        function toggleEmojiPicker() {
-            let picker = document.getElementById('emoji-picker');
-            picker.style.display = picker.style.display === 'grid' ? 'none' : 'grid';
-        }
-
-        function insertarEmoji(e) {
-            let input = document.getElementById('chat-input-texto');
-            input.value += e;
-            document.getElementById('emoji-picker').style.display = 'none';
-            input.focus();
-        }
-
-        function enviarImagenAdjunta(input) {
-            if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = function (e) {
-                    let imgHTML = `<img src="${e.target.result}" style="max-width:200px; border-radius:8px; display:block; margin-bottom:4px;"/>`;
-                    enviarMensajeSupabaseConContenido(imgHTML);
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        async function toggleGrabarAudio() {
-            let micBtn = document.getElementById('mic-btn-icon');
-            if (!isRecordingAudio) {
-                try {
-                    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                    mediaRecorder = new MediaRecorder(stream);
-                    audioChunks = [];
-
-                    mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-                    mediaRecorder.onstop = () => {
-                        let blob = new Blob(audioChunks, { type: 'audio/webm' });
-                        let audioUrl = URL.createObjectURL(blob);
-                        let audioHTML = `<audio controls src="${audioUrl}" style="max-width:220px; display:block; margin-top:4px;"></audio>`;
-                        enviarMensajeSupabaseConContenido(audioHTML);
-                    };
-
-                    mediaRecorder.start();
-                    isRecordingAudio = true;
-                    micBtn.style.color = "#ff3366";
-                    micBtn.title = "Tocando para detener y enviar audio";
-                } catch(err) {
-                    alert("Permiso de micrófono denegado.");
-                }
-            } else {
-                if (mediaRecorder) mediaRecorder.stop();
-                isRecordingAudio = false;
-                micBtn.style.color = "#54656f";
-                micBtn.title = "Grabar Nota de Voz";
-            }
-        }
-
-        function iniciarLlamadaVozHD() { abrirPantallaLlamada(false); }
-        function iniciarVideollamadaHD() { abrirPantallaLlamada(true); }
 
         function abrirPantallaLlamada(esVideo) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida por falta de pago.");
-                return;
-            }
-
-            let receptorNombre = document.getElementById('chat-nombre-receptor').innerText;
-            document.getElementById('call-name').innerText = receptorNombre;
-            document.getElementById('call-avatar').innerText = receptorNombre.split(" ").map(n=>n[0]).join("");
-            document.getElementById('call-status').innerText = esVideo ? "Iniciando Videollamada HD Red IP..." : "Conectando Llamada HD Red IP...";
-            
-            let videoBox = document.getElementById('call-video-container');
-            let videoIcon = document.getElementById('call-video-icon');
-            
-            if(esVideo) {
-                videoBox.style.background = "#000";
-                videoIcon.className = "fa-solid fa-video";
-                videoIcon.style.color = "var(--accent-green)";
-            } else {
-                videoBox.style.background = "#1a253f";
-                videoIcon.className = "fa-solid fa-video-slash";
-                videoIcon.style.color = "#54656f";
-            }
-
+            if(estadoLineaActual !== "Activa") { alert("Línea suspendida."); return; }
+            document.getElementById('call-name').innerText = document.getElementById('chat-nombre-receptor').innerText || "Llamada IP";
             document.getElementById('modal-call-screen').style.display = 'flex';
             secondsInCall = 0;
-            
             callInterval = setInterval(() => {
                 secondsInCall++;
                 let mins = String(Math.floor(secondsInCall / 60)).padStart(2, '0');
                 let secs = String(secondsInCall % 60).padStart(2, '0');
                 document.getElementById('call-timer').innerText = `${mins}:${secs}`;
-                if(secondsInCall === 2) {
-                    document.getElementById('call-status').innerText = "🟢 En Comunicación Cifrada";
-                }
             }, 1000);
         }
 
-        function toggleMuteCall() {
-            let icon = document.getElementById('mute-icon');
-            if(icon.className.includes("slash")) {
-                icon.className = "fa-solid fa-microphone";
-            } else {
-                icon.className = "fa-solid fa-microphone-slash";
-            }
-        }
-
         function finalizarLlamada() {
-            if(sipSession) {
-                sipSession.terminate();
-                sipSession = null;
-            }
+            if(sipSession) { sipSession.terminate(); sipSession = null; }
             clearInterval(callInterval);
             document.getElementById('modal-call-screen').style.display = 'none';
         }
 
-        async function enviarMensajeSupabaseConContenido(contenidoHTML) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Línea Suspendida por vencimiento de plan.");
-                return;
-            }
-
-            let client = obtenerClienteSupabase();
-            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            if(client) {
-                try {
-                    let { error } = await client
-                        .from('mensajes')
-                        .insert([{
-                            origen: miNumeroAsignado,
-                            destino: numeroDestinoActual,
-                            texto: contenidoHTML,
-                            hora: horaActual,
-                            estado: 'entregado'
-                        }]);
-
-                    if(error) {
-                        console.warn("Fallo temporal BD:", error.message);
-                    }
-                } catch(e) {
-                    console.warn("Interrupción de red:", e);
-                }
-            }
-
-            renderizarMensajeEnPantalla(miNumeroAsignado, contenidoHTML, horaActual);
+        function toggleMuteCall() {
+            let icon = document.getElementById('mute-icon');
+            icon.className = icon.className.includes("slash") ? "fa-solid fa-microphone" : "fa-solid fa-microphone-slash";
         }
 
-        async function enviarMensajeSupabase() {
-            let texto = document.getElementById('chat-input-texto').value;
-            if(!texto) return;
-            document.getElementById('chat-input-texto').value = "";
-            await enviarMensajeSupabaseConContenido(texto);
-        }
-
-        function renderizarMensajeEnPantalla(origen, texto, hora) {
-            let box = document.getElementById('contenedor-mensajes');
-            if(box.innerText.includes("Comienza tu chat en vivo")) {
-                box.innerHTML = "";
-            }
-            let esMio = origen === miNumeroAsignado;
-            box.innerHTML += `
-                <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
-                    ${texto}
-                    <div class="wa-msg-meta">${hora} ${esMio ? '<i class="fa-solid fa-check-double" style="color:#53bdeb;"></i>' : ''}</div>
-                </div>
-            `;
-            box.scrollTop = box.scrollHeight;
-        }
-
-        async function cargarMensajesSupabase() {
-            let client = obtenerClienteSupabase();
-            if(!client) return;
-
-            try {
-                let { data, error } = await client
-                    .from('mensajes')
-                    .select('*')
-                    .or(`and(origen.eq.${miNumeroAsignado},destino.eq.${numeroDestinoActual}),and(origen.eq.${numeroDestinoActual},destino.eq.${miNumeroAsignado})`)
-                    .order('created_at', { ascending: true });
-
-                if(data && data.length > 0) {
-                    let box = document.getElementById('contenedor-mensajes');
-                    box.innerHTML = "";
-                    data.forEach(m => {
-                        renderizarMensajeEnPantalla(m.origen, m.texto, m.hora);
-                    });
-                }
-            } catch(e) { console.log("Carga diferida activa."); }
-        }
-
-        function registrarClienteDesdeAdmin() {
-            let nombre = document.getElementById('admin-reg-nombre').value;
-            let cedula = document.getElementById('admin-reg-cedula').value;
-            let user = document.getElementById('admin-reg-user').value;
-            let pass = document.getElementById('admin-reg-pass').value;
-            let telefono = document.getElementById('admin-reg-telefono').value;
-            let montoPlan = parseFloat(document.getElementById('admin-reg-plan').value);
-
-            if(!nombre || !cedula || !user || !pass) { alert("Ingresa Nombre, Cédula, Usuario y Contraseña."); return; }
-            if(poolNumeros.length === 0) { alert("No hay números en el Pool."); return; }
-
-            let numAsignado = poolNumeros.shift();
-            let hoy = new Date().toISOString().split('T')[0];
-            
-            let proximoMes = new Date();
-            proximoMes.setDate(proximoMes.getDate() + 30);
-            let fechaVenc = proximoMes.toISOString().split('T')[0];
-
-            clientesRegistrados.push({
-                id: clientesRegistrados.length + 1,
-                nombre: nombre,
-                usuario: user,
-                pass: pass,
-                cedula: cedula || "N/A",
-                contacto: telefono || "N/A",
-                numero: numAsignado,
-                saldo: montoPlan,
-                estado: "Activa",
-                vencimiento: fechaVenc,
-                fecha: hoy,
-                contactosChat: [],
-                historialTransacciones: [
-                    { id: Date.now(), fecha: hoy, tipo: "Registro Admin", descripcion: `Asignación de línea ${numAsignado}`, monto: montoPlan, estado: "Procesado" }
-                ]
-            });
-
-            document.getElementById('admin-reg-nombre').value = "";
-            document.getElementById('admin-reg-cedula').value = "";
-            document.getElementById('admin-reg-user').value = "";
-            document.getElementById('admin-reg-pass').value = "";
-            document.getElementById('admin-reg-telefono').value = "";
-
-            renderizarAdmin();
-            alert(`¡Cliente registrado con éxito!\n\nUsuario: ${user}\nLínea: ${numAsignado}\nVencimiento: ${fechaVenc}`);
-        }
-
-        function actualizarVistaCliente() {
-            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
-            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
-            document.getElementById('ad-nombre-user').innerText = nombreCliente;
-            document.getElementById('ad-num-user').innerText = miNumeroAsignado;
-            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
-            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            document.getElementById('linea-fecha-venc').innerText = fechaVencimientoActual;
-
-            let badge = document.getElementById('linea-status-badge');
-            if(estadoLineaActual === "Activa") {
-                badge.className = "status-badge active-line";
-                badge.innerText = "● ACTIVA";
-            } else {
-                badge.className = "status-badge suspended-line";
-                badge.innerText = "● SUSPENDIDA";
-            }
-
-            renderizarContactosCliente();
-            renderizarHistorialPersonal();
-        }
-
-        function renderizarHistorialPersonal() {
-            let container = document.getElementById('lista-historial-personal');
-            container.innerHTML = "";
-
-            let historial = (clienteAutenticado && clienteAutenticado.historialTransacciones) ? clienteAutenticado.historialTransacciones : [];
-            
-            if(historial.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 20px;">Sin transacciones registradas.</div>`;
-                return;
-            }
-
-            historial.forEach(item => {
-                let badgeClass = item.estado === 'Procesado' ? 'st-procesado' : item.estado === 'Pendiente' ? 'st-pendiente' : item.estado === 'Rechazado' ? 'st-rechazado' : 'st-enviado';
-                let signo = item.monto > 0 ? '+' : '';
-                container.innerHTML += `
-                    <div class="history-item">
-                        <div>
-                            <strong style="color:white; font-size:0.85rem;">${item.tipo}</strong> 
-                            <span class="st-tag ${badgeClass}">${item.estado}</span><br/>
-                            <span style="font-size:0.7rem; color:var(--text-muted);">${item.descripcion} • ${item.fecha}</span>
-                        </div>
-                        <span style="font-weight:bold; color:${item.monto >= 0 ? 'var(--accent-green)':'var(--accent-red)'}; font-size:0.85rem;">${signo}$${Math.abs(item.monto).toFixed(2)}</span>
-                    </div>
-                `;
-            });
+        function abrirModalLoginAdmin() { document.getElementById('modal-login-admin').style.display = 'flex'; }
+        function cerrarModalAdmin() { document.getElementById('modal-login-admin').style.display = 'none'; }
+        function salirDeAdmin() {
+            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
+            if(clienteAutenticado) document.getElementById('panel-cliente').classList.add('active');
+            else abrirModalRegistroInicial();
         }
 
         function ingresarAdmin() {
@@ -1654,102 +1125,90 @@
                 document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
                 document.getElementById('panel-admin').classList.add('active');
                 renderizarAdmin();
-            } else {
-                alert("Credenciales administrativas incorrectas.");
-            }
+            } else { alert("Credenciales incorrectas."); }
         }
 
+        // RENDERIZAR PANEL ADMIN CON FILTROS Y EXPORTACIÓN INDEPENDIENTE
         function renderizarAdmin() {
+            // 1. Clientes
             let contClientes = document.getElementById('lista-clientes-admin');
             let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
-            let dia = document.getElementById('filter-dia')?.value || "";
-            let mes = document.getElementById('filter-mes')?.value || "";
-            let anio = document.getElementById('filter-anio')?.value || "";
+            let dCli = document.getElementById('filter-cli-dia')?.value || "";
+            let mCli = document.getElementById('filter-cli-mes')?.value || "";
+            let aCli = document.getElementById('filter-cli-anio')?.value || "";
 
-            let clientesFiltrados = clientesRegistrados.filter(c => {
+            let cliFiltrados = clientesRegistrados.filter(c => {
                 let partes = c.fecha.split("-");
-                let coincideTexto = c.nombre.toLowerCase().includes(busqueda) || 
-                                   (c.cedula && c.cedula.toLowerCase().includes(busqueda)) || 
-                                   c.numero.toLowerCase().includes(busqueda);
-
-                return coincideTexto &&
-                       (anio === "" || partes[0] === anio) &&
-                       (mes === "" || partes[1] === mes) &&
-                       (dia === "" || partes[2] === dia);
+                let coincide = c.nombre.toLowerCase().includes(busqueda) || c.numero.toLowerCase().includes(busqueda);
+                return coincide && (aCli === "" || partes[0] === aCli) && (mCli === "" || partes[1] === mCli) && (dCli === "" || partes[2] === dCli);
             });
 
-            if(clientesFiltrados.length === 0) {
-                contClientes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem; padding: 10px;">Sin registros para los filtros o búsqueda.</div>`;
-            } else {
-                contClientes.innerHTML = "";
-                clientesFiltrados.forEach((c, idx) => {
-                    let esActivo = c.estado === "Activa";
-                    contClientes.innerHTML += `
-                        <div class="history-item">
-                            <div>
-                                <strong style="color:var(--accent);">${c.nombre}</strong> <span style="font-size:0.65rem; color:${esActivo ? '#00e676':'#ff3366'};">[${c.estado}]</span><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">Línea Única: <strong>${c.numero}</strong> • User: ${c.usuario || 'N/A'}</span><br/>
-                                <span style="font-size:0.68rem; color:#8fa3bf;">Corte: ${c.vencimiento} • Reg: ${c.fecha}</span>
-                            </div>
-                            <div style="display:flex; gap:4px; align-items:center;">
-                                <span style="font-weight:bold; color:var(--accent-green); font-size:0.8rem; margin-right:4px;">$${c.saldo.toFixed(2)}</span>
-                                <button class="btn btn-small" style="background:${esActivo ? '#ff3366':'#00e676'}; color:#000;" onclick="alternarEstadoCliente(${idx})">${esActivo ? 'Suspender':'Activar'}</button>
-                            </div>
+            contClientes.innerHTML = cliFiltrados.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">Sin registros.</div>` : "";
+            cliFiltrados.forEach((c, idx) => {
+                contClientes.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <strong style="color:var(--accent);">${c.nombre}</strong> [${c.estado}]<br/>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">${c.numero} • Reg: ${c.fecha}</span>
                         </div>
-                    `;
-                });
-            }
+                        <span style="color:var(--accent-green);">$${c.saldo.toFixed(2)}</span>
+                    </div>`;
+            });
 
-            let contSolicitudes = document.getElementById('lista-solicitudes-admin');
-            if(solicitudesRecarga.length === 0) {
-                contSolicitudes.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.8rem; padding: 10px;">No hay solicitudes registradas.</div>`;
-            } else {
-                contSolicitudes.innerHTML = "";
-                solicitudesRecarga.forEach((s, idx) => {
-                    let esPendiente = s.estado === "Pendiente";
-                    let badgeClass = esPendiente ? 'st-pendiente' : s.estado === 'Procesado' ? 'st-procesado' : 'st-rechazado';
-                    contSolicitudes.innerHTML += `
-                        <div class="history-item">
-                            <div>
-                                <strong>${s.cliente}</strong> ($${s.monto.toFixed(2)}) <span class="st-tag ${badgeClass}">${s.estado}</span><br/>
-                                <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref}</span>
-                            </div>
-                            <div style="display:flex; gap:4px;">
-                                ${esPendiente ? `
-                                    <button class="btn btn-small" style="background:var(--accent-green); color:#000;" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>
-                                    <button class="btn btn-small" style="background:var(--accent-red); color:#fff;" onclick="rechazarRecarga(${idx})">✗ Rechazar</button>
-                                ` : `<span style="font-size:0.75rem; color:var(--text-muted);">Auditado</span>`}
-                            </div>
+            // 2. Solicitudes / Recargas
+            let contSol = document.getElementById('lista-solicitudes-admin');
+            let dSol = document.getElementById('filter-sol-dia')?.value || "";
+            let mSol = document.getElementById('filter-sol-mes')?.value || "";
+            let aSol = document.getElementById('filter-sol-anio')?.value || "";
+
+            let solFiltradas = solicitudesRecarga.filter(s => {
+                let partes = (s.fecha || new Date().toISOString().split('T')[0]).split("-");
+                return (aSol === "" || partes[0] === aSol) && (mSol === "" || partes[1] === mSol) && (dSol === "" || partes[2] === dSol);
+            });
+
+            contSol.innerHTML = solFiltradas.length === 0 ? `<div style="text-align:center; color:var(--text-muted); padding:10px;">No hay solicitudes.</div>` : "";
+            solFiltradas.forEach((s, idx) => {
+                contSol.innerHTML += `
+                    <div class="history-item">
+                        <div>
+                            <strong>${s.cliente}</strong> ($${s.monto.toFixed(2)}) <span class="st-tag">${s.estado}</span><br/>
+                            <span style="font-size:0.7rem; color:var(--text-muted);">Ref: ${s.ref} • ${s.fecha}</span>
                         </div>
-                    `;
-                });
-            }
+                        ${s.estado === 'Pendiente' ? `<button class="btn btn-small" style="background:var(--accent-green);" onclick="aprobarRecarga(${idx})">✓ Aprobar</button>` : ''}
+                    </div>`;
+            });
 
+            // 3. Pool de Números
             let contPool = document.getElementById('lista-pool-numeros');
             contPool.innerHTML = "";
-            if(poolNumeros.length === 0) {
-                contPool.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.75rem;">Pool vacío. Se generarán automáticamente.</div>`;
-            } else {
-                poolNumeros.forEach((num) => {
-                    contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible p/ venta</span></div>`;
-                });
-            }
-        }
-
-        function alternarEstadoCliente(idx) {
-            let cli = clientesRegistrados[idx];
-            cli.estado = cli.estado === "Activa" ? "Suspendida" : "Activa";
-            renderizarAdmin();
-        }
-
-        function exportarClientesCSV() {
-            let csv = "ID,Nombre,Usuario,Cedula,Contacto,NumeroVoIP,Saldo,Estado,FechaVencimiento,FechaRegistro\n";
-            clientesRegistrados.forEach(c => { 
-                csv += `${c.id},"${c.nombre}","${c.usuario || 'N/A'}","${c.cedula || 'N/A'}","${c.contacto || 'N/A'}","${c.numero}",${c.saldo},"${c.estado}","${c.vencimiento}","${c.fecha}"\n`; 
+            poolNumeros.forEach(num => {
+                contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green); font-size:0.7rem;">Disponible</span></div>`;
             });
+        }
+
+        // FUNCIONES DE EXPORTACIÓN A CSV
+        function exportarClientesCSV() {
+            let csv = "ID,Nombre,Usuario,Cedula,Numero,Saldo,Estado,Fecha\n";
+            clientesRegistrados.forEach(c => { csv += `${c.id},"${c.nombre}","${c.usuario}","${c.cedula}","${c.numero}",${c.saldo},"${c.estado}","${c.fecha}"\n`; });
+            descargarCSV(csv, "Clientes_OmniMovil.csv");
+        }
+
+        function exportarSolicitudesCSV() {
+            let csv = "Cliente,Monto,Referencia,Estado,Fecha\n";
+            solicitudesRecarga.forEach(s => { csv += `"${s.cliente}",${s.monto},"${s.ref}","${s.estado}","${s.fecha}"\n`; });
+            descargarCSV(csv, "Recargas_OmniMovil.csv");
+        }
+
+        function exportarPoolCSV() {
+            let csv = "NumeroVoIP,Estado\n";
+            poolNumeros.forEach(n => { csv += `"${n}","Disponible"\n`; });
+            descargarCSV(csv, "Pool_Numeros_OmniMovil.csv");
+        }
+
+        function descargarCSV(csvContent, filename) {
             let link = document.createElement("a");
-            link.href = encodeURI("data:text/csv;charset=utf-8," + csv);
-            link.download = "Base_Clientes_OmniMovil.csv";
+            link.href = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+            link.download = filename;
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -1763,163 +1222,42 @@
         function enviarReportePago() {
             let monto = parseFloat(document.getElementById('monto-pago').value);
             let ref = document.getElementById('ref-pago').value;
-            if(!monto || !ref) { alert("Completa los datos de pago."); return; }
-
+            if(!monto || !ref) { alert("Completa los datos."); return; }
             let hoy = new Date().toISOString().split('T')[0];
-            let itemId = Date.now();
-            let itemHistorial = {
-                id: itemId,
-                fecha: hoy,
-                tipo: "Reporte de Pago",
-                descripcion: `Pago Móvil / Zelle Ref #${ref}`,
-                monto: monto,
-                estado: "Pendiente"
-            };
-
-            if(clienteAutenticado) {
-                if(!clienteAutenticado.historialTransacciones) clienteAutenticado.historialTransacciones = [];
-                clienteAutenticado.historialTransacciones.unshift(itemHistorial);
-            }
-
-            solicitudesRecarga.unshift({ cliente: nombreCliente, monto: monto, ref: ref, itemId: itemId, estado: "Pendiente" });
+            solicitudesRecarga.unshift({ cliente: nombreCliente, monto: monto, ref: ref, estado: "Pendiente", fecha: hoy });
             document.getElementById('monto-pago').value = "";
             document.getElementById('ref-pago').value = "";
-            
-            actualizarVistaCliente();
             renderizarAdmin();
-            alert("Solicitud de pago enviada al operador. Tu transacción figura como PENDIENTE en el Historial.");
+            alert("Solicitud enviada con éxito.");
         }
 
         function aprobarRecarga(idx) {
-            let sol = solicitudesRecarga[idx];
-            sol.estado = "Procesado";
-            
-            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
-            if(cli) {
-                cli.saldo += sol.monto;
-                cli.estado = "Activa";
-                
-                let nuevaFecha = new Date();
-                nuevaFecha.setDate(nuevaFecha.getDate() + 30);
-                cli.vencimiento = nuevaFecha.toISOString().split('T')[0];
-                
-                if(cli.historialTransacciones) {
-                    let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
-                    if(h) h.estado = "Procesado";
-                }
-
-                if(clienteAutenticado && clienteAutenticado.nombre === cli.nombre) {
-                    saldoActual = cli.saldo;
-                    estadoLineaActual = cli.estado;
-                    fechaVencimientoActual = cli.vencimiento;
-                }
-            }
-
-            actualizarVistaCliente();
+            solicitudesRecarga[idx].estado = "Procesado";
             renderizarAdmin();
-            alert("Renovación de mensualidad aprobada con éxito.");
+            alert("Recarga aprobada.");
         }
 
-        function rechazarRecarga(idx) {
-            let sol = solicitudesRecarga[idx];
-            sol.estado = "Rechazado";
-
-            let cli = clientesRegistrados.find(c => c.nombre === sol.cliente);
-            if(cli && cli.historialTransacciones) {
-                let h = cli.historialTransacciones.find(t => t.id === sol.itemId);
-                if(h) h.estado = "Rechazado";
-            }
-
-            actualizarVistaCliente();
-            renderizarAdmin();
-            alert("Solicitud de recarga rechazada.");
-        }
-
-        function comprarPaquete(precio, nombre) {
-            if(estadoLineaActual !== "Activa") {
-                alert("Tu línea está suspendida. Reporta tu pago mensual en la sección Saldo.");
-                return;
-            }
-            if(saldoActual >= precio) {
-                saldoActual -= precio;
-                planActualNombre = nombre;
-                document.getElementById('linea-plan-nombre').innerText = nombre;
-
-                let hoy = new Date().toISOString().split('T')[0];
-                if(clienteAutenticado) {
-                    clienteAutenticado.saldo = saldoActual;
-                    if(!clienteAutenticado.historialTransacciones) clienteAutenticado.historialTransacciones = [];
-                    clienteAutenticado.historialTransacciones.unshift({
-                        id: Date.now(),
-                        fecha: hoy,
-                        tipo: "Suscripción Plan",
-                        descripcion: nombre,
-                        monto: -precio,
-                        estado: "Procesado"
-                    });
-                }
-
-                actualizarVistaCliente();
-                alert(`¡Te has suscrito exitosamente al ${nombre}!`);
-            } else {
-                alert("Saldo insuficiente. Reporta un pago en Billetera.");
-            }
+        function actualizarVistaCliente() {
+            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
+            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
+            document.getElementById('ad-nombre-user').innerText = nombreCliente;
+            document.getElementById('ad-num-user').innerText = miNumeroAsignado;
+            document.getElementById('ad-saldo-user').innerText = saldoActual.toFixed(2);
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
         }
 
         function cambiarSeccionCliente(seccion) {
             document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
-
             document.getElementById(`csec-${seccion}`).classList.add('active');
-            let tabBtn = document.getElementById(`ctab-${seccion === 'billetera'? '1' : seccion === 'paquetes'? '2' : seccion === 'llamadas'? '3' : seccion === 'historial'? '4' : 'chat'}`);
-            if(tabBtn) tabBtn.classList.add('active');
-            if(seccion === 'chat') { cargarMensajesSupabase(); }
-            if(seccion === 'historial') { renderizarHistorialPersonal(); }
         }
 
-        function seleccionarContacto(numero, nombre) {
-            numeroDestinoActual = numero;
-            document.getElementById('chat-nombre-receptor').innerText = nombre;
-            document.getElementById('chat-numero-receptor').innerText = numero;
-            document.getElementById('chat-header-avatar').innerText = nombre.split(" ").map(n=>n[0]).join("");
-            renderizarContactosCliente();
-            cargarMensajesSupabase();
-        }
-
-        function iniciarSuscripcionRealtime() {
-            let client = obtenerClienteSupabase();
-            if(!client) return;
-
-            try {
-                client
-                    .channel('public:mensajes')
-                    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes' }, payload => {
-                        let m = payload.new;
-                        if(m.destino === miNumeroAsignado) {
-                            mostrarBannerNotificacion(m.origen, m.texto);
-                        }
-                        if(m.origen === numeroDestinoActual || m.destino === numeroDestinoActual) {
-                            renderizarMensajeEnPantalla(m.origen, m.texto, m.hora);
-                        }
-                    })
-                    .subscribe();
-            } catch(e) { console.log("Realtime diferido"); }
-        }
-
-        function mostrarBannerNotificacion(remitente, texto) {
-            document.getElementById('notif-sender').innerText = remitente;
-            document.getElementById('notif-body').innerText = texto;
-            let banner = document.getElementById('chat-notification-banner');
-            banner.style.display = 'block';
-            setTimeout(() => { banner.style.display = 'none'; }, 6000);
-        }
-
-        function abrirChatDesdeNotificacion() {
-            document.getElementById('chat-notification-banner').style.display = 'none';
-            document.querySelectorAll('.panel-view').forEach(p => p.classList.remove('active'));
-            document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
-        }
+        function abrirModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'flex'; }
+        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
+        function abrirModalEstados() { document.getElementById('modal-status-screen').style.display = 'flex'; }
+        function cerrarModalEstados() { document.getElementById('modal-status-screen').style.display = 'none'; }
+        function subirNuevoEstado() { alert("Estado publicado."); cerrarModalEstados(); }
+        function verEstadoContacto(n, t) { alert(`${n}: ${t}`); }
     </script>
 </body>
 </html>
