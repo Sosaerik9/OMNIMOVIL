@@ -168,6 +168,100 @@
             border: 1px solid #e2e8f0;
         }
 
+        /* --- TELÉFONO ZOIPER --- */
+        .zoiper-phone-card {
+            background: #0b141a;
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 20px;
+            max-width: 340px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            border: 1px solid #1f2c34;
+        }
+
+        .zoiper-screen {
+            background: #111b21;
+            border: 1px solid #202c33;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .zoiper-num-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: var(--wa-green);
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+            letter-spacing: 2px;
+            margin: 0;
+            outline: none;
+        }
+
+        .zoiper-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .zoiper-key {
+            background: #1f2c34;
+            color: #e9edef;
+            border: 1px solid #2a3942;
+            height: 56px;
+            border-radius: 50%;
+            font-size: 1.25rem;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.1s ease;
+        }
+
+        .zoiper-key:active {
+            background: var(--wa-green);
+            color: #0b141a;
+            transform: scale(0.95);
+        }
+
+        .zoiper-key span {
+            font-size: 0.6rem;
+            color: var(--wa-muted);
+            margin-top: -2px;
+        }
+
+        .zoiper-controls {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .zoiper-action-btn {
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        .zoiper-action-btn:active { transform: scale(0.92); }
+        .btn-call-green { background: #00a884; color: #ffffff; }
+        .btn-hangup-red { background: #ef4444; color: #ffffff; }
+        .btn-backspace-dark { background: #202c33; color: var(--wa-muted); }
+
         /* --- OMNICHAT ESTILO WHATSAPP DARK MODE --- */
         .wa-app-container {
             background: var(--wa-bg);
@@ -190,261 +284,45 @@
             align-items: center;
         }
 
-        .wa-top-bar h2 {
-            margin: 0;
-            font-size: 1.3rem;
-            color: var(--wa-text);
-            font-weight: 600;
-        }
+        .wa-top-bar h2 { margin: 0; font-size: 1.3rem; color: var(--wa-text); font-weight: 600; }
+        .wa-top-icons { display: flex; gap: 18px; font-size: 1.1rem; color: var(--wa-muted); }
 
-        .wa-top-icons {
-            display: flex;
-            gap: 18px;
-            font-size: 1.1rem;
-            color: var(--wa-muted);
-        }
+        .wa-search-box { padding: 8px 12px; background: var(--wa-bg); }
+        .wa-search-input-wrap { background: #202c33; border-radius: 20px; padding: 8px 14px; display: flex; align-items: center; gap: 10px; }
+        .wa-search-input-wrap input { background: transparent; border: none; color: var(--wa-text); padding: 0; margin: 0; font-size: 0.85rem; }
 
-        .wa-search-box {
-            padding: 8px 12px;
-            background: var(--wa-bg);
-        }
+        .wa-filter-chips { display: flex; gap: 8px; padding: 8px 12px; overflow-x: auto; }
+        .wa-chip { background: #202c33; color: var(--wa-muted); padding: 6px 14px; border-radius: 18px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; }
+        .wa-chip.active { background: #0a332c; color: var(--wa-green); font-weight: bold; }
 
-        .wa-search-input-wrap {
-            background: #202c33;
-            border-radius: 20px;
-            padding: 8px 14px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .wa-search-input-wrap input {
-            background: transparent;
-            border: none;
-            color: var(--wa-text);
-            padding: 0;
-            margin: 0;
-            font-size: 0.85rem;
-        }
-
-        .wa-filter-chips {
-            display: flex;
-            gap: 8px;
-            padding: 8px 12px;
-            overflow-x: auto;
-        }
-
-        .wa-chip {
-            background: #202c33;
-            color: var(--wa-muted);
-            padding: 6px 14px;
-            border-radius: 18px;
-            font-size: 0.75rem;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .wa-chip.active {
-            background: #0a332c;
-            color: var(--wa-green);
-            font-weight: bold;
-        }
-
-        .wa-content-area {
-            flex-grow: 1;
-            overflow-y: auto;
-            position: relative;
-        }
-
+        .wa-content-area { flex-grow: 1; overflow-y: auto; position: relative; }
         .wa-tab-content { display: none; }
         .wa-tab-content.active { display: block; }
 
-        /* LISTA DE CHATS */
-        .wa-chat-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            cursor: pointer;
-            border-bottom: 1px solid #1f2c34;
-        }
-
+        .wa-chat-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1f2c34; }
         .wa-chat-item:hover { background: #182229; }
 
-        .wa-avatar-wrap {
-            position: relative;
-            width: 46px;
-            height: 46px;
-            flex-shrink: 0;
-        }
+        .wa-avatar-wrap { position: relative; width: 46px; height: 46px; flex-shrink: 0; }
+        .wa-avatar-img { width: 100%; height: 100%; border-radius: 50%; background: var(--wa-header); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1rem; }
 
-        .wa-avatar-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: var(--wa-header);
-            color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 1rem;
-        }
+        .wa-chat-info { flex-grow: 1; overflow: hidden; }
 
-        .status-ring-green {
-            border: 2px solid var(--wa-green);
-            padding: 2px;
-        }
+        .wa-bottom-nav { background: var(--wa-card); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0; border-top: 1px solid #1f2c34; }
+        .wa-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--wa-muted); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
+        .wa-nav-btn i { font-size: 1.1rem; padding: 4px 14px; border-radius: 12px; }
+        .wa-nav-btn.active { color: var(--wa-text); font-weight: bold; }
+        .wa-nav-btn.active i { background: #103b34; color: var(--wa-green); }
 
-        .status-ring-gray {
-            border: 2px solid var(--wa-muted);
-            padding: 2px;
-        }
+        .wa-fab { position: absolute; bottom: 60px; right: 16px; width: 50px; height: 50px; background: var(--wa-green); color: #0b141a; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.4); cursor: pointer; z-index: 10; }
 
-        .wa-chat-info {
-            flex-grow: 1;
-            overflow: hidden;
-        }
-
-        .wa-chat-top {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 4px;
-        }
-
-        .wa-chat-name {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--wa-text);
-        }
-
-        .wa-chat-time {
-            font-size: 0.7rem;
-            color: var(--wa-muted);
-        }
-
-        .wa-chat-msg {
-            font-size: 0.8rem;
-            color: var(--wa-muted);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        /* NAVEGACIÓN INFERIOR DE WHATSAPP */
-        .wa-bottom-nav {
-            background: var(--wa-card);
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            padding: 8px 0;
-            border-top: 1px solid #1f2c34;
-        }
-
-        .wa-nav-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            color: var(--wa-muted);
-            text-decoration: none;
-            font-size: 0.7rem;
-            cursor: pointer;
-        }
-
-        .wa-nav-btn i {
-            font-size: 1.1rem;
-            padding: 4px 14px;
-            border-radius: 12px;
-        }
-
-        .wa-nav-btn.active {
-            color: var(--wa-text);
-            font-weight: bold;
-        }
-
-        .wa-nav-btn.active i {
-            background: #103b34;
-            color: var(--wa-green);
-        }
-
-        /* BOTÓN FLOTANTE (FAB) */
-        .wa-fab {
-            position: absolute;
-            bottom: 60px;
-            right: 16px;
-            width: 50px;
-            height: 50px;
-            background: var(--wa-green);
-            color: #0b141a;
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-            cursor: pointer;
-            z-index: 10;
-        }
-
-        .status-header-title {
-            padding: 12px 16px;
-            font-size: 0.8rem;
-            color: var(--wa-muted);
-            font-weight: bold;
-        }
-
-        /* PANTALLA DE CONVERSACIÓN INDIVIDUAL */
-        .wa-chat-view {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--wa-bg);
-            z-index: 100;
-            flex-direction: column;
-        }
-
+        .wa-chat-view { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--wa-bg); z-index: 100; flex-direction: column; }
         .wa-chat-view.active { display: flex; }
 
-        .wa-chat-view-header {
-            background: var(--wa-card);
-            padding: 10px 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 1px solid #1f2c34;
-        }
+        .wa-chat-view-header { background: var(--wa-card); padding: 10px 14px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #1f2c34; }
+        .wa-chat-view-messages { flex-grow: 1; padding: 12px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1f2c34 1px, transparent 0); background-size: 16px 16px; }
 
-        .wa-chat-view-messages {
-            flex-grow: 1;
-            padding: 12px 16px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background-image: radial-gradient(#1f2c34 1px, transparent 0);
-            background-size: 16px 16px;
-        }
-
-        .wa-input-bar-dark {
-            background: var(--wa-card);
-            padding: 8px 12px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .wa-input-bar-dark input {
-            background: #202c33;
-            border: none;
-            color: var(--wa-text);
-            padding: 10px 14px;
-            border-radius: 20px;
-            margin: 0;
-            font-size: 0.85rem;
-        }
+        .wa-input-bar-dark { background: var(--wa-card); padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
+        .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 14px; border-radius: 20px; margin: 0; font-size: 0.85rem; }
 
         #modal-call-screen { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.95); z-index: 4000; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 20px; }
         .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
@@ -474,13 +352,14 @@
         </div>
     </div>
 
-    <!-- MODAL LLAMADA EN VIVO -->
+    <!-- MODAL LLAMADA EN VIVO CON TARIFADOR EN SEGUNDOS -->
     <div id="modal-call-screen">
         <div style="text-align: center;">
             <div class="wa-avatar-img" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 12px auto; background: var(--wa-green);" id="call-avatar">C</div>
-            <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Contacto</h2>
-            <p style="color: var(--wa-green); font-size: 0.9rem; margin-top: 4px;" id="call-status">Conectando llamada HD Red IP...</p>
-            <div style="color: #94a3b8; font-size: 0.8rem;" id="call-timer">00:00</div>
+            <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Llamada VoIP</h2>
+            <p style="color: var(--wa-green); font-size: 0.85rem; margin-top: 4px;" id="call-status">Conectando servicio SIP Zoiper...</p>
+            <div style="color: #f59e0b; font-size: 0.75rem; font-weight: bold;" id="call-rate-info">Tarifa: $0.00/min</div>
+            <div style="color: #94a3b8; font-size: 1.1rem; font-weight: bold; margin-top: 6px;" id="call-timer">00:00</div>
         </div>
         <div style="display: flex; gap: 20px;">
             <button class="btn" style="background: #334155; width: 60px; height: 60px; border-radius: 50%;" onclick="toggleMuteCall()"><i class="fa-solid fa-microphone-slash" id="mute-icon"></i></button>
@@ -504,7 +383,7 @@
             <div class="card" style="padding: 12px; margin-bottom: 10px; border-color: var(--accent);">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
                     <div>
-                        <strong style="font-size: 0.9rem; color: var(--accent);" id="cliente-num-linea">+58 500-0001</strong>
+                        <strong style="font-size: 0.9rem; color: var(--accent);" id="cliente-num-linea">+58 500-3391</strong>
                         <span style="font-size: 0.8rem; color: var(--text-muted);"> (<span id="cliente-nombre-actual">Erik</span>)</span>
                     </div>
                     <div>
@@ -526,16 +405,15 @@
             <div id="csec-chat" class="client-section active">
                 <div class="wa-app-container">
                     
-                    <!-- TOP BAR -->
                     <div class="wa-top-bar">
                         <h2 id="wa-header-title">WhatsApp</h2>
                         <div class="wa-top-icons">
-                            <i class="fa-solid fa-camera" title="Cámara" onclick="alert('Función de cámara activa')"></i>
+                            <i class="fa-solid fa-camera" title="Cámara" onclick="alert('Cámara lista')"></i>
                             <i class="fa-solid fa-ellipsis-vertical" title="Opciones"></i>
                         </div>
                     </div>
 
-                    <!-- PESTAÑA 1: CHATS (EN CERO) -->
+                    <!-- CHATS -->
                     <div id="wa-tab-chats" class="wa-tab-content active">
                         <div class="wa-search-box">
                             <div class="wa-search-input-wrap">
@@ -544,7 +422,6 @@
                             </div>
                         </div>
 
-                        <!-- FILTROS SUPERIORES -->
                         <div class="wa-filter-chips">
                             <span class="wa-chip active">Todos</span>
                             <span class="wa-chip">No leídos</span>
@@ -552,16 +429,14 @@
                             <span class="wa-chip">Grupos</span>
                         </div>
 
-                        <div class="wa-content-area" id="lista-chats-wa">
-                            <!-- SE CARGAN DINÁMICAMENTE. SI NO HAY CHATS, MUESTRA EL MENSAJE INICIAL -->
-                        </div>
+                        <div class="wa-content-area" id="lista-chats-wa"></div>
 
                         <div class="wa-fab" onclick="abrirModalNuevoChat()">
                             <i class="fa-solid fa-comment-medical"></i>
                         </div>
                     </div>
 
-                    <!-- PESTAÑA 2: NOVEDADES / ESTADOS -->
+                    <!-- NOVEDADES -->
                     <div id="wa-tab-novedades" class="wa-tab-content">
                         <div class="wa-content-area">
                             <div style="padding: 12px 16px;">
@@ -588,7 +463,7 @@
                         </div>
                     </div>
 
-                    <!-- PESTAÑA 3: COMUNIDADES -->
+                    <!-- COMUNIDADES -->
                     <div id="wa-tab-comunidades" class="wa-tab-content">
                         <div class="wa-content-area" style="text-align: center; padding: 30px 20px;">
                             <div style="width: 120px; height: 120px; background: #1f2c34; border-radius: 24px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--wa-green);">
@@ -596,34 +471,25 @@
                             </div>
                             <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">Usa una comunidad para mantenerte en contacto</h3>
                             <p style="font-size: 0.8rem; color: var(--wa-muted); line-height: 1.4; margin-bottom: 20px;">
-                                Las comunidades reúnen a los miembros en grupos por temas y facilitan la recepción de avisos de los administradores.
+                                Las comunidades reúnen a los miembros en grupos por temas y facilitan la recepción de avisos.
                             </p>
                             <button class="btn" style="background: var(--wa-green); color: #0b141a; font-weight: bold; border-radius: 20px;" onclick="alert('Comunidad creada')">Iniciar tu comunidad</button>
                         </div>
                     </div>
 
-                    <!-- PESTAÑA 4: LLAMADAS -->
+                    <!-- LLAMADAS EN OMNICHAT -->
                     <div id="wa-tab-llamadas" class="wa-tab-content">
-                        <div class="wa-content-area">
-                            <div style="display: flex; justify-content: space-around; padding: 14px 10px; border-bottom: 1px solid #1f2c34; text-align: center;">
-                                <div><i class="fa-solid fa-phone" style="font-size: 1.2rem; color: var(--wa-green);"></i><br/><span style="font-size: 0.7rem; color: var(--wa-muted);">Llamar</span></div>
-                                <div><i class="fa-solid fa-calendar-days" style="font-size: 1.2rem; color: var(--wa-green);"></i><br/><span style="font-size: 0.7rem; color: var(--wa-muted);">Programar</span></div>
-                                <div><i class="fa-solid fa-grip" style="font-size: 1.2rem; color: var(--wa-green);"></i><br/><span style="font-size: 0.7rem; color: var(--wa-muted);">Teclado</span></div>
-                                <div><i class="fa-solid fa-heart" style="font-size: 1.2rem; color: var(--wa-green);"></i><br/><span style="font-size: 0.7rem; color: var(--wa-muted);">Favoritos</span></div>
-                            </div>
-
-                            <div class="status-header-title">Recientes</div>
-                            <div style="text-align: center; color: var(--wa-muted); padding: 30px 0; font-size: 0.8rem;">
-                                No tienes registro de llamadas recientes.
-                            </div>
-                        </div>
-
-                        <div class="wa-fab" onclick="iniciarLlamadaVozHD()">
-                            <i class="fa-solid fa-phone-slash"></i>
+                        <div class="wa-content-area" style="padding: 20px 12px; text-align: center;">
+                            <i class="fa-solid fa-phone" style="font-size: 3rem; color: var(--wa-green); margin-bottom: 12px;"></i>
+                            <h3 style="margin: 0 0 6px 0;">Llamadas HD OmniMovil</h3>
+                            <p style="font-size: 0.8rem; color: var(--wa-muted);">Llama gratis a la red interna o a otras operadoras usando tu saldo.</p>
+                            <button class="btn" style="width: auto; padding: 10px 20px; margin-top: 10px; background: var(--wa-green); color: #0b141a;" onclick="iniciarLlamadaVozHD('+58 500-0001')">
+                                <i class="fa-solid fa-phone"></i> Probar Llamada Interna
+                            </button>
                         </div>
                     </div>
 
-                    <!-- PANTALLA DE CONVERSACIÓN ABIERTA TIPO CHAT -->
+                    <!-- CHAT ABIERTO -->
                     <div class="wa-chat-view" id="pantalla-chat-abierto">
                         <div class="wa-chat-view-header">
                             <i class="fa-solid fa-arrow-left" style="cursor: pointer; font-size: 1.1rem;" onclick="cerrarChatAbierto()"></i>
@@ -650,7 +516,7 @@
                         </div>
                     </div>
 
-                    <!-- BOTTOM NAV (BARRA NAVEGACIÓN INFERIOR DE IMÁGENES) -->
+                    <!-- NAVEGACIÓN INFERIOR -->
                     <div class="wa-bottom-nav">
                         <div class="wa-nav-btn active" id="nav-btn-chats" onclick="switchWATab('chats')">
                             <i class="fa-solid fa-comment-dots"></i>
@@ -703,16 +569,54 @@
                 </div>
             </div>
 
-            <!-- RED SIP -->
+            <!-- SECCIÓN RED SIP: TELÉFONO ZOIPER INTERACTIVO CON INTERCONEXIÓN -->
             <div id="csec-llamadas" class="client-section">
+                <div class="zoiper-phone-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;">● SOFTPHONE ZOIPER</span>
+                        <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-3391</span>
+                    </div>
+
+                    <div class="zoiper-screen">
+                        <input type="text" id="zoiper-input-display" class="zoiper-num-input" value="+58 " placeholder="+58 " />
+                    </div>
+
+                    <div class="zoiper-grid">
+                        <div class="zoiper-key" onclick="pressKey('1')">1 <span>&nbsp;</span></div>
+                        <div class="zoiper-key" onclick="pressKey('2')">2 <span>ABC</span></div>
+                        <div class="zoiper-key" onclick="pressKey('3')">3 <span>DEF</span></div>
+                        <div class="zoiper-key" onclick="pressKey('4')">4 <span>GHI</span></div>
+                        <div class="zoiper-key" onclick="pressKey('5')">5 <span>JKL</span></div>
+                        <div class="zoiper-key" onclick="pressKey('6')">6 <span>MNO</span></div>
+                        <div class="zoiper-key" onclick="pressKey('7')">7 <span>PQRS</span></div>
+                        <div class="zoiper-key" onclick="pressKey('8')">8 <span>TUV</span></div>
+                        <div class="zoiper-key" onclick="pressKey('9')">9 <span>WXYZ</span></div>
+                        <div class="zoiper-key" onclick="pressKey('*')">* <span>&nbsp;</span></div>
+                        <div class="zoiper-key" onclick="pressKey('0')">0 <span>+</span></div>
+                        <div class="zoiper-key" onclick="pressKey('#')"># <span>&nbsp;</span></div>
+                    </div>
+
+                    <div class="zoiper-controls">
+                        <button class="zoiper-action-btn btn-backspace-dark" title="Borrar" onclick="backspaceKey()">
+                            <i class="fa-solid fa-backspace"></i>
+                        </button>
+                        <button class="zoiper-action-btn btn-call-green" title="Llamar" onclick="makeZoiperCall()">
+                            <i class="fa-solid fa-phone"></i>
+                        </button>
+                        <button class="zoiper-action-btn btn-hangup-red" title="Colgar" onclick="finalizarLlamada()">
+                            <i class="fa-solid fa-phone-slash"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div class="card">
-                    <h2>⚙️ Configuración Softphone SIP</h2>
+                    <h2>⚙️ Servidor SIP / WebSocket</h2>
                     <input type="text" id="sip-server-ws" value="wss://omnimovil.xo.je:8089/ws" />
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
                         <input type="text" id="sip-user" value="5000001" />
                         <input type="password" id="sip-pass" value="1234" />
                     </div>
-                    <button class="btn" style="background: var(--accent); color: #fff;" onclick="conectarZoiperSIP()">⚡ Conectar SIP</button>
+                    <button class="btn" style="background: var(--accent); color: #fff;" onclick="conectarZoiperSIP()">⚡ Reconectar Servidor SIP</button>
                 </div>
             </div>
 
@@ -725,7 +629,7 @@
             </div>
         </div>
 
-        <!-- PANTALLA DE BIENVENIDA / DESCARGA E INGRESO CONTINUO -->
+        <!-- MODAL BIENVENIDA Y REGISTRO -->
         <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 24px;">
                 <div style="width: 80px; height: 80px; background: #0f172a; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center;">
@@ -787,11 +691,14 @@
         }
 
         let clienteAutenticado = null;
-        let miNumeroAsignado = "+58 500-0001";
+        let miNumeroAsignado = "+58 500-3391";
         let numeroDestinoActual = "+58 500-0000";
         let nombreCliente = "Erik";
         let saldoActual = 5.00;
         let clientesRegistrados = [];
+        let callTimerInterval = null;
+        let callSeconds = 0;
+        let costoPorSegundo = 0;
 
         window.onload = async function() {
             obtenerClienteSupabase();
@@ -892,6 +799,7 @@
         function actualizarVistaCliente() {
             document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
             document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
+            document.getElementById('zoiper-line-id').innerText = miNumeroAsignado;
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
             renderizarListaChatsWhatsApp();
         }
@@ -902,7 +810,6 @@
             document.getElementById(`csec-${seccion}`).classList.add('active');
         }
 
-        /* CAMBIO DE PESTAÑAS WHATSAPP */
         function switchWATab(tabName) {
             document.querySelectorAll('.wa-nav-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.wa-tab-content').forEach(c => c.classList.remove('active'));
@@ -914,10 +821,100 @@
             document.getElementById('wa-header-title').innerText = titleMap[tabName];
         }
 
+        /* --- CÁLCULO DE TARIFAS Y CONTROL DE SALDO EN LLAMADAS --- */
+        function obtenerTarifaPorMinuto(numero) {
+            let clean = numero.replace(/\s+|-/g, '');
+            if (clean.includes("500") || clean.startsWith("+58500")) {
+                return { tipo: "Red Interna OmniMovil", tarifaMin: 0.00 };
+            } else if (clean.startsWith("+58412") || clean.startsWith("+58414") || clean.startsWith("+58424") || clean.startsWith("+58416") || clean.startsWith("+58426")) {
+                return { tipo: "Móvil Nacional (Movistar/Digitel/Movilnet)", tarifaMin: 0.02 };
+            } else if (clean.startsWith("+582")) {
+                return { tipo: "Fijo Nacional", tarifaMin: 0.01 };
+            } else {
+                return { tipo: "Internacional", tarifaMin: 0.05 };
+            }
+        }
+
+        function pressKey(char) {
+            let input = document.getElementById('zoiper-input-display');
+            input.value += char;
+        }
+
+        function backspaceKey() {
+            let input = document.getElementById('zoiper-input-display');
+            if (input.value.length > 3) {
+                input.value = input.value.slice(0, -1);
+            }
+        }
+
+        function makeZoiperCall() {
+            let num = document.getElementById('zoiper-input-display').value.trim();
+            if (num.length < 7) {
+                alert("Ingresa un número válido.");
+                return;
+            }
+            iniciarLlamadaVozHD(num);
+        }
+
+        function iniciarLlamadaVozHD(numDestino) {
+            let target = numDestino || numeroDestinoActual;
+            let infoTarifa = obtenerTarifaPorMinuto(target);
+            
+            if (infoTarifa.tarifaMin > 0 && saldoActual < infoTarifa.tarifaMin) {
+                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin} para llamar a ${infoTarifa.tipo}. Por favor recarga en la sección Saldo.`);
+                return;
+            }
+
+            costoPorSegundo = infoTarifa.tarifaMin / 60;
+            document.getElementById('call-name').innerText = target;
+            document.getElementById('call-rate-info').innerText = `${infoTarifa.tipo}: $${infoTarifa.tarifaMin.toFixed(2)}/min`;
+            document.getElementById('call-status').innerText = "Conectando llamada HD...";
+            document.getElementById('modal-call-screen').style.display = 'flex';
+
+            callSeconds = 0;
+            clearInterval(callTimerInterval);
+            callTimerInterval = setInterval(() => {
+                callSeconds++;
+                let mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
+                let secs = String(callSeconds % 60).padStart(2, '0');
+                document.getElementById('call-timer').innerText = `${mins}:${secs}`;
+                
+                if (callSeconds === 2) document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
+
+                // COBRO SEGUNDO A SEGUNDO PARA REDES EXTERNAS
+                if (costoPorSegundo > 0) {
+                    saldoActual -= costoPorSegundo;
+                    if (saldoActual <= 0) {
+                        saldoActual = 0;
+                        actualizarVistaCliente();
+                        finalizarLlamada();
+                        alert("La llamada ha finalizado por saldo agotado.");
+                        return;
+                    }
+                    actualizarVistaCliente();
+                }
+            }, 1000);
+        }
+
+        function finalizarLlamada() {
+            clearInterval(callTimerInterval);
+            document.getElementById('modal-call-screen').style.display = 'none';
+        }
+
+        function toggleMuteCall() {
+            let icon = document.getElementById('mute-icon');
+            if(icon.classList.contains('fa-microphone-slash')) {
+                icon.classList.remove('fa-microphone-slash');
+                icon.classList.add('fa-microphone');
+            } else {
+                icon.classList.remove('fa-microphone');
+                icon.classList.add('fa-microphone-slash');
+            }
+        }
+
         function renderizarListaChatsWhatsApp() {
             let container = document.getElementById('lista-chats-wa');
             container.innerHTML = "";
-
             let contactos = clienteAutenticado?.contactosChat || [];
 
             if (contactos.length === 0) {
@@ -925,24 +922,18 @@
                     <div style="text-align: center; color: var(--wa-muted); padding: 40px 20px; font-size: 0.85rem;">
                         <i class="fa-solid fa-comments" style="font-size: 2.5rem; color: var(--wa-green); margin-bottom: 12px; display: block;"></i>
                         <strong>No tienes chats aún</strong><br/>
-                        Toca el botón verde <i class="fa-solid fa-comment-medical" style="color:var(--wa-green);"></i> para agregar un contacto e iniciar una conversación.
+                        Toca el botón verde <i class="fa-solid fa-comment-medical" style="color:var(--wa-green);"></i> para agregar un contacto.
                     </div>
                 `;
                 return;
             }
 
             contactos.forEach(c => {
-                let inicial = c.nombre[0];
                 container.innerHTML += `
                     <div class="wa-chat-item" onclick="abrirChatWhatsApp('${c.numero}', '${c.nombre}')">
-                        <div class="wa-avatar-wrap">
-                            <div class="wa-avatar-img">${inicial}</div>
-                        </div>
+                        <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.nombre[0]}</div></div>
                         <div class="wa-chat-info">
-                            <div class="wa-chat-top">
-                                <span class="wa-chat-name">${c.nombre}</span>
-                                <span class="wa-chat-time">${c.hora || 'Ahora'}</span>
-                            </div>
+                            <div class="wa-chat-top"><span class="wa-chat-name">${c.nombre}</span><span class="wa-chat-time">${c.hora || 'Ahora'}</span></div>
                             <div class="wa-chat-msg">${c.ultimoMsg || 'Toca para abrir chat'}</div>
                         </div>
                     </div>
@@ -959,9 +950,7 @@
             cargarMensajesSupabaseWhatsApp();
         }
 
-        function cerrarChatAbierto() {
-            document.getElementById('pantalla-chat-abierto').classList.remove('active');
-        }
+        function cerrarChatAbierto() { document.getElementById('pantalla-chat-abierto').classList.remove('active'); }
 
         async function enviarMensajeWhatsApp() {
             let input = document.getElementById('chat-input-texto-wa');
@@ -982,12 +971,7 @@
         function renderizarMensajeEnPantallaWA(origen, texto, hora) {
             let box = document.getElementById('contenedor-mensajes-wa');
             let esMio = origen === miNumeroAsignado;
-            box.innerHTML += `
-                <div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">
-                    ${texto}
-                    <div class="wa-msg-meta">${hora} ${esMio ? '✓✓' : ''}</div>
-                </div>
-            `;
+            box.innerHTML += `<div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">${texto}<div class="wa-msg-meta">${hora} ${esMio ? '✓✓' : ''}</div></div>`;
             box.scrollTop = box.scrollHeight;
         }
 
