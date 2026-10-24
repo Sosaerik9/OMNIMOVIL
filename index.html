@@ -24,7 +24,6 @@
     }">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jssip/3.10.0/jssip.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -324,7 +323,7 @@
         .wa-input-bar-dark { background: var(--wa-card); padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
         .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 14px; border-radius: 20px; margin: 0; font-size: 0.85rem; }
 
-        /* --- PANTALLA DE LLAMADA ESTILO WHATSAPP REAL --- */
+        /* PANTALLA DE LLAMADA ESTILO WHATSAPP REAL */
         #modal-call-screen {
             display: none;
             position: fixed;
@@ -337,11 +336,6 @@
             align-items: center;
             padding: 50px 20px;
             color: #e9edef;
-        }
-
-        .wa-call-header-info {
-            text-align: center;
-            margin-top: 20px;
         }
 
         .wa-call-avatar-container {
@@ -436,7 +430,7 @@
             </div>
 
             <h2 style="color: #e9edef; margin: 0; font-size: 1.6rem; font-weight: 600;" id="call-name">Llamada VoIP</h2>
-            <p style="color: var(--wa-green); font-size: 0.9rem; margin-top: 6px;" id="call-status">Conectando servicio SIP...</p>
+            <p style="color: var(--wa-green); font-size: 0.9rem; margin-top: 6px;" id="call-status">Conectando servicio WebRTC...</p>
             <div style="color: #f59e0b; font-size: 0.8rem; font-weight: bold; margin-top: 4px;" id="call-rate-info">Tarifa: $0.00/min</div>
             <div style="color: #8696a0; font-size: 1.2rem; font-weight: bold; margin-top: 10px;" id="call-timer">00:00</div>
         </div>
@@ -538,16 +532,9 @@
                                         <span style="font-size: 0.75rem; color: var(--wa-muted);">Añade una actualización</span>
                                     </div>
                                 </div>
-
                                 <div class="status-header-title">Recientes</div>
-                                <div style="text-align: center; color: var(--wa-muted); padding: 20px 0; font-size: 0.8rem;">
-                                    No hay estados recientes.
-                                </div>
+                                <div style="text-align: center; color: var(--wa-muted); padding: 20px 0; font-size: 0.8rem;">No hay estados recientes.</div>
                             </div>
-                        </div>
-
-                        <div class="wa-fab" onclick="alert('Subir estado')">
-                            <i class="fa-solid fa-camera"></i>
                         </div>
                     </div>
 
@@ -557,11 +544,7 @@
                             <div style="width: 120px; height: 120px; background: #1f2c34; border-radius: 24px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 3rem; color: var(--wa-green);">
                                 <i class="fa-solid fa-people-group"></i>
                             </div>
-                            <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">Usa una comunidad para mantenerte en contacto</h3>
-                            <p style="font-size: 0.8rem; color: var(--wa-muted); line-height: 1.4; margin-bottom: 20px;">
-                                Las comunidades reúnen a los miembros en grupos por temas y facilitan la recepción de avisos.
-                            </p>
-                            <button class="btn" style="background: var(--wa-green); color: #0b141a; font-weight: bold; border-radius: 20px;" onclick="alert('Comunidad creada')">Iniciar tu comunidad</button>
+                            <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">Usa una comunidad</h3>
                         </div>
                     </div>
 
@@ -570,7 +553,7 @@
                         <div class="wa-content-area" style="padding: 20px 12px; text-align: center;">
                             <i class="fa-solid fa-phone" style="font-size: 3rem; color: var(--wa-green); margin-bottom: 12px;"></i>
                             <h3 style="margin: 0 0 6px 0;">Llamadas HD OmniMovil</h3>
-                            <p style="font-size: 0.8rem; color: var(--wa-muted);">Llama gratis a la red interna o a otras operadoras usando tu saldo.</p>
+                            <p style="font-size: 0.8rem; color: var(--wa-muted);">Llama a cualquier número usando tu saldo.</p>
                             <button class="btn" style="width: auto; padding: 10px 20px; margin-top: 10px; background: var(--wa-green); color: #0b141a;" onclick="iniciarLlamadaVozHD('+58 500-0001')">
                                 <i class="fa-solid fa-phone"></i> Probar Llamada Interna
                             </button>
@@ -588,40 +571,25 @@
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
                                 <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
                             </div>
-                            <i class="fa-solid fa-video" style="color: var(--wa-muted); cursor: pointer;" onclick="iniciarLlamadaVozHD()"></i>
                             <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer; margin-left: 10px;" onclick="iniciarLlamadaVozHD()"></i>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
-                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Los mensajes están cifrados de extremo a extremo.</div>
+                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados de extremo a extremo.</div>
                         </div>
 
                         <div class="wa-input-bar-dark">
-                            <i class="fa-regular fa-face-smile" style="color: var(--wa-muted); font-size: 1.2rem;"></i>
                             <input type="text" id="chat-input-texto-wa" placeholder="Mensaje" onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
-                            <i class="fa-solid fa-paperclip" style="color: var(--wa-muted); font-size: 1.1rem;"></i>
                             <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.2rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
 
                     <!-- NAVEGACIÓN INFERIOR -->
                     <div class="wa-bottom-nav">
-                        <div class="wa-nav-btn active" id="nav-btn-chats" onclick="switchWATab('chats')">
-                            <i class="fa-solid fa-comment-dots"></i>
-                            <span>Chats</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-novedades" onclick="switchWATab('novedades')">
-                            <i class="fa-solid fa-circle-notch"></i>
-                            <span>Novedades</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-comunidades" onclick="switchWATab('comunidades')">
-                            <i class="fa-solid fa-people-group"></i>
-                            <span>Comunidades</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-llamadas" onclick="switchWATab('llamadas')">
-                            <i class="fa-solid fa-phone"></i>
-                            <span>Llamadas</span>
-                        </div>
+                        <div class="wa-nav-btn active" id="nav-btn-chats" onclick="switchWATab('chats')"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
+                        <div class="wa-nav-btn" id="nav-btn-novedades" onclick="switchWATab('novedades')"><i class="fa-solid fa-circle-notch"></i><span>Novedades</span></div>
+                        <div class="wa-nav-btn" id="nav-btn-comunidades" onclick="switchWATab('comunidades')"><i class="fa-solid fa-people-group"></i><span>Comunidades</span></div>
+                        <div class="wa-nav-btn" id="nav-btn-llamadas" onclick="switchWATab('llamadas')"><i class="fa-solid fa-phone"></i><span>Llamadas</span></div>
                     </div>
 
                 </div>
@@ -635,10 +603,9 @@
                 </div>
                 <div class="card">
                     <h2>Reportar Pago / Recarga Automática</h2>
-                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px;">Acreditación instantánea tras verificación de referencia.</p>
                     <input type="number" id="monto-pago" placeholder="Monto ($ USD)" />
                     <input type="text" id="ref-pago" placeholder="Número de Referencia" />
-                    <button class="btn" style="background: var(--accent-orange);" onclick="enviarReportePagoAutomatico()">⚡ Procesar Recarga Automática</button>
+                    <button class="btn" style="background: var(--accent-orange);" onclick="enviarReportePagoAutomatico()">⚡ Procesar Recarga</button>
                 </div>
             </div>
 
@@ -647,21 +614,17 @@
                 <div class="card">
                     <h2>Planes Mensuales</h2>
                     <div class="history-item">
-                        <div><strong>Plan Básico ($3.00/mes)</strong></div>
-                        <button class="btn btn-small" onclick="comprarPaquete(3.00, 'Plan Básico')">Suscribir</button>
-                    </div>
-                    <div class="history-item">
                         <div><strong>Plan Ilimitado Pro ($5.00/mes)</strong></div>
-                        <button class="btn btn-small" style="background: var(--accent);" onclick="comprarPaquete(5.00, 'Plan Ilimitado Pro')">Suscribir</button>
+                        <button class="btn btn-small" style="background: var(--accent);" onclick="alert('Plan suscrito')">Suscribir</button>
                     </div>
                 </div>
             </div>
 
-            <!-- RED SIP CON PANTALLA ESTILO WHATSAPP -->
+            <!-- RED SIP CON WEBRTC NATIVO -->
             <div id="csec-llamadas" class="client-section">
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;" id="sip-status-indicator">● SOFTPHONE ZOIPER (SIP)</span>
+                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;" id="sip-status-indicator">● WEBRTC NATIVO (ONLINE)</span>
                         <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-3391</span>
                     </div>
 
@@ -685,26 +648,16 @@
                     </div>
 
                     <div class="zoiper-controls">
-                        <button class="zoiper-action-btn btn-backspace-dark" title="Borrar" onclick="backspaceKey()">
-                            <i class="fa-solid fa-backspace"></i>
-                        </button>
-                        <button class="zoiper-action-btn btn-call-green" title="Llamar" onclick="makeZoiperCall()">
-                            <i class="fa-solid fa-phone"></i>
-                        </button>
-                        <button class="zoiper-action-btn btn-hangup-red" title="Colgar" onclick="finalizarLlamada()">
-                            <i class="fa-solid fa-phone-slash"></i>
-                        </button>
+                        <button class="zoiper-action-btn btn-backspace-dark" title="Borrar" onclick="backspaceKey()"><i class="fa-solid fa-backspace"></i></button>
+                        <button class="zoiper-action-btn btn-call-green" title="Llamar" onclick="makeZoiperCall()"><i class="fa-solid fa-phone"></i></button>
+                        <button class="zoiper-action-btn btn-hangup-red" title="Colgar" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
                     </div>
                 </div>
 
                 <div class="card">
-                    <h2>⚙️ Servidor SIP / WebSocket</h2>
-                    <input type="text" id="sip-server-ws" value="wss://omnimovil.xo.je:8089/ws" />
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                        <input type="text" id="sip-user" value="5000001" />
-                        <input type="password" id="sip-pass" value="1234" />
-                    </div>
-                    <button class="btn" style="background: var(--accent); color: #fff;" onclick="conectarZoiperSIP()">⚡ Reconectar Servidor SIP</button>
+                    <h2>⚙️ Servidor WebSocket de Señalización</h2>
+                    <input type="text" id="ws-server-url" value="wss://tu-enlace-ngrok.ngrok-free.app" />
+                    <button class="btn" style="background: var(--accent); color: #fff;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
                 </div>
             </div>
 
@@ -717,56 +670,20 @@
             </div>
         </div>
 
-        <!-- MODAL BIENVENIDA Y REGISTRO -->
-        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px; overflow-y: auto;">
+        <!-- MODAL REGISTRO -->
+        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 24px;">
-                <div style="width: 80px; height: 80px; background: #0f172a; border-radius: 20px; margin: 0 auto 14px auto; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-phone" style="font-size: 2.2rem; color: #ffffff;"></i>
-                    <i class="fa-solid fa-star" style="font-size: 1.1rem; color: #f59e0b; position: absolute; margin-top: -24px; margin-left: 28px;"></i>
-                </div>
-                
                 <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-                    Descarga nuestra app y regístrate y disfruta de la mejor aventura en comunicaciones.
-                </p>
-
-                <button class="btn" id="btn-descarga-inicial" style="background: var(--accent-green); color: #fff; padding: 14px; font-weight: bold; margin-bottom: 14px;" onclick="iniciarDescargaYAcceso()">
-                    📲 Descarga nuestra app y regístrate
-                </button>
-
-                <div id="form-auth-container" style="display: none; margin-top: 14px; text-align: left; border-top: 1px solid #e2e8f0; padding-top: 14px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
-                        <button class="tab-auth-btn active" id="tab-btn-reg" onclick="switchAuthTab('reg')">Registrarse</button>
-                        <button class="tab-auth-btn" id="tab-btn-log" onclick="switchAuthTab('log')">Ingresar</button>
-                    </div>
-
-                    <div id="sub-form-reg">
-                        <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
-                        <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
-                        <input type="password" id="init-reg-pass" placeholder="Contraseña segura" />
-                        <button class="btn" style="background: var(--accent-green); font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro y Entrar</button>
-                    </div>
-
-                    <div id="sub-form-log" style="display: none;">
-                        <input type="text" id="init-log-user" placeholder="Nombre de Usuario" />
-                        <input type="password" id="init-log-pass" placeholder="Contraseña" />
-                        <button class="btn" style="background: var(--accent); font-weight: bold;" onclick="ejecutarLoginExistente()">Ingresar a Mi Cuenta</button>
-                    </div>
-                </div>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Regístrate y disfruta de la mejor comunicación.</p>
+                <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
+                <input type="password" id="init-reg-pass" placeholder="Contraseña" />
+                <button class="btn" style="background: var(--accent-green); font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro</button>
             </div>
         </div>
     </div>
 
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(err => console.log(err));
-            });
-        }
-
-        let deferredPrompt = null;
-        window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; });
-
         const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
         const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
         let supabaseClient = null;
@@ -788,8 +705,11 @@
         let callSeconds = 0;
         let costoPorSegundo = 0;
 
-        let jsSipUA = null;
-        let activeSipSession = null;
+        // WEBRTC NATIVO VARIABLES
+        let wsSocket = null;
+        let peerConnection = null;
+        let localStream = null;
+        const iceServers = { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] };
 
         window.onload = async function() {
             obtenerClienteSupabase();
@@ -798,75 +718,63 @@
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
-                if(cli) {
-                    vincularSesionCliente(cli);
-                    conectarZoiperSIP();
-                    return;
-                }
+                if(cli) { vincularSesionCliente(cli); return; }
             }
-            abrirModalRegistroInicial();
+            document.getElementById('modal-registro-inicial').style.display = 'flex';
         };
 
-        function conectarZoiperSIP() {
-            let wsUrl = document.getElementById('sip-server-ws').value.trim();
-            let sipUser = document.getElementById('sip-user').value.trim();
-            let sipPass = document.getElementById('sip-pass').value.trim();
+        function conectarServidorWebSocket() {
+            let url = document.getElementById('ws-server-url').value.trim();
+            if (!url) return;
 
-            if (!wsUrl || !sipUser || typeof JsSIP === 'undefined') return;
+            wsSocket = new WebSocket(url);
 
-            try {
-                let socket = new JsSIP.WebSocketInterface(wsUrl);
-                let domain = wsUrl.split('/')[2].split(':')[0];
-                
-                let configuration = {
-                    sockets: [socket],
-                    uri: `sip:${sipUser}@${domain}`,
-                    password: sipPass,
-                    register: true
-                };
+            wsSocket.onopen = () => {
+                document.getElementById('sip-status-indicator').innerText = "● WEBRTC (CONECTADO)";
+                document.getElementById('sip-status-indicator').style.color = "#25d366";
+                wsSocket.send(JSON.stringify({ type: 'register', numero: miNumeroAsignado }));
+            };
 
-                jsSipUA = new JsSIP.UA(configuration);
+            wsSocket.onmessage = async (event) => {
+                let data = JSON.parse(event.data);
+                if (data.type === 'call-offer') {
+                    numeroDestinoActual = data.from;
+                    abrirPantallaLlamada(data.from, "Llamada Entrante...");
+                    await iniciarPeerConnection();
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.offer));
+                    let answer = await peerConnection.createAnswer();
+                    await peerConnection.setLocalDescription(answer);
+                    wsSocket.send(JSON.stringify({ type: 'call-answer', to: data.from, answer }));
+                } else if (data.type === 'call-answer') {
+                    await peerConnection.setRemoteDescription(new RTCSessionDescription(data.answer));
+                    document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
+                } else if (data.type === 'ice-candidate') {
+                    if (peerConnection) await peerConnection.addIceCandidate(new RTCIceCandidate(data.candidate));
+                } else if (data.type === 'hangup') {
+                    finalizarLlamada();
+                }
+            };
 
-                jsSipUA.on('connecting', () => {
-                    document.getElementById('sip-status-indicator').innerText = "● CONECTANDO SIP...";
-                    document.getElementById('sip-status-indicator').style.color = "#f59e0b";
-                });
-
-                jsSipUA.on('connected', () => {
-                    document.getElementById('sip-status-indicator').innerText = "● SOFTPHONE ZOIPER (ONLINE)";
-                    document.getElementById('sip-status-indicator').style.color = "#25d366";
-                });
-
-                jsSipUA.on('disconnected', () => {
-                    document.getElementById('sip-status-indicator').innerText = "○ SOFTPHONE (OFFLINE)";
-                    document.getElementById('sip-status-indicator').style.color = "#ef4444";
-                });
-
-                jsSipUA.on('newRTCSession', (data) => {
-                    let session = data.session;
-                    if (session.direction === 'incoming') {
-                        activeSipSession = session;
-                        let caller = session.remote_identity.uri.user;
-                        document.getElementById('call-name').innerText = caller;
-                        document.getElementById('call-avatar').innerText = caller[0].toUpperCase();
-                        document.getElementById('call-status').innerText = "Llamada Entrante...";
-                        document.getElementById('modal-call-screen').style.display = 'flex';
-
-                        session.answer({ mediaConstraints: { audio: true, video: false } });
-                        vincularStreamsAudio(session);
-                    }
-                });
-
-                jsSipUA.start();
-            } catch (err) { console.warn(err); }
+            wsSocket.onclose = () => {
+                document.getElementById('sip-status-indicator').innerText = "○ WEBRTC (DESCONECTADO)";
+                document.getElementById('sip-status-indicator').style.color = "#ef4444";
+            };
         }
 
-        function vincularStreamsAudio(session) {
-            session.connection.addEventListener('track', (e) => {
-                if (e.track.kind === 'audio') {
-                    document.getElementById('remoteAudio').srcObject = e.streams[0];
+        async function iniciarPeerConnection() {
+            peerConnection = new RTCPeerConnection(iceServers);
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+
+            peerConnection.ontrack = (event) => {
+                document.getElementById('remoteAudio').srcObject = event.streams[0];
+            };
+
+            peerConnection.onicecandidate = (event) => {
+                if (event.candidate && wsSocket) {
+                    wsSocket.send(JSON.stringify({ type: 'ice-candidate', to: numeroDestinoActual, candidate: event.candidate }));
                 }
-            });
+            };
         }
 
         async function cargarUsuariosDesdeSupabase() {
@@ -876,24 +784,6 @@
                 let { data } = await client.from('usuarios').select('*');
                 if(data && data.length > 0) clientesRegistrados = data;
             } catch(e) { console.warn(e); }
-        }
-
-        function abrirModalRegistroInicial() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
-        function instalarPWA() { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt.userChoice.then(() => { deferredPrompt = null; }); } }
-        function iniciarDescargaYAcceso() { instalarPWA(); document.getElementById('form-auth-container').style.display = 'block'; }
-
-        function switchAuthTab(type) {
-            if(type === 'reg') {
-                document.getElementById('tab-btn-reg').classList.add('active');
-                document.getElementById('tab-btn-log').classList.remove('active');
-                document.getElementById('sub-form-reg').style.display = 'block';
-                document.getElementById('sub-form-log').style.display = 'none';
-            } else {
-                document.getElementById('tab-btn-log').classList.add('active');
-                document.getElementById('tab-btn-reg').classList.remove('active');
-                document.getElementById('sub-form-log').style.display = 'block';
-                document.getElementById('sub-form-reg').style.display = 'none';
-            }
         }
 
         async function ejecutarRegistroInicialPaso1() {
@@ -908,17 +798,8 @@
             clientesRegistrados.push(nuevoCliente);
             let client = obtenerClienteSupabase();
             if(client) await client.from('usuarios').insert([nuevoCliente]);
-            
             vincularSesionCliente(nuevoCliente);
-            conectarZoiperSIP();
             alert(`¡Bienvenido!\nTu línea asignada es: ${numAsignadoUnico}`);
-        }
-
-        function ejecutarLoginExistente() {
-            let user = document.getElementById('init-log-user').value.trim();
-            let pass = document.getElementById('init-log-pass').value.trim();
-            let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase() && c.pass === pass);
-            if(cli) { vincularSesionCliente(cli); conectarZoiperSIP(); } else alert("Usuario o contraseña incorrectos.");
         }
 
         function vincularSesionCliente(cli) {
@@ -926,7 +807,6 @@
             nombreCliente = cli.nombre;
             miNumeroAsignado = cli.numero;
             saldoActual = cli.saldo;
-
             localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
             actualizarVistaCliente();
             document.getElementById('modal-registro-inicial').style.display = 'none';
@@ -935,7 +815,7 @@
         }
 
         function cerrarSesionCliente() {
-            if (jsSipUA) jsSipUA.stop();
+            if (wsSocket) wsSocket.close();
             localStorage.removeItem('omnimovil_usuario_activo');
             location.reload();
         }
@@ -963,15 +843,9 @@
 
         function obtenerTarifaPorMinuto(numero) {
             let clean = numero.replace(/\s+|-/g, '');
-            if (clean.includes("500") || clean.startsWith("+58500")) {
-                return { tipo: "Red Interna OmniMovil", tarifaMin: 0.00 };
-            } else if (clean.startsWith("+58412") || clean.startsWith("+58414") || clean.startsWith("+58424") || clean.startsWith("+58416") || clean.startsWith("+58426")) {
-                return { tipo: "Móvil Nacional (Movistar/Digitel/Movilnet)", tarifaMin: 0.02 };
-            } else if (clean.startsWith("+582")) {
-                return { tipo: "Fijo Nacional", tarifaMin: 0.01 };
-            } else {
-                return { tipo: "Internacional", tarifaMin: 0.05 };
-            }
+            if (clean.includes("500") || clean.startsWith("+58500")) return { tipo: "Red Interna", tarifaMin: 0.00 };
+            if (clean.startsWith("+584")) return { tipo: "Móvil Nacional", tarifaMin: 0.02 };
+            return { tipo: "Internacional", tarifaMin: 0.05 };
         }
 
         function pressKey(char) { document.getElementById('zoiper-input-display').value += char; }
@@ -986,27 +860,26 @@
             iniciarLlamadaVozHD(num);
         }
 
-        function iniciarLlamadaVozHD(numDestino) {
-            let target = numDestino || numeroDestinoActual;
-            let infoTarifa = obtenerTarifaPorMinuto(target);
+        async function iniciarLlamadaVozHD(numDestino) {
+            numeroDestinoActual = numDestino || numeroDestinoActual;
+            let infoTarifa = obtenerTarifaPorMinuto(numeroDestinoActual);
             
             if (infoTarifa.tarifaMin > 0 && saldoActual < infoTarifa.tarifaMin) {
-                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin} para llamar.`);
+                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin}.`);
                 return;
             }
 
-            if (jsSipUA && jsSipUA.isConnected()) {
-                activeSipSession = jsSipUA.call(`sip:${target.replace(/\s+|-/g, '')}@omnimovil.xo.je`, { mediaConstraints: { audio: true, video: false } });
-                vincularStreamsAudio(activeSipSession);
+            abrirPantallaLlamada(numeroDestinoActual, "Conectando llamada HD...");
+            await iniciarPeerConnection();
+
+            let offer = await peerConnection.createOffer();
+            await peerConnection.setLocalDescription(offer);
+
+            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
+                wsSocket.send(JSON.stringify({ type: 'call-offer', to: numeroDestinoActual, offer }));
             }
 
             costoPorSegundo = infoTarifa.tarifaMin / 60;
-            document.getElementById('call-name').innerText = target;
-            document.getElementById('call-avatar').innerText = target.slice(-1);
-            document.getElementById('call-rate-info').innerText = `${infoTarifa.tipo}: $${infoTarifa.tarifaMin.toFixed(2)}/min`;
-            document.getElementById('call-status').innerText = "Conectando llamada HD...";
-            document.getElementById('modal-call-screen').style.display = 'flex';
-
             callSeconds = 0;
             clearInterval(callTimerInterval);
             callTimerInterval = setInterval(() => {
@@ -1015,8 +888,6 @@
                 let secs = String(callSeconds % 60).padStart(2, '0');
                 document.getElementById('call-timer').innerText = `${mins}:${secs}`;
                 
-                if (callSeconds === 2) document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
-
                 if (costoPorSegundo > 0) {
                     saldoActual -= costoPorSegundo;
                     if (saldoActual <= 0) {
@@ -1031,57 +902,41 @@
             }, 1000);
         }
 
+        function abrirPantallaLlamada(num, estado) {
+            document.getElementById('call-name').innerText = num;
+            document.getElementById('call-avatar').innerText = num.slice(-1);
+            document.getElementById('call-status').innerText = estado;
+            document.getElementById('modal-call-screen').style.display = 'flex';
+        }
+
         function finalizarLlamada() {
-            if (activeSipSession) { activeSipSession.terminate(); activeSipSession = null; }
+            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
+                wsSocket.send(JSON.stringify({ type: 'hangup', to: numeroDestinoActual }));
+            }
+            if (peerConnection) { peerConnection.close(); peerConnection = null; }
+            if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
             clearInterval(callTimerInterval);
             document.getElementById('modal-call-screen').style.display = 'none';
         }
 
         function toggleMuteCall() {
-            let btn = document.getElementById('btn-mute');
-            let icon = document.getElementById('mute-icon');
-            if(icon.classList.contains('fa-microphone-slash')) {
-                icon.classList.remove('fa-microphone-slash');
-                icon.classList.add('fa-microphone');
-                btn.classList.add('active');
-                if (activeSipSession) activeSipSession.unmute();
-            } else {
-                icon.classList.remove('fa-microphone');
-                icon.classList.add('fa-microphone-slash');
-                btn.classList.remove('active');
-                if (activeSipSession) activeSipSession.mute();
+            if (localStream) {
+                let audioTrack = localStream.getAudioTracks()[0];
+                audioTrack.enabled = !audioTrack.enabled;
+                document.getElementById('btn-mute').classList.toggle('active');
             }
         }
 
-        function toggleSpeaker() {
-            let btn = document.getElementById('btn-speaker');
-            btn.classList.toggle('active');
-            let remoteAudio = document.getElementById('remoteAudio');
-            if (remoteAudio.sinkId) {
-                // Alternar salida de audio si el navegador lo soporta
-            }
-        }
+        function toggleSpeaker() { document.getElementById('btn-speaker').classList.toggle('active'); }
 
         function renderizarListaChatsWhatsApp() {
             let container = document.getElementById('lista-chats-wa');
-            container.innerHTML = "";
-            let contactos = clienteAutenticado?.contactosChat || [];
-
-            if (contactos.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 40px 20px; font-size: 0.85rem;"><i class="fa-solid fa-comments" style="font-size: 2.5rem; color: var(--wa-green); margin-bottom: 12px; display: block;"></i><strong>No tienes chats aún</strong></div>`;
-                return;
-            }
-
-            contactos.forEach(c => {
-                container.innerHTML += `<div class="wa-chat-item" onclick="abrirChatWhatsApp('${c.numero}', '${c.nombre}')"><div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.nombre[0]}</div></div><div class="wa-chat-info"><div class="wa-chat-top"><span class="wa-chat-name">${c.nombre}</span><span class="wa-chat-time">${c.hora || 'Ahora'}</span></div><div class="wa-chat-msg">${c.ultimoMsg || 'Toca para abrir chat'}</div></div></div>`;
-            });
+            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 20px;">No hay chats activos.</div>`;
         }
 
         function abrirChatWhatsApp(numero, nombre) {
             numeroDestinoActual = numero;
             document.getElementById('chat-nombre-receptor-wa').innerText = nombre;
-            document.getElementById('chat-numero-receptor-wa').innerText = numero;
-            document.getElementById('chat-header-avatar-wa').innerText = nombre[0];
             document.getElementById('pantalla-chat-abierto').classList.add('active');
         }
 
@@ -1089,63 +944,17 @@
 
         async function enviarMensajeWhatsApp() {
             let input = document.getElementById('chat-input-texto-wa');
-            let texto = input.value.trim();
-            if(!texto) return;
+            if(!input.value.trim()) return;
             input.value = "";
-            let hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            let client = obtenerClienteSupabase();
-            if(client) await client.from('mensajes').insert([{ origen: miNumeroAsignado, destino: numeroDestinoActual, texto, hora }]);
-            renderizarMensajeEnPantallaWA(miNumeroAsignado, texto, hora);
-        }
-
-        function renderizarMensajeEnPantallaWA(origen, texto, hora) {
-            let box = document.getElementById('contenedor-mensajes-wa');
-            let esMio = origen === miNumeroAsignado;
-            box.innerHTML += `<div class="wa-msg ${esMio ? 'wa-msg-out' : 'wa-msg-in'}">${texto}<div class="wa-msg-meta">${hora} ${esMio ? '✓✓' : ''}</div></div>`;
-            box.scrollTop = box.scrollHeight;
-        }
-
-        function abrirModalNuevoChat() {
-            let container = document.getElementById('modal-lista-contactos');
-            container.innerHTML = "";
-            clientesRegistrados.forEach(c => {
-                if(c.numero !== miNumeroAsignado) {
-                    container.innerHTML += `<div class="history-item" style="cursor:pointer;" onclick="seleccionarContactoDeModal('${c.numero}', '${c.nombre}')"><div><strong>${c.nombre}</strong><br/><span style="font-size:0.7rem;">${c.numero}</span></div></div>`;
-                }
-            });
-            document.getElementById('modal-select-contact').style.display = 'flex';
-        }
-
-        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-        function seleccionarContactoDeModal(n, nom) {
-            document.getElementById('input-nuevo-nombre-contacto').value = nom;
-            document.getElementById('input-nuevo-numero-chat').value = n;
-        }
-        function guardarNuevoContactoChat() {
-            let nombre = document.getElementById('input-nuevo-nombre-contacto').value;
-            let num = document.getElementById('input-nuevo-numero-chat').value;
-            if(!clienteAutenticado.contactosChat) clienteAutenticado.contactosChat = [];
-            clienteAutenticado.contactosChat.push({ nombre, numero: num });
-            cerrarModalNuevoChat();
-            renderizarListaChatsWhatsApp();
-            abrirChatWhatsApp(num, nombre);
         }
 
         async function enviarReportePagoAutomatico() {
             let monto = parseFloat(document.getElementById('monto-pago').value);
             let ref = document.getElementById('ref-pago').value.trim();
             if(!monto || !ref) { alert("Ingresa monto y referencia."); return; }
-            let client = obtenerClienteSupabase();
-            let hoy = new Date().toISOString().split('T')[0];
-            if(client) {
-                try {
-                    await client.from('solicitudes').insert([{ cliente: nombreCliente, monto, ref, estado: 'Procesado', fecha: hoy }]);
-                    saldoActual += monto;
-                    clienteAutenticado.saldo = saldoActual;
-                    actualizarVistaCliente();
-                    alert(`¡Recarga procesada!\nNuevo saldo: $${saldoActual.toFixed(2)}`);
-                } catch(e) { alert("Reporte enviado."); }
-            }
+            saldoActual += monto;
+            actualizarVistaCliente();
+            alert(`¡Recarga procesada!\nNuevo saldo: $${saldoActual.toFixed(2)}`);
         }
     </script>
 </body>
