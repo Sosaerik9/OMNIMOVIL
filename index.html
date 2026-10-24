@@ -168,7 +168,7 @@
             border: 1px solid #e2e8f0;
         }
 
-        /* --- TELÉFONO ZOIPER --- */
+        /* TELÉFONO ZOIPER */
         .zoiper-phone-card {
             background: #0b141a;
             color: #ffffff;
@@ -262,7 +262,7 @@
         .btn-hangup-red { background: #ef4444; color: #ffffff; }
         .btn-backspace-dark { background: #202c33; color: var(--wa-muted); }
 
-        /* --- OMNICHAT ESTILO WHATSAPP DARK MODE --- */
+        /* OMNICHAT ESTILO WHATSAPP DARK MODE */
         .wa-app-container {
             background: var(--wa-bg);
             color: var(--wa-text);
@@ -352,12 +352,12 @@
         </div>
     </div>
 
-    <!-- MODAL LLAMADA EN VIVO CON TARIFADOR EN SEGUNDOS -->
+    <!-- MODAL LLAMADA EN VIVO CON JS-SIP Y WEBRTC -->
     <div id="modal-call-screen">
         <div style="text-align: center;">
             <div class="wa-avatar-img" style="width: 80px; height: 80px; font-size: 2rem; margin: 0 auto 12px auto; background: var(--wa-green);" id="call-avatar">C</div>
             <h2 style="color: white; margin: 0; font-size: 1.4rem;" id="call-name">Llamada VoIP</h2>
-            <p style="color: var(--wa-green); font-size: 0.85rem; margin-top: 4px;" id="call-status">Conectando servicio SIP Zoiper...</p>
+            <p style="color: var(--wa-green); font-size: 0.85rem; margin-top: 4px;" id="call-status">Conectando servicio SIP...</p>
             <div style="color: #f59e0b; font-size: 0.75rem; font-weight: bold;" id="call-rate-info">Tarifa: $0.00/min</div>
             <div style="color: #94a3b8; font-size: 1.1rem; font-weight: bold; margin-top: 6px;" id="call-timer">00:00</div>
         </div>
@@ -569,11 +569,11 @@
                 </div>
             </div>
 
-            <!-- SECCIÓN RED SIP: TELÉFONO ZOIPER INTERACTIVO CON INTERCONEXIÓN -->
+            <!-- RED SIP CON JS-SIP CONECTADO -->
             <div id="csec-llamadas" class="client-section">
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;">● SOFTPHONE ZOIPER</span>
+                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;" id="sip-status-indicator">● SOFTPHONE ZOIPER (SIP)</span>
                         <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-3391</span>
                     </div>
 
@@ -700,6 +700,10 @@
         let callSeconds = 0;
         let costoPorSegundo = 0;
 
+        // VARIABLES Y MOTOR JS-SIP
+        let jsSipUA = null;
+        let activeSipSession = null;
+
         window.onload = async function() {
             obtenerClienteSupabase();
             await cargarUsuariosDesdeSupabase();
@@ -709,11 +713,89 @@
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
                 if(cli) {
                     vincularSesionCliente(cli);
+                    conectarZoiperSIP(); // Inicializar JsSIP
                     return;
                 }
             }
             abrirModalRegistroInicial();
         };
+
+        /* --- MOTOR DE CONEXIÓN JS-SIP WEBRTC --- */
+        function conectarZoiperSIP() {
+            let wsUrl = document.getElementById('sip-server-ws').value.trim();
+            let sipUser = document.getElementById('sip-user').value.trim();
+            let sipPass = document.getElementById('sip-pass').value.trim();
+
+            if (!wsUrl || !sipUser || typeof JsSIP === 'undefined') {
+                console.warn("JsSIP no disponible o datos incompletos.");
+                return;
+            }
+
+            try {
+                let socket = new JsSIP.WebSocketInterface(wsUrl);
+                let domain = wsUrl.split('/')[2].split(':')[0];
+                
+                let configuration = {
+                    sockets: [socket],
+                    uri: `sip:${sipUser}@${domain}`,
+                    password: sipPass,
+                    register: true
+                };
+
+                jsSipUA = new JsSIP.UA(configuration);
+
+                jsSipUA.on('connecting', () => {
+                    document.getElementById('sip-status-indicator').innerText = "● CONECTANDO SIP...";
+                    document.getElementById('sip-status-indicator').style.color = "#f59e0b";
+                });
+
+                jsSipUA.on('connected', () => {
+                    document.getElementById('sip-status-indicator').innerText = "● SOFTPHONE ZOIPER (ONLINE)";
+                    document.getElementById('sip-status-indicator').style.color = "#25d366";
+                });
+
+                jsSipUA.on('disconnected', () => {
+                    document.getElementById('sip-status-indicator').innerText = "○ SOFTPHONE (OFFLINE)";
+                    document.getElementById('sip-status-indicator').style.color = "#ef4444";
+                });
+
+                jsSipUA.on('registered', () => {
+                    console.log("Línea SIP registrada con éxito en el servidor.");
+                });
+
+                // ATENDER LLAMADAS ENTRANTES
+                jsSipUA.on('newRTCSession', (data) => {
+                    let session = data.session;
+                    if (session.direction === 'incoming') {
+                        activeSipSession = session;
+                        let caller = session.remote_identity.uri.user;
+                        document.getElementById('call-name').innerText = caller;
+                        document.getElementById('call-status').innerText = "Llamada Entrante...";
+                        document.getElementById('modal-call-screen').style.display = 'flex';
+
+                        // Auto-respuesta / Confirmación
+                        session.answer({
+                            mediaConstraints: { audio: true, video: false }
+                        });
+                        vincularStreamsAudio(session);
+                    }
+                });
+
+                jsSipUA.start();
+
+            } catch (err) {
+                console.error("Error al conectar JsSIP:", err);
+            }
+        }
+
+        function vincularStreamsAudio(session) {
+            session.connection.addEventListener('track', (e) => {
+                if (e.track.kind === 'audio') {
+                    let remoteAudio = document.getElementById('remoteAudio');
+                    remoteAudio.srcObject = e.streams[0];
+                }
+            });
+        }
 
         async function cargarUsuariosDesdeSupabase() {
             let client = obtenerClienteSupabase();
@@ -767,6 +849,7 @@
             if(client) await client.from('usuarios').insert([nuevoCliente]);
             
             vincularSesionCliente(nuevoCliente);
+            conectarZoiperSIP();
             alert(`¡Bienvenido!\nTu línea asignada es: ${numAsignadoUnico}`);
         }
 
@@ -774,8 +857,10 @@
             let user = document.getElementById('init-log-user').value.trim();
             let pass = document.getElementById('init-log-pass').value.trim();
             let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === user.toLowerCase() && c.pass === pass);
-            if(cli) vincularSesionCliente(cli);
-            else alert("Usuario o contraseña incorrectos.");
+            if(cli) {
+                vincularSesionCliente(cli);
+                conectarZoiperSIP();
+            } else alert("Usuario o contraseña incorrectos.");
         }
 
         function vincularSesionCliente(cli) {
@@ -792,6 +877,7 @@
         }
 
         function cerrarSesionCliente() {
+            if (jsSipUA) jsSipUA.stop();
             localStorage.removeItem('omnimovil_usuario_activo');
             location.reload();
         }
@@ -821,7 +907,6 @@
             document.getElementById('wa-header-title').innerText = titleMap[tabName];
         }
 
-        /* --- CÁLCULO DE TARIFAS Y CONTROL DE SALDO EN LLAMADAS --- */
         function obtenerTarifaPorMinuto(numero) {
             let clean = numero.replace(/\s+|-/g, '');
             if (clean.includes("500") || clean.startsWith("+58500")) {
@@ -861,8 +946,17 @@
             let infoTarifa = obtenerTarifaPorMinuto(target);
             
             if (infoTarifa.tarifaMin > 0 && saldoActual < infoTarifa.tarifaMin) {
-                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin} para llamar a ${infoTarifa.tipo}. Por favor recarga en la sección Saldo.`);
+                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin} para llamar.`);
                 return;
+            }
+
+            // Realizar llamada SIP con JsSIP si está registrado
+            if (jsSipUA && jsSipUA.isConnected()) {
+                let eventOptions = {
+                    mediaConstraints: { audio: true, video: false }
+                };
+                activeSipSession = jsSipUA.call(`sip:${target.replace(/\s+|-/g, '')}@omnimovil.xo.je`, eventOptions);
+                vincularStreamsAudio(activeSipSession);
             }
 
             costoPorSegundo = infoTarifa.tarifaMin / 60;
@@ -881,14 +975,13 @@
                 
                 if (callSeconds === 2) document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
 
-                // COBRO SEGUNDO A SEGUNDO PARA REDES EXTERNAS
                 if (costoPorSegundo > 0) {
                     saldoActual -= costoPorSegundo;
                     if (saldoActual <= 0) {
                         saldoActual = 0;
                         actualizarVistaCliente();
                         finalizarLlamada();
-                        alert("La llamada ha finalizado por saldo agotado.");
+                        alert("Llamada finalizada por saldo agotado.");
                         return;
                     }
                     actualizarVistaCliente();
@@ -897,6 +990,10 @@
         }
 
         function finalizarLlamada() {
+            if (activeSipSession) {
+                activeSipSession.terminate();
+                activeSipSession = null;
+            }
             clearInterval(callTimerInterval);
             document.getElementById('modal-call-screen').style.display = 'none';
         }
@@ -906,9 +1003,11 @@
             if(icon.classList.contains('fa-microphone-slash')) {
                 icon.classList.remove('fa-microphone-slash');
                 icon.classList.add('fa-microphone');
+                if (activeSipSession) activeSipSession.unmute();
             } else {
                 icon.classList.remove('fa-microphone');
                 icon.classList.add('fa-microphone-slash');
+                if (activeSipSession) activeSipSession.mute();
             }
         }
 
