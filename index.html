@@ -454,7 +454,7 @@
                 <h2 style="color: var(--accent); margin: 0;">➕ Nuevo OmniChat / WhatsApp</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: var(--text-muted);" onclick="cerrarModalNuevoChat()"></i>
             </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0;">Puedes chatear con usuarios internos o ingresar cualquier número de WhatsApp (Ej: +584141234567).</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0;">Ingresa el número real con lada (Ej: +584141234567) para chatear o abrirlo en WhatsApp.</p>
             <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre o Alias del Contacto" />
             <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 414-1234567)" />
             <button class="btn" style="background: var(--accent-green); color: #fff; margin-bottom: 12px;" onclick="guardarNuevoContactoChat()">💬 Iniciar Chat</button>
@@ -463,7 +463,7 @@
         </div>
     </div>
 
-    <!-- PANTALLA DE LLAMADA EN VIVO - ESTILO WHATSAPP REAL -->
+    <!-- PANTALLA DE LLAMADA EN VIVO -->
     <div id="modal-call-screen">
         <div style="text-align: center; width: 100%;">
             <div style="font-size: 0.8rem; color: #8696a0; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 20px;">
@@ -480,7 +480,6 @@
             <div style="color: #8696a0; font-size: 1.2rem; font-weight: bold; margin-top: 10px;" id="call-timer">00:00</div>
         </div>
 
-        <!-- BARRA DE CONTROLES INFERIOR ESTILO WHATSAPP -->
         <div class="wa-call-actions-bar">
             <button class="wa-call-btn btn-wa-muted-dark" id="btn-speaker" title="Altavoz" onclick="toggleSpeaker()">
                 <i class="fa-solid fa-volume-high"></i>
@@ -533,7 +532,7 @@
                 <button class="client-tab-btn" id="ctab-4" onclick="cambiarSeccionCliente('historial')">📋 Hist.</button>
             </div>
 
-            <!-- OMNICHAT ESTILO WHATSAPP -->
+            <!-- OMNICHAT -->
             <div id="csec-chat" class="client-section active">
                 <div class="wa-app-container">
                     
@@ -621,16 +620,17 @@
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
                                 <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
                             </div>
-                            <i class="fa-brands fa-whatsapp" style="color: var(--wa-green); font-size: 1.2rem; cursor: pointer; margin-right: 6px;" title="Abrir en WhatsApp Web/App" onclick="abrirEnWhatsAppWeb()"></i>
+                            <!-- BOTÓN DIRECTO A WHATSAPP WEB / MÓVIL OFICIAL -->
+                            <i class="fa-brands fa-whatsapp" style="color: var(--wa-green); font-size: 1.3rem; cursor: pointer; margin-right: 8px;" title="Abrir directo en WhatsApp" onclick="abrirEnWhatsAppWeb()"></i>
                             <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer;" onclick="iniciarLlamadaVozHD()"></i>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
-                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados de extremo a extremo.</div>
+                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados de extremo a extremo. Haz clic en el ícono de WhatsApp verde arriba para abrir la app oficial.</div>
                         </div>
 
                         <div class="wa-input-bar-dark">
-                            <input type="text" id="chat-input-texto-wa" placeholder="Mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
+                            <input type="text" id="chat-input-texto-wa" placeholder="Escribe tu mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
                             <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.2rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
@@ -646,7 +646,7 @@
                 </div>
             </div>
 
-            <!-- BILLETERA / RECARGA AUTOMÁTICA -->
+            <!-- BILLETERA -->
             <div id="csec-billetera" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible</h2>
@@ -660,7 +660,7 @@
                 </div>
             </div>
 
-            <!-- PLANES Mensuales -->
+            <!-- PLANES -->
             <div id="csec-paquetes" class="client-section">
                 <div class="card">
                     <h2>Planes Mensuales</h2>
@@ -671,7 +671,7 @@
                 </div>
             </div>
 
-            <!-- RED SIP CON WEBRTC NATIVO -->
+            <!-- RED SIP -->
             <div id="csec-llamadas" class="client-section">
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -721,7 +721,7 @@
             </div>
         </div>
 
-        <!-- MODAL DE AUTENTICACIÓN Y REGISTRO -->
+        <!-- MODAL DE AUTENTICACIÓN -->
         <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 24px; position: relative;">
                 <i class="fa-solid fa-xmark" id="btn-cerrar-modal-auth" style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; display: none;" onclick="cerrarModalAuth()"></i>
@@ -729,20 +729,17 @@
                 <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 4px 0;">OmniMovil</h1>
                 <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Plataforma de Comunicaciones IP</p>
 
-                <!-- PESTAÑAS LOGIN / REGISTRO -->
                 <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
                     <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')">🔑 Iniciar Sesión</button>
                     <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')">📝 Registrarse</button>
                 </div>
 
-                <!-- FORMULARIO DE LOGIN -->
                 <div id="form-login-container">
                     <input type="text" id="auth-login-user" placeholder="Usuario o Nombre" />
                     <input type="password" id="auth-login-pass" placeholder="Contraseña" />
                     <button class="btn" style="background: var(--accent); font-weight: bold; margin-top: 4px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
                 </div>
 
-                <!-- FORMULARIO DE REGISTRO -->
                 <div id="form-registro-container" style="display: none;">
                     <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
                     <input type="text" id="init-reg-user" placeholder="Nombre de usuario" />
@@ -778,7 +775,6 @@
         let callSeconds = 0;
         let costoPorSegundo = 0;
 
-        // WEBRTC NATIVO VARIABLES
         let wsSocket = null;
         let peerConnection = null;
         let localStream = null;
@@ -840,7 +836,7 @@
                         alert(`¡Bienvenido de nuevo, ${data[0].nombre}!`);
                         return;
                     }
-                } catch(e) { console.warn("Error consultando Supabase:", e); }
+                } catch(e) { console.warn(e); }
             }
 
             let cliLocal = clientesRegistrados.find(c => 
@@ -1061,7 +1057,6 @@
 
         function toggleSpeaker() { document.getElementById('btn-speaker').classList.toggle('active'); }
 
-        // FUNCIONALIDADES DE OMNICHAT Y WHATSAPP UNIVERSAL
         function cargarChatsGuardados() {
             let chatsRaw = localStorage.getItem('omnimovil_chats');
             let msgsRaw = localStorage.getItem('omnimovil_mensajes');
@@ -1080,7 +1075,7 @@
 
             let redContactos = clientesRegistrados.filter(c => c.numero !== miNumeroAsignado);
             if (redContactos.length === 0) {
-                contenedor.innerHTML = `<div style="font-size: 0.75rem; color: var(--text-muted);">No hay otros usuarios en la red local. Ingresa cualquier número arriba.</div>`;
+                contenedor.innerHTML = `<div style="font-size: 0.75rem; color: var(--text-muted);">No hay otros usuarios en la red local. Ingresa cualquier número de WhatsApp arriba.</div>`;
             } else {
                 redContactos.forEach(c => {
                     let div = document.createElement('div');
@@ -1126,13 +1121,13 @@
             container.innerHTML = '';
 
             if (chatsActivos.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 30px 16px; font-size: 0.85rem;">No tienes chats activos.<br/>Haz clic en el botón <strong>+</strong> para chatear con cualquier número de WhatsApp o de la red.</div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 30px 16px; font-size: 0.85rem;">No tienes chats activos.<br/>Haz clic en el botón <strong>+</strong> para agregar un número real de WhatsApp.</div>`;
                 return;
             }
 
             chatsActivos.forEach(chat => {
                 let msgs = mensajesPorChat[chat.numero] || [];
-                let ultimoMsg = msgs.length > 0 ? msgs[msgs.length - 1].texto : (chat.esWhatsAppExterno ? "Contacto WhatsApp" : "Nuevo chat OmniMovil");
+                let ultimoMsg = msgs.length > 0 ? msgs[msgs.length - 1].texto : (chat.esWhatsAppExterno ? "WhatsApp Externo" : "Red IP Interna");
                 let inicial = chat.nombre.charAt(0).toUpperCase();
 
                 let item = document.createElement('div');
@@ -1164,7 +1159,7 @@
             let esWhatsAppExterno = !clean.includes('500');
 
             document.getElementById('chat-nombre-receptor-wa').innerText = nombre;
-            document.getElementById('chat-numero-receptor-wa').innerText = `${numero} (${esWhatsAppExterno ? 'WhatsApp Externe' : 'Red Interna'})`;
+            document.getElementById('chat-numero-receptor-wa').innerText = `${numero} (${esWhatsAppExterno ? 'WhatsApp' : 'Red Interna'})`;
             document.getElementById('chat-header-avatar-wa').innerText = nombre.charAt(0).toUpperCase();
 
             renderizarMensajesChat(numero);
@@ -1173,7 +1168,7 @@
 
         function renderizarMensajesChat(numero) {
             let container = document.getElementById('contenedor-mensajes-wa');
-            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; margin-bottom: 10px;">🔒 Mensajes cifrados de extremo a extremo.</div>`;
+            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; margin-bottom: 10px;">🔒 Mensajes cifrados de extremo a extremo. Haz clic en el ícono de WhatsApp verde arriba para abrir la app oficial.</div>`;
 
             let msgs = mensajesPorChat[numero] || [];
             msgs.forEach(m => {
@@ -1206,10 +1201,11 @@
             renderizarMensajesChat(num);
             renderizarListaChatsWhatsApp();
 
+            // Si es un número externo, ofrece saltar directo a la app de WhatsApp oficial con el texto escrito
             let clean = num.replace(/\s+|-|\+/g, '');
             if (!clean.startsWith('58500')) {
-                let responderWA = confirm("¿Deseas enviar este mensaje directamente a la aplicación oficial de WhatsApp?");
-                if (responderWA) {
+                let abrirWA = confirm(`¿Deseas enviar "${texto}" directamente a WhatsApp con este número (${num})?`);
+                if (abrirWA) {
                     window.open(`https://wa.me/${clean}?text=${encodeURIComponent(texto)}`, '_blank');
                 }
             }
