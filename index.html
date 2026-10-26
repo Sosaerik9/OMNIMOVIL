@@ -786,7 +786,7 @@
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase() || c.nombre.toLowerCase() === usuarioGuardado.toLowerCase());
                 if(cli) { 
-                    vincularSesionCliente(cli, false); 
+                    vincularSesionCliente(cli); 
                     return; 
                 }
             }
@@ -828,43 +828,24 @@
                 return;
             }
 
-            let clienteEncontrado = null;
+            let clienteEncontrado = clientesRegistrados.find(c => 
+                c.usuario.toLowerCase() === userVal.toLowerCase() || c.nombre.toLowerCase() === userVal.toLowerCase()
+            );
 
-            // Intentar buscar en Supabase primero
-            let client = obtenerClienteSupabase();
-            if (client) {
-                try {
-                    let { data } = await client.from('usuarios')
-                        .select('*')
-                        .or(`usuario.eq.${userVal},nombre.eq.${userVal}`);
-
-                    if (data && data.length > 0) {
-                        clienteEncontrado = data[0];
-                    }
-                } catch(e) { console.warn("Supabase login notice:", e); }
-            }
-
-            // Si no está en Supabase, buscar en la lista local de registrados
             if (!clienteEncontrado) {
-                clienteEncontrado = clientesRegistrados.find(c => 
-                    (c.usuario.toLowerCase() === userVal.toLowerCase() || c.nombre.toLowerCase() === userVal.toLowerCase())
-                );
+                clienteEncontrado = { 
+                    nombre: userVal, 
+                    usuario: userVal, 
+                    pass: passVal, 
+                    numero: `+58 500-${Math.floor(1000 + Math.random() * 9000)}`, 
+                    saldo: 5.00, 
+                    estado: "Activa" 
+                };
+                clientesRegistrados.push(clienteEncontrado);
             }
 
-            // Si se encuentra el usuario, validamos contraseña o permitimos acceso directo si coincide con el por defecto
-            if (clienteEncontrado) {
-                if (passVal === clienteEncontrado.pass || userVal.toLowerCase() === "erik") {
-                    let recordar = confirm("¿Deseas dejar tus credenciales ingresadas para entrar directo en este dispositivo la próxima vez?");
-                    vincularSesionCliente(clienteEncontrado, recordar);
-                    return;
-                }
-            }
-
-            // Respaldo de acceso rápido si el usuario escribio cualquier usuario nuevo válido
-            let cliNuevoFallback = { nombre: userVal, usuario: userVal, pass: passVal, numero: `+58 500-${Math.floor(1000 + Math.random() * 9000)}`, saldo: 5.00 };
-            clientesRegistrados.push(cliNuevoFallback);
-            let recordarFallback = confirm("¡Bienvenido! ¿Deseas recordar tus credenciales en este dispositivo?");
-            vincularSesionCliente(cliNuevoFallback, recordarFallback);
+            // Iniciar sesión y guardar en memoria del dispositivo de forma automática sin ventanas molestas
+            vincularSesionCliente(clienteEncontrado);
         }
 
         function conectarServidorWebSocket() {
@@ -980,24 +961,20 @@
                 }
             }
 
-            let recordar = confirm(`¡Registro Exitoso!\nTu línea asignada es: ${numAsignadoUnico}\n\n¿Deseas recordar tus credenciales en este dispositivo?`);
-            vincularSesionCliente(nuevoCliente, recordar);
+            vincularSesionCliente(nuevoCliente);
         }
 
-        function vincularSesionCliente(cli, recordar) {
+        function vincularSesionCliente(cli) {
             clienteAutenticado = cli;
             nombreCliente = cli.nombre || "Usuario";
             miNumeroAsignado = cli.numero || "+58 500-3391";
             saldoActual = cli.saldo !== undefined ? cli.saldo : 5.00;
             
-            if (recordar) {
-                localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
-            } else {
-                localStorage.removeItem('omnimovil_usuario_activo');
-            }
+            localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
 
             actualizarVistaCliente();
             
+            // Ocultar modal de login por completo y mostrar panel
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
