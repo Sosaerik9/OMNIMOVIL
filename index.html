@@ -9,19 +9,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
-    
-    <link rel="manifest" href="data:application/manifest+json;charset=utf-8,{
-        %22name%22: %22OmniMovil Red IP y Mensajeria%22,
-        %22short_name%22: %22OmniMovil%22,
-        %22start_url%22: %22.%22,
-        %22display%22: %22standalone%22,
-        %22background_color%22: %22%23121b22%22,
-        %22theme_color%22: %22%2300a884%22,
-        %22icons%22: [
-            { %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22, %22sizes%22: %22192x192%22, %22type%22: %22image/png%22 },
-            { %22src%22: %22https://cdn-icons-png.flaticon.com/512/3059/3059494.png%22, %22sizes%22: %22512x512%22, %22type%22: %22image/png%22 }
-        ]
-    }">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -87,7 +74,6 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            transition: background 0.2s ease;
         }
 
         .login-top-btn:hover { background: #0369a1; }
@@ -367,7 +353,7 @@
         .wa-input-bar-dark { background: var(--wa-card); padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
         .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 14px; border-radius: 20px; margin: 0; font-size: 0.85rem; flex-grow: 1; }
 
-        /* PANTALLA DE LLAMADA ESTILO WHATSAPP REAL */
+        /* PANTALLA DE LLAMADA */
         #modal-call-screen {
             display: none;
             position: fixed;
@@ -447,14 +433,14 @@
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
 
-    <!-- MODAL AGREGAR CONTACTO / CUALQUIER NÚMERO DE WHATSAPP -->
+    <!-- MODAL AGREGAR CONTACTO / WHATSAPP -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2 style="color: var(--accent); margin: 0;">➕ Nuevo OmniChat / WhatsApp</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: var(--text-muted);" onclick="cerrarModalNuevoChat()"></i>
             </div>
-            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0;">Ingresa el número real con lada (Ej: +584141234567) para chatear o abrirlo en WhatsApp.</p>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0;">Ingresa el número real con código de país (Ej: +584141234567) para chatear o abrirlo en WhatsApp.</p>
             <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre o Alias del Contacto" />
             <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 414-1234567)" />
             <button class="btn" style="background: var(--accent-green); color: #fff; margin-bottom: 12px;" onclick="guardarNuevoContactoChat()">💬 Iniciar Chat</button>
@@ -463,7 +449,7 @@
         </div>
     </div>
 
-    <!-- PANTALLA DE LLAMADA EN VIVO -->
+    <!-- PANTALLA DE LLAMADA -->
     <div id="modal-call-screen">
         <div style="text-align: center; width: 100%;">
             <div style="font-size: 0.8rem; color: #8696a0; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 20px;">
@@ -620,7 +606,6 @@
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
                                 <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
                             </div>
-                            <!-- BOTÓN DIRECTO A WHATSAPP WEB / MÓVIL OFICIAL -->
                             <i class="fa-brands fa-whatsapp" style="color: var(--wa-green); font-size: 1.3rem; cursor: pointer; margin-right: 8px;" title="Abrir directo en WhatsApp" onclick="abrirEnWhatsAppWeb()"></i>
                             <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer;" onclick="iniciarLlamadaVozHD()"></i>
                         </div>
@@ -757,7 +742,9 @@
 
         function obtenerClienteSupabase() {
             if (!supabaseClient && typeof supabase !== 'undefined') {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+                try {
+                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+                } catch(e) { console.warn(e); }
             }
             return supabaseClient;
         }
@@ -1201,7 +1188,6 @@
             renderizarMensajesChat(num);
             renderizarListaChatsWhatsApp();
 
-            // Si es un número externo, ofrece saltar directo a la app de WhatsApp oficial con el texto escrito
             let clean = num.replace(/\s+|-|\+/g, '');
             if (!clean.startsWith('58500')) {
                 let abrirWA = confirm(`¿Deseas enviar "${texto}" directamente a WhatsApp con este número (${num})?`);
