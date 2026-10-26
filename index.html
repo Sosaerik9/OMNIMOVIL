@@ -691,7 +691,8 @@
 
                 <div class="card">
                     <h2>⚙️ Servidor WebSocket de Señalización</h2>
-                    <input type="text" id="ws-server-url" value="wss://tu-enlace-ngrok.ngrok-free.app" />
+                    <!-- Campo limpio, configurado y con guardado automático -->
+                    <input type="text" id="ws-server-url" value="wss://omnimovil-backend.onrender.com" oninput="guardarUrlServidor(this.value)" />
                     <button class="btn" style="background: var(--accent); color: #fff;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
                 </div>
             </div>
@@ -771,6 +772,10 @@
             await cargarUsuariosDesdeSupabase();
             cargarChatsGuardados();
 
+            // Cargar enlace de WebSocket guardado previamente o usar Render por defecto
+            let wsGuardado = localStorage.getItem('omnimovil_ws_url') || "wss://omnimovil-backend.onrender.com";
+            document.getElementById('ws-server-url').value = wsGuardado;
+
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
                 let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase() || c.nombre.toLowerCase() === usuarioGuardado.toLowerCase());
@@ -778,6 +783,10 @@
             }
             abrirModalAuth('login');
         };
+
+        function guardarUrlServidor(url) {
+            localStorage.setItem('omnimovil_ws_url', url.trim());
+        }
 
         function switchAuthMode(mode) {
             document.getElementById('tab-btn-login').classList.toggle('active', mode === 'login');
@@ -1194,15 +1203,6 @@
                         { remitente: miNumeroAsignado, receptor: num, mensaje: texto, fecha: new Date().toISOString() }
                     ]);
                 }
-
-                // Aquí conectaras tu API cuando tengas el servidor activo:
-                /*
-                let respuesta = await fetch('https://tu-servidor-pasarela.com/api/enviar-whatsapp', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ numero: num, mensaje: texto })
-                });
-                */
             } catch (error) {
                 console.warn("Modo local activo:", error);
             }
