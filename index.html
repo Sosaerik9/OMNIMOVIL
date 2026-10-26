@@ -10,7 +10,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
@@ -735,19 +734,6 @@
     </div>
 
     <script>
-        const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
-        let supabaseClient = null;
-
-        function obtenerClienteSupabase() {
-            if (!supabaseClient && typeof supabase !== 'undefined') {
-                try {
-                    supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
-                } catch(e) { console.warn("Supabase warning:", e); }
-            }
-            return supabaseClient;
-        }
-
         let clienteAutenticado = null;
         let miNumeroAsignado = "+58 500-3391";
         let numeroDestinoActual = "+58 500-0000";
@@ -775,8 +761,6 @@
         };
 
         window.onload = async function() {
-            obtenerClienteSupabase();
-            await cargarUsuariosDesdeSupabase();
             cargarChatsGuardados();
 
             let wsGuardado = localStorage.getItem('omnimovil_ws_url') || "wss://omnimovil-backend.onrender.com";
@@ -819,7 +803,7 @@
             document.getElementById('modal-registro-inicial').style.display = 'none';
         }
 
-        async function ejecutarInicioSesion() {
+        function ejecutarInicioSesion() {
             let userVal = document.getElementById('auth-login-user').value.trim();
             let passVal = document.getElementById('auth-login-pass').value.trim();
 
@@ -844,7 +828,6 @@
                 clientesRegistrados.push(clienteEncontrado);
             }
 
-            // Iniciar sesión y guardar en memoria del dispositivo de forma automática sin ventanas molestas
             vincularSesionCliente(clienteEncontrado);
         }
 
@@ -922,22 +905,7 @@
             };
         }
 
-        async function cargarUsuariosDesdeSupabase() {
-            let client = obtenerClienteSupabase();
-            if(!client) return;
-            try {
-                let { data } = await client.from('usuarios').select('*');
-                if(data && data.length > 0) {
-                    data.forEach(usr => {
-                        if(!clientesRegistrados.some(c => c.usuario === usr.usuario)) {
-                            clientesRegistrados.push(usr);
-                        }
-                    });
-                }
-            } catch(e) { console.warn("Supabase fetch notice:", e); }
-        }
-
-        async function ejecutarRegistroInicialPaso1() {
+        function ejecutarRegistroInicialPaso1() {
             let nombre = document.getElementById('init-reg-nombre').value.trim();
             let user = document.getElementById('init-reg-user').value.trim();
             let pass = document.getElementById('init-reg-pass').value.trim();
@@ -951,16 +919,6 @@
             let nuevoCliente = { nombre, usuario: user, pass, numero: numAsignadoUnico, saldo: 5.00, estado: "Activa", fecha: new Date().toISOString().split('T')[0] };
 
             clientesRegistrados.push(nuevoCliente);
-            
-            let client = obtenerClienteSupabase();
-            if(client) {
-                try {
-                    await client.from('usuarios').insert([nuevoCliente]);
-                } catch(err) {
-                    console.warn("Registro guardado localmente (Supabase bypass)");
-                }
-            }
-
             vincularSesionCliente(nuevoCliente);
         }
 
@@ -974,7 +932,6 @@
 
             actualizarVistaCliente();
             
-            // Ocultar modal de login por completo y mostrar panel
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
             cambiarSeccionCliente('chat');
@@ -1011,9 +968,30 @@
 
         function obtenerTarifaPorMinuto(numero) {
             let clean = numero.replace(/\s+|-/g, '');
-            if (clean.includes("500") || clean.startsWith("+58500")) return { tipo: "Red Interna", tarifaMin: 0.00 };
-            if (clean.startsWith("+584")) return { tipo: "Móvil Nacional", tarifaMin: 0.02 };
-            return { tipo: "Internacional", tarifaMin: 0.05 };
+            let tipoLlamada = "Red Interna";
+            let tarifaMin = 0.00;
+
+            if (clean.includes("500") || clean.startsWith("+58500")) {
+                tipoLlamada = "Red Interna OmniMovil";
+                tarifaMin = 0.00;
+            } else if (clean.startsWith("+58412") || clean.startsWith("0412")) {
+                tipoLlamada = "Operador Digitel (Nacional)";
+                tarifaMin = 0.02;
+            } else if (clean.startsWith("+58414") || clean.startsWith("+58424") || clean.startsWith("0414") || clean.startsWith("0424")) {
+                tipoLlamada = "Operador Movistar (Nacional)";
+                tarifaMin = 0.02;
+            } else if (clean.startsWith("+58416") || clean.startsWith("+58426") || clean.startsWith("0416") || clean.startsWith("0426")) {
+                tipoLlamada = "Operador Movilnet (Nacional)";
+                tarifaMin = 0.02;
+            } else if (clean.startsWith("+582") || clean.startsWith("02")) {
+                tipoLlamada = "CANTV Fijo (Nacional)";
+                tarifaMin = 0.01;
+            } else {
+                tipoLlamada = "Internacional / Otros";
+                tarifaMin = 0.05;
+            }
+
+            return { tipo: tipoLlamada, tarifaMin: tarifaMin };
         }
 
         function pressKey(char) { document.getElementById('zoiper-input-display').value += char; }
@@ -1024,8 +1002,13 @@
 
         function makeZoiperCall() {
             let num = document.getElementById('zoiper-input-display').value.trim();
-            if (num.length < 7) { alert("Ingresa un número válido."); return; }
-            iniciarLlamadaVozHD(num);
+            if (num.length < 7) { alert("Ingresa un número válido para discar."); return; }
+            
+            let infoTarifa = obtenerTarifaPorMinuto(num);
+            
+            if (confirm(`🌐 Llamada saliente detectada:\nDestino: ${num}\nOperador/Red: ${infoTarifa.tipo}\nTarifa: $${infoTarifa.tarifaMin.toFixed(2)}/min\n\n¿Deseas proceder con la llamada enrutada?`)) {
+                iniciarLlamadaVozHD(num);
+            }
         }
 
         async function iniciarLlamadaVozHD(numDestino) {
@@ -1037,7 +1020,7 @@
                 return;
             }
 
-            abrirPantallaLlamada(numeroDestinoActual, "Conectando llamada HD...");
+            abrirPantallaLlamada(numeroDestinoActual, `Conectando con ${infoTarifa.tipo}...`);
             createPeerConnection(numeroDestinoActual);
 
             try {
@@ -1050,7 +1033,7 @@
                 if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
                     wsSocket.send(JSON.stringify({ type: 'offer', target: numeroDestinoActual, payload: offer }));
                 } else {
-                    console.log("WebSocket no conectado activamente, simulando canal local...");
+                    console.log("Canal WebRTC local activo...");
                 }
             } catch (err) {
                 console.error("Error al acceder al micrófono:", err);
@@ -1246,17 +1229,6 @@
             guardarChatsEnStorage();
             renderizarMensajesChat(num);
             renderizarListaChatsWhatsApp();
-
-            try {
-                let client = obtenerClienteSupabase();
-                if (client) {
-                    await client.from('mensajes').insert([
-                        { remitente: miNumeroAsignado, receptor: num, mensaje: texto, fecha: new Date().toISOString() }
-                    ]);
-                }
-            } catch (error) {
-                console.warn("Modo local activo:", error);
-            }
         }
 
         function filtrarChatsWhatsApp() {
