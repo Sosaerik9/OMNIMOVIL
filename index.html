@@ -69,7 +69,30 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
 
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
         .login-top-btn {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .login-top-btn:hover { background: #0369a1; }
+
+        .logout-top-btn {
             background: var(--accent-red);
             color: #fff;
             border: none;
@@ -306,6 +329,27 @@
 
         .wa-chat-info { flex-grow: 1; overflow: hidden; }
 
+        .wa-msg-bubble {
+            max-width: 75%;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-bottom: 6px;
+            word-wrap: break-word;
+        }
+        .wa-msg-sent {
+            background: #005c4b;
+            color: #e9edef;
+            align-self: flex-end;
+            border-top-right-radius: 2px;
+        }
+        .wa-msg-received {
+            background: #202c33;
+            color: #e9edef;
+            align-self: flex-start;
+            border-top-left-radius: 2px;
+        }
+
         .wa-bottom-nav { background: var(--wa-card); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0; border-top: 1px solid #1f2c34; }
         .wa-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--wa-muted); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
         .wa-nav-btn i { font-size: 1.1rem; padding: 4px 14px; border-radius: 12px; }
@@ -321,7 +365,7 @@
         .wa-chat-view-messages { flex-grow: 1; padding: 12px 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1f2c34 1px, transparent 0); background-size: 16px 16px; }
 
         .wa-input-bar-dark { background: var(--wa-card); padding: 8px 12px; display: flex; align-items: center; gap: 10px; }
-        .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 14px; border-radius: 20px; margin: 0; font-size: 0.85rem; }
+        .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 14px; border-radius: 20px; margin: 0; font-size: 0.85rem; flex-grow: 1; }
 
         /* PANTALLA DE LLAMADA ESTILO WHATSAPP REAL */
         #modal-call-screen {
@@ -394,7 +438,7 @@
         .status-badge { display: inline-block; padding: 3px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: bold; }
         .status-badge.active-line { background: #dcfce7; color: #15803d; }
         
-        .tab-auth-btn { background: #e2e8f0; border: none; padding: 8px; border-radius: 6px; font-weight: bold; font-size: 0.8rem; cursor: pointer; width: 48%; }
+        .tab-auth-btn { background: #e2e8f0; border: none; padding: 10px; border-radius: 6px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 48%; color: var(--text-muted); }
         .tab-auth-btn.active { background: var(--accent); color: white; }
     </style>
 </head>
@@ -403,18 +447,19 @@
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
 
-    <!-- MODAL AGREGAR CONTACTO -->
+    <!-- MODAL AGREGAR CONTACTO / CUALQUIER NÚMERO DE WHATSAPP -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: var(--accent);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--accent); margin: 0;">➕ Agregar Contacto / Nuevo OmniChat</h2>
+                <h2 style="color: var(--accent); margin: 0;">➕ Nuevo OmniChat / WhatsApp</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: var(--text-muted);" onclick="cerrarModalNuevoChat()"></i>
             </div>
-            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre del Contacto" />
-            <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-0004)" />
-            <button class="btn" style="background: var(--accent); color: #fff; margin-bottom: 12px;" onclick="guardarNuevoContactoChat()">Guardar e Iniciar Chat</button>
+            <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0;">Puedes chatear con usuarios internos o ingresar cualquier número de WhatsApp (Ej: +584141234567).</p>
+            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre o Alias del Contacto" />
+            <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 414-1234567)" />
+            <button class="btn" style="background: var(--accent-green); color: #fff; margin-bottom: 12px;" onclick="guardarNuevoContactoChat()">💬 Iniciar Chat</button>
             <strong style="font-size: 0.8rem; display: block; margin-bottom: 6px;">Contactos Registrados en la Red:</strong>
-            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 140px;"></div>
+            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 130px;"></div>
         </div>
     </div>
 
@@ -455,8 +500,13 @@
                 <h1 style="font-size: 1rem; color: var(--accent); margin: 0;">🌐 OmniMovil Red IP</h1>
                 <p style="font-size: 0.65rem; color: var(--text-muted); margin: 2px 0 0 0;">omnimovil.xo.je</p>
             </div>
-            <div>
-                <button id="btn-instalar-app" style="background: var(--accent-green); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 Instalar App</button>
+            <div class="header-actions">
+                <button class="login-top-btn" id="btn-login-top" onclick="abrirModalAuth('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
+                </button>
+                <button id="btn-instalar-app" style="background: var(--accent-green); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">
+                    📲 Instalar App
+                </button>
             </div>
         </header>
 
@@ -470,7 +520,7 @@
                     </div>
                     <div>
                         <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
-                        <button class="login-top-btn" onclick="cerrarSesionCliente()">Cerrar Sesión</button>
+                        <button class="logout-top-btn" onclick="cerrarSesionCliente()">Cerrar Sesión</button>
                     </div>
                 </div>
             </div>
@@ -571,7 +621,8 @@
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
                                 <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
                             </div>
-                            <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer; margin-left: 10px;" onclick="iniciarLlamadaVozHD()"></i>
+                            <i class="fa-brands fa-whatsapp" style="color: var(--wa-green); font-size: 1.2rem; cursor: pointer; margin-right: 6px;" title="Abrir en WhatsApp Web/App" onclick="abrirEnWhatsAppWeb()"></i>
+                            <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer;" onclick="iniciarLlamadaVozHD()"></i>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
@@ -579,7 +630,7 @@
                         </div>
 
                         <div class="wa-input-bar-dark">
-                            <input type="text" id="chat-input-texto-wa" placeholder="Mensaje" onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
+                            <input type="text" id="chat-input-texto-wa" placeholder="Mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
                             <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.2rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
@@ -609,7 +660,7 @@
                 </div>
             </div>
 
-            <!-- PLANES -->
+            <!-- PLANES Mensuales -->
             <div id="csec-paquetes" class="client-section">
                 <div class="card">
                     <h2>Planes Mensuales</h2>
@@ -670,15 +721,34 @@
             </div>
         </div>
 
-        <!-- MODAL REGISTRO -->
+        <!-- MODAL DE AUTENTICACIÓN Y REGISTRO -->
         <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.85); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 24px;">
-                <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 6px 0;">OmniMovil</h1>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">Regístrate y disfruta de la mejor comunicación.</p>
-                <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
-                <input type="text" id="init-reg-user" placeholder="Nombre de Usuario" />
-                <input type="password" id="init-reg-pass" placeholder="Contraseña" />
-                <button class="btn" style="background: var(--accent-green); font-weight: bold;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro</button>
+            <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 24px; position: relative;">
+                <i class="fa-solid fa-xmark" id="btn-cerrar-modal-auth" style="position: absolute; top: 16px; right: 16px; cursor: pointer; color: var(--text-muted); font-size: 1.2rem; display: none;" onclick="cerrarModalAuth()"></i>
+                
+                <h1 style="color: var(--accent); font-size: 1.4rem; margin: 0 0 4px 0;">OmniMovil</h1>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Plataforma de Comunicaciones IP</p>
+
+                <!-- PESTAÑAS LOGIN / REGISTRO -->
+                <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                    <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')">🔑 Iniciar Sesión</button>
+                    <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')">📝 Registrarse</button>
+                </div>
+
+                <!-- FORMULARIO DE LOGIN -->
+                <div id="form-login-container">
+                    <input type="text" id="auth-login-user" placeholder="Usuario o Nombre" />
+                    <input type="password" id="auth-login-pass" placeholder="Contraseña" />
+                    <button class="btn" style="background: var(--accent); font-weight: bold; margin-top: 4px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
+                </div>
+
+                <!-- FORMULARIO DE REGISTRO -->
+                <div id="form-registro-container" style="display: none;">
+                    <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                    <input type="text" id="init-reg-user" placeholder="Nombre de usuario" />
+                    <input type="password" id="init-reg-pass" placeholder="Contraseña" />
+                    <button class="btn" style="background: var(--accent-green); font-weight: bold; margin-top: 4px;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro</button>
+                </div>
             </div>
         </div>
     </div>
@@ -701,6 +771,9 @@
         let nombreCliente = "Erik";
         let saldoActual = 5.00;
         let clientesRegistrados = [];
+        let chatsActivos = [];
+        let mensajesPorChat = {};
+        let chatSeleccionado = null;
         let callTimerInterval = null;
         let callSeconds = 0;
         let costoPorSegundo = 0;
@@ -714,14 +787,73 @@
         window.onload = async function() {
             obtenerClienteSupabase();
             await cargarUsuariosDesdeSupabase();
+            cargarChatsGuardados();
 
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if(usuarioGuardado) {
-                let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase());
+                let cli = clientesRegistrados.find(c => c.usuario.toLowerCase() === usuarioGuardado.toLowerCase() || c.nombre.toLowerCase() === usuarioGuardado.toLowerCase());
                 if(cli) { vincularSesionCliente(cli); return; }
             }
-            document.getElementById('modal-registro-inicial').style.display = 'flex';
+            abrirModalAuth('login');
         };
+
+        function switchAuthMode(mode) {
+            document.getElementById('tab-btn-login').classList.toggle('active', mode === 'login');
+            document.getElementById('tab-btn-registro').classList.toggle('active', mode === 'registro');
+            document.getElementById('form-login-container').style.display = mode === 'login' ? 'block' : 'none';
+            document.getElementById('form-registro-container').style.display = mode === 'registro' ? 'block' : 'none';
+        }
+
+        function abrirModalAuth(mode = 'login') {
+            switchAuthMode(mode);
+            document.getElementById('btn-cerrar-modal-auth').style.display = clienteAutenticado ? 'block' : 'none';
+            document.getElementById('modal-registro-inicial').style.display = 'flex';
+        }
+
+        function cerrarModalAuth() {
+            if (!clienteAutenticado) {
+                alert("Debes iniciar sesión o registrarte para continuar.");
+                return;
+            }
+            document.getElementById('modal-registro-inicial').style.display = 'none';
+        }
+
+        async function ejecutarInicioSesion() {
+            let userVal = document.getElementById('auth-login-user').value.trim();
+            let passVal = document.getElementById('auth-login-pass').value.trim();
+
+            if (!userVal || !passVal) {
+                alert("Por favor ingresa usuario y contraseña.");
+                return;
+            }
+
+            let client = obtenerClienteSupabase();
+            if (client) {
+                try {
+                    let { data } = await client.from('usuarios')
+                        .select('*')
+                        .or(`usuario.eq.${userVal},nombre.eq.${userVal}`)
+                        .eq('pass', passVal);
+
+                    if (data && data.length > 0) {
+                        vincularSesionCliente(data[0]);
+                        alert(`¡Bienvenido de nuevo, ${data[0].nombre}!`);
+                        return;
+                    }
+                } catch(e) { console.warn("Error consultando Supabase:", e); }
+            }
+
+            let cliLocal = clientesRegistrados.find(c => 
+                (c.usuario.toLowerCase() === userVal.toLowerCase() || c.nombre.toLowerCase() === userVal.toLowerCase()) && c.pass === passVal
+            );
+
+            if (cliLocal) {
+                vincularSesionCliente(cliLocal);
+                alert(`¡Bienvenido de nuevo, ${cliLocal.nombre}!`);
+            } else {
+                alert("Usuario o contraseña incorrectos.");
+            }
+        }
 
         function conectarServidorWebSocket() {
             let url = document.getElementById('ws-server-url').value.trim();
@@ -929,23 +1061,173 @@
 
         function toggleSpeaker() { document.getElementById('btn-speaker').classList.toggle('active'); }
 
+        // FUNCIONALIDADES DE OMNICHAT Y WHATSAPP UNIVERSAL
+        function cargarChatsGuardados() {
+            let chatsRaw = localStorage.getItem('omnimovil_chats');
+            let msgsRaw = localStorage.getItem('omnimovil_mensajes');
+            if (chatsRaw) chatsActivos = JSON.parse(chatsRaw);
+            if (msgsRaw) mensajesPorChat = JSON.parse(msgsRaw);
+        }
+
+        function guardarChatsEnStorage() {
+            localStorage.setItem('omnimovil_chats', JSON.stringify(chatsActivos));
+            localStorage.setItem('omnimovil_mensajes', JSON.stringify(mensajesPorChat));
+        }
+
+        function abrirModalNuevoChat() {
+            let contenedor = document.getElementById('modal-lista-contactos');
+            contenedor.innerHTML = '';
+
+            let redContactos = clientesRegistrados.filter(c => c.numero !== miNumeroAsignado);
+            if (redContactos.length === 0) {
+                contenedor.innerHTML = `<div style="font-size: 0.75rem; color: var(--text-muted);">No hay otros usuarios en la red local. Ingresa cualquier número arriba.</div>`;
+            } else {
+                redContactos.forEach(c => {
+                    let div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `<div><strong>${c.nombre}</strong> <span style="font-size: 0.7rem; color: var(--text-muted);">${c.numero}</span></div><button class="btn btn-small" onclick="seleccionarContactoModal('${c.nombre}', '${c.numero}')">Chat</button>`;
+                    contenedor.appendChild(div);
+                });
+            }
+
+            document.getElementById('modal-select-contact').style.display = 'flex';
+        }
+
+        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
+
+        function seleccionarContactoModal(nombre, numero) {
+            document.getElementById('input-nuevo-nombre-contacto').value = nombre;
+            document.getElementById('input-nuevo-numero-chat').value = numero;
+            guardarNuevoContactoChat();
+        }
+
+        function guardarNuevoContactoChat() {
+            let nombre = document.getElementById('input-nuevo-nombre-contacto').value.trim();
+            let numero = document.getElementById('input-nuevo-numero-chat').value.trim();
+
+            if (!numero) { alert("Ingresa un número telefónico."); return; }
+            if (!nombre) nombre = numero;
+
+            let existe = chatsActivos.find(c => c.numero.replace(/\s+|-/g, '') === numero.replace(/\s+|-/g, ''));
+            if (!existe) {
+                let nuevoChat = { nombre, numero, esWhatsAppExterno: !numero.includes('500') };
+                chatsActivos.unshift(nuevoChat);
+                if (!mensajesPorChat[numero]) mensajesPorChat[numero] = [];
+                guardarChatsEnStorage();
+            }
+
+            cerrarModalNuevoChat();
+            renderizarListaChatsWhatsApp();
+            abrirChatWhatsApp(numero, nombre);
+        }
+
         function renderizarListaChatsWhatsApp() {
             let container = document.getElementById('lista-chats-wa');
-            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 20px;">No hay chats activos.</div>`;
+            container.innerHTML = '';
+
+            if (chatsActivos.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 30px 16px; font-size: 0.85rem;">No tienes chats activos.<br/>Haz clic en el botón <strong>+</strong> para chatear con cualquier número de WhatsApp o de la red.</div>`;
+                return;
+            }
+
+            chatsActivos.forEach(chat => {
+                let msgs = mensajesPorChat[chat.numero] || [];
+                let ultimoMsg = msgs.length > 0 ? msgs[msgs.length - 1].texto : (chat.esWhatsAppExterno ? "Contacto WhatsApp" : "Nuevo chat OmniMovil");
+                let inicial = chat.nombre.charAt(0).toUpperCase();
+
+                let item = document.createElement('div');
+                item.className = 'wa-chat-item';
+                item.onclick = () => abrirChatWhatsApp(chat.numero, chat.nombre);
+                item.innerHTML = `
+                    <div class="wa-avatar-wrap">
+                        <div class="wa-avatar-img">${inicial}</div>
+                    </div>
+                    <div class="wa-chat-info">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="font-size: 0.9rem; color: var(--wa-text);">${chat.nombre}</strong>
+                            <span style="font-size: 0.65rem; color: var(--wa-muted);">${chat.esWhatsAppExterno ? 'WhatsApp' : 'Red IP'}</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--wa-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">
+                            ${ultimoMsg}
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
         }
 
         function abrirChatWhatsApp(numero, nombre) {
+            chatSeleccionado = { numero, nombre };
             numeroDestinoActual = numero;
+
+            let clean = numero.replace(/\s+|-/g, '');
+            let esWhatsAppExterno = !clean.includes('500');
+
             document.getElementById('chat-nombre-receptor-wa').innerText = nombre;
+            document.getElementById('chat-numero-receptor-wa').innerText = `${numero} (${esWhatsAppExterno ? 'WhatsApp Externe' : 'Red Interna'})`;
+            document.getElementById('chat-header-avatar-wa').innerText = nombre.charAt(0).toUpperCase();
+
+            renderizarMensajesChat(numero);
             document.getElementById('pantalla-chat-abierto').classList.add('active');
         }
 
-        function cerrarChatAbierto() { document.getElementById('pantalla-chat-abierto').classList.remove('active'); }
+        function renderizarMensajesChat(numero) {
+            let container = document.getElementById('contenedor-mensajes-wa');
+            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; margin-bottom: 10px;">🔒 Mensajes cifrados de extremo a extremo.</div>`;
 
-        async function enviarMensajeWhatsApp() {
+            let msgs = mensajesPorChat[numero] || [];
+            msgs.forEach(m => {
+                let msgDiv = document.createElement('div');
+                msgDiv.className = `wa-msg-bubble ${m.tipo === 'sent' ? 'wa-msg-sent' : 'wa-msg-received'}`;
+                msgDiv.innerText = m.texto;
+                container.appendChild(msgDiv);
+            });
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function cerrarChatAbierto() {
+            document.getElementById('pantalla-chat-abierto').classList.remove('active');
+            chatSeleccionado = null;
+        }
+
+        function enviarMensajeWhatsApp() {
             let input = document.getElementById('chat-input-texto-wa');
-            if(!input.value.trim()) return;
-            input.value = "";
+            let texto = input.value.trim();
+            if (!texto || !chatSeleccionado) return;
+
+            let num = chatSeleccionado.numero;
+            if (!mensajesPorChat[num]) mensajesPorChat[num] = [];
+
+            mensajesPorChat[num].push({ tipo: 'sent', texto, fecha: new Date().toLocaleTimeString() });
+            input.value = '';
+
+            guardarChatsEnStorage();
+            renderizarMensajesChat(num);
+            renderizarListaChatsWhatsApp();
+
+            let clean = num.replace(/\s+|-|\+/g, '');
+            if (!clean.startsWith('58500')) {
+                let responderWA = confirm("¿Deseas enviar este mensaje directamente a la aplicación oficial de WhatsApp?");
+                if (responderWA) {
+                    window.open(`https://wa.me/${clean}?text=${encodeURIComponent(texto)}`, '_blank');
+                }
+            }
+        }
+
+        function abrirEnWhatsAppWeb() {
+            if (!chatSeleccionado) return;
+            let clean = chatSeleccionado.numero.replace(/\s+|-|\+/g, '');
+            window.open(`https://wa.me/${clean}`, '_blank');
+        }
+
+        function filtrarChatsWhatsApp() {
+            let query = document.getElementById('wa-search-input').value.toLowerCase();
+            let items = document.querySelectorAll('#lista-chats-wa .wa-chat-item');
+            items.forEach(item => {
+                let text = item.innerText.toLowerCase();
+                item.style.display = text.includes(query) ? 'flex' : 'none';
+            });
         }
 
         async function enviarReportePagoAutomatico() {
@@ -955,6 +1237,10 @@
             saldoActual += monto;
             actualizarVistaCliente();
             alert(`¡Recarga procesada!\nNuevo saldo: $${saldoActual.toFixed(2)}`);
+        }
+
+        function instalarPWA() {
+            alert("Para instalar OmniMovil, abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.");
         }
     </script>
 </body>
