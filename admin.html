@@ -3,283 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniMovil - Panel de Administración</title>
-    
+    <title>Panel de Administración - OmniMóvil</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --bg-dark: #f4f6f9;
-            --card-bg: #ffffff;
-            --accent: #0284c7;
-            --accent-green: #10b981;
-            --accent-red: #ef4444;
-            --accent-orange: #f59e0b;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            padding: 20px;
-        }
-
-        .container { max-width: 1100px; margin: 0 auto; }
-
-        .card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        input, select {
-            width: 100%;
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            padding: 10px;
-            color: var(--text-main);
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-
-        .btn {
-            width: 100%;
-            background: var(--accent-green);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: bold;
-            font-size: 0.95rem;
-            cursor: pointer;
-        }
-
-        .btn-small { padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; width: auto; display: inline-block; cursor: pointer; border: none; }
-
-        .static-scroll-box {
-            height: 220px;
-            overflow-y: auto;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .history-item {
-            background: #ffffff;
-            padding: 10px 14px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .filter-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-4 md:p-8">
 
-    <!-- MODAL INGRESO SEGURIDAD -->
-    <div id="modal-login-admin" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15,23,42,0.9); z-index: 10000; justify-content: center; align-items: center; padding: 20px;">
-        <div class="card" style="width: 100%; max-width: 340px; text-align: center;">
-            <h2 style="color: var(--accent-orange); margin-bottom: 12px;">⚙️ Acceso Administrador</h2>
-            <input type="text" id="admin-user" placeholder="Usuario Admin" value="admin" />
-            <input type="password" id="admin-pass" placeholder="Contraseña" value="admin123" />
-            <button class="btn" style="background: var(--accent-orange);" onclick="verificarAccesoAdmin()">Entrar al Panel Operadora</button>
-        </div>
-    </div>
-
-    <div class="container" id="contenido-admin" style="display: none;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-            <h1 style="font-size: 1.3rem; color: var(--accent-orange); margin: 0;">⚙️ Control Central Operadora OmniMovil</h1>
-            <button class="btn-small" style="background: var(--accent-red); color: #fff;" onclick="location.reload()">Cerrar Sesión Admin</button>
-        </div>
-
-        <!-- REGISTRAR CLIENTE -->
-        <div class="card" style="border-color: var(--accent-green);">
-            <h2 style="color: var(--accent-green);">📝 Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo" />
-                <input type="text" id="admin-reg-cedula" placeholder="Cédula / ID" />
+    <div class="max-w-6xl mx-auto">
+        <!-- Cabecera Admin -->
+        <header class="flex justify-between items-center bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-emerald-400">🛡️ Panel de Administración OmniMóvil</h1>
+                <p class="text-xs text-slate-400 mt-1">Control global de líneas, verificaciones y recargas en la red IP</p>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                <input type="text" id="admin-reg-user" placeholder="Usuario" />
-                <input type="text" id="admin-reg-pass" placeholder="Contraseña" />
+            <a href="index.html" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-2">
+                <i class="fa-solid fa-arrow-left"></i> Ir a la App
+            </a>
+        </header>
+
+        <!-- Tarjetas de Estadísticas / Resumen -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <h2 class="text-xs font-semibold uppercase text-slate-400">Total Líneas Registradas</h2>
+                <p id="stat-total-lineas" class="text-3xl font-bold text-emerald-400 mt-2">0</p>
             </div>
-            <button class="btn" onclick="registrarClienteDesdeAdmin()">➕ Registrar Cliente y Generar Línea Automática</button>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <h2 class="text-xs font-semibold uppercase text-slate-400">Líneas Verificadas</h2>
+                <p id="stat-verificadas" class="text-3xl font-bold text-blue-400 mt-2">0</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-lg">
+                <h2 class="text-xs font-semibold uppercase text-slate-400">Pagos Pendientes</h2>
+                <p id="stat-pendientes" class="text-3xl font-bold text-amber-400 mt-2">0</p>
+            </div>
         </div>
 
-        <!-- BASE DE CLIENTES Y FILTROS -->
-        <div class="card" style="border-color: var(--accent);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--accent); margin:0;">👥 Base de Líneas y Clientes Registrados</h2>
-                <button class="btn-small" style="background: var(--accent-green); color: #fff;" onclick="exportarClientesCSV()">📥 Exportar Clientes CSV</button>
+        <!-- Tabla de Control de Supabase -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden p-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-lg font-bold text-slate-200">📋 Registros y Solicitudes en Tiempo Real</h2>
+                <button onclick="cargarRegistrosAdmin()" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-lg text-xs transition flex items-center gap-2">
+                    <i class="fa-solid fa-rotate"></i> Actualizar Datos
+                </button>
             </div>
 
-            <input type="text" id="admin-search-input" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="renderizarAdmin()" />
-
-            <div class="filter-grid">
-                <select id="filter-cli-dia" onchange="renderizarAdmin()">
-                    <option value="">Día (Todos)</option>
-                    <script>for(let i=1; i<=31; i++) document.write(`<option value="${i<10?'0'+i:i}">${i}</option>`);</script>
-                </select>
-                <select id="filter-cli-mes" onchange="renderizarAdmin()">
-                    <option value="">Mes (Todos)</option>
-                    <option value="01">Enero</option><option value="02">Febrero</option><option value="03">Marzo</option>
-                    <option value="04">Abril</option><option value="05">Mayo</option><option value="06">Junio</option>
-                    <option value="07">Julio</option><option value="08">Agosto</option><option value="09">Septiembre</option>
-                    <option value="10">Octubre</option><option value="11">Noviembre</option><option value="12">Diciembre</option>
-                </select>
-                <select id="filter-cli-anio" onchange="renderizarAdmin()">
-                    <option value="">Año (Todos)</option>
-                    <option value="2025">2025</option><option value="2026">2026</option>
-                </select>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-slate-800 text-xs text-slate-400 uppercase">
+                            <th class="p-3">ID</th>
+                            <th class="p-3">Teléfono / Línea</th>
+                            <th class="p-3">Código / Ref</th>
+                            <th class="p-3">Estado actual</th>
+                            <th class="p-3">Monto / Intentos</th>
+                            <th class="p-3 text-center">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-registros-admin" class="text-sm divide-y divide-slate-800">
+                        <tr>
+                            <td colspan="6" class="p-6 text-center text-slate-500">Cargando registros desde Supabase...</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-
-            <div class="static-scroll-box" id="lista-clientes-admin"></div>
-        </div>
-
-        <!-- RECARGAS Y AUDITORÍA -->
-        <div class="card" style="border-color: var(--accent-orange);">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2 style="color: var(--accent-orange); margin:0;">💳 Solicitudes, Recargas y Reales (Aprobadas / Rechazadas)</h2>
-                <button class="btn-small" style="background: var(--accent-orange); color: #fff;" onclick="exportarSolicitudesCSV()">📥 Exportar Recargas CSV</button>
-            </div>
-
-            <div class="static-scroll-box" id="lista-solicitudes-admin"></div>
-        </div>
-
-        <!-- POOL DE NÚMEROS -->
-        <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h2>🔢 Pool de Números Disponibles</h2>
-                <button class="btn-small" style="background: var(--accent); color: #fff;" onclick="exportarPoolCSV()">📥 Exportar Pool CSV</button>
-            </div>
-            <input type="text" id="nuevo-num-pool" placeholder="Ej: +58 500-0045" />
-            <button class="btn" style="background: var(--accent-orange);" onclick="agregarNumeroAlPool()">➕ Añadir Número al Pool</button>
-            <div class="static-scroll-box" id="lista-pool-numeros" style="height: 120px; margin-top: 10px;"></div>
         </div>
     </div>
 
     <script>
-        const SUPABASE_URL = "https://pgpcjspbzfjslylcywju.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8";
-        let supabaseClient = null;
+        // Credenciales de Supabase del proyecto
+        const SUPABASE_URL = 'https://pgpcjspbzfjslylcwyju.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8';
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        function obtenerClienteSupabase() {
-            if (!supabaseClient && typeof supabase !== 'undefined') {
-                supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false } });
+        window.onload = function() {
+            cargarRegistrosAdmin();
+        };
+
+        async function cargarRegistrosAdmin() {
+            const tbody = document.getElementById('tabla-registros-admin');
+            tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">Consultando base de datos...</td></tr>`;
+
+            const { data, error } = await _supabase
+                .from('verificaciones_omnimovil')
+                .select('*')
+                .order('id', { ascending: false });
+
+            if (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-red-400">Error al cargar datos: ${error.message}</td></tr>`;
+                return;
             }
-            return supabaseClient;
-        }
 
-        let clientesRegistrados = [];
-        let poolNumeros = ["+58 500-0004", "+58 500-0005", "+58 500-0006"];
-        let solicitudesRecarga = [];
-
-        function verificarAccesoAdmin() {
-            let u = document.getElementById('admin-user').value;
-            let p = document.getElementById('admin-pass').value;
-            if(u === 'admin' && p === 'admin123') {
-                document.getElementById('modal-login-admin').style.display = 'none';
-                document.getElementById('contenido-admin').style.display = 'block';
-                cargarDatosEnAdmin();
-            } else { alert("Credenciales de administrador incorrectas."); }
-        }
-
-        async function cargarDatosEnAdmin() {
-            obtenerClienteSupabase();
-            if(supabaseClient) {
-                let { data } = await supabaseClient.from('usuarios').select('*');
-                if(data) clientesRegistrados = data;
+            if (!data || data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-500">No hay registros en la red todavía.</td></tr>`;
+                document.getElementById('stat-total-lineas').innerText = '0';
+                document.getElementById('stat-verificadas').innerText = '0';
+                document.getElementById('stat-pendientes').innerText = '0';
+                return;
             }
-            renderizarAdmin();
-        }
 
-        function renderizarAdmin() {
-            let contClientes = document.getElementById('lista-clientes-admin');
-            let busqueda = document.getElementById('admin-search-input')?.value.toLowerCase() || "";
-            let dCli = document.getElementById('filter-cli-dia')?.value || "";
-            let mCli = document.getElementById('filter-cli-mes')?.value || "";
-            let aCli = document.getElementById('filter-cli-anio')?.value || "";
+            // Estadísticas
+            let total = data.length;
+            let verificadas = data.filter(d => d.estado === 'verificado').length;
+            let pendientes = data.filter(d => d.estado === 'pago_pendiente').length;
 
-            let cliFiltrados = clientesRegistrados.filter(c => {
-                let partes = (c.fecha || "").split("-");
-                let coincide = c.nombre.toLowerCase().includes(busqueda) || c.numero.toLowerCase().includes(busqueda);
-                return coincide && (aCli === "" || partes[0] === aCli) && (mCli === "" || partes[1] === mCli) && (dCli === "" || partes[2] === dCli);
+            document.getElementById('stat-total-lineas').innerText = total;
+            document.getElementById('stat-verificadas').innerText = verificadas;
+            document.getElementById('stat-pendientes').innerText = pendientes;
+
+            tbody.innerHTML = '';
+            data.forEach(reg => {
+                let tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/50 transition";
+                
+                let badgeColor = "bg-slate-800 text-slate-300";
+                if(reg.estado === 'verificado') badgeColor = "bg-emerald-950 text-emerald-400 border border-emerald-800";
+                if(reg.estado === 'pago_pendiente') badgeColor = "bg-amber-950 text-amber-400 border border-amber-800";
+
+                tr.innerHTML = `
+                    <td class="p-3 text-slate-400">#${reg.id}</td>
+                    <td class="p-3 font-semibold text-emerald-300">${reg.telefono}</td>
+                    <td class="p-3 font-mono text-xs text-slate-300">${reg.codigo}</td>
+                    <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold ${badgeColor}">${reg.estado}</span></td>
+                    <td class="p-3 text-slate-300">${reg.intentos}</td>
+                    <td class="p-3 text-center space-x-2">
+                        <button onclick="cambiarEstadoRegistro(${reg.id}, 'verificado')" class="bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-3 py-1 rounded text-xs transition" title="Aprobar / Verificar">
+                            ✔ Aprobar
+                        </button>
+                        <button onclick="eliminarRegistro(${reg.id})" class="bg-red-600/80 hover:bg-red-500 text-white px-2.5 py-1 rounded text-xs transition" title="Eliminar">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
-
-            contClientes.innerHTML = cliFiltrados.length === 0 ? `<div style="text-align:center; padding:10px;">Sin registros.</div>` : "";
-            cliFiltrados.forEach((c) => {
-                let esActivo = c.estado === "Activa";
-                contClientes.innerHTML += `
-                    <div class="history-item">
-                        <div>
-                            <strong style="color:var(--accent);">${c.nombre}</strong> [${c.estado}]<br/>
-                            <span style="font-size:0.75rem; color:var(--text-muted);">${c.numero} • User: ${c.usuario}</span>
-                        </div>
-                        <span style="font-weight:bold; color:var(--accent-green);">$${(c.saldo||0).toFixed(2)}</span>
-                    </div>`;
-            });
-
-            let contPool = document.getElementById('lista-pool-numeros');
-            contPool.innerHTML = "";
-            poolNumeros.forEach(num => {
-                contPool.innerHTML += `<div class="history-item"><span>${num}</span><span style="color:var(--accent-green);">Disponible</span></div>`;
-            });
         }
 
-        async function registrarClienteDesdeAdmin() {
-            let nombre = document.getElementById('admin-reg-nombre').value;
-            let user = document.getElementById('admin-reg-user').value;
-            let pass = document.getElementById('admin-reg-pass').value;
-            let cedula = document.getElementById('admin-reg-cedula').value;
+        async function cambiarEstadoRegistro(id, nuevoEstado) {
+            const { error } = await _supabase
+                .from('verificaciones_omnimovil')
+                .update({ estado: nuevoEstado })
+                .eq('id', id);
 
-            if(!nombre || !user || !pass) { alert("Completa los campos."); return; }
-            let numAsignado = poolNumeros.shift() || `+58 500-${Math.floor(1000 + Math.random() * 9000)}`;
-            let nuevo = { nombre, usuario: user, pass, cedula, numero: numAsignado, saldo: 5.00, estado: "Activa", fecha: new Date().toISOString().split('T')[0] };
-
-            clientesRegistrados.push(nuevo);
-            if(supabaseClient) await supabaseClient.from('usuarios').insert([nuevo]);
-            
-            renderizarAdmin();
-            alert(`Cliente registrado con éxito. Línea: ${numAsignado}`);
+            if (error) {
+                alert("Error al actualizar: " + error.message);
+            } else {
+                cargarRegistrosAdmin();
+            }
         }
 
-        function exportarClientesCSV() { descargarCSV(JSON.stringify(clientesRegistrados), "Clientes_OmniMovil.csv"); }
-        function exportarSolicitudesCSV() { descargarCSV(JSON.stringify(solicitudesRecarga), "Recargas_OmniMovil.csv"); }
-        function exportarPoolCSV() { descargarCSV(JSON.stringify(poolNumeros), "Pool_OmniMovil.csv"); }
+        async function eliminarRegistro(id) {
+            if (confirm("¿Estás seguro de eliminar este registro de la red?")) {
+                const { error } = await _supabase
+                    .from('verificaciones_omnimovil')
+                    .delete()
+                    .eq('id', id);
 
-        function descargarCSV(content, filename) {
-            let link = document.createElement("a");
-            link.href = encodeURI("data:text/csv;charset=utf-8," + content);
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-
-        function agregarNumeroAlPool() {
-            let input = document.getElementById('nuevo-num-pool');
-            if(input.value) { poolNumeros.push(input.value); input.value = ""; renderizarAdmin(); }
+                if (error) {
+                    alert("Error al eliminar: " + error.message);
+                } else {
+                    cargarRegistrosAdmin();
+                }
+            }
         }
     </script>
 </body>
