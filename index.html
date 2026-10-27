@@ -849,10 +849,63 @@
             }
         }
 
-        abrirModalAuth('login');
-            cargarChatsGuardados();
+        window.onload = async function() {
+    if (typeof cargarChatsGuardados === 'function') cargarChatsGuardados();
 
-            let wsGuardado = localStorage.getItem('omnimovil_ws_url') || "wss://omnimovil-backend.onrender.com";
+    // Mantener URL del WebSocket guardada
+    let wsInput = document.getElementById('ws-server-url');
+    if (wsInput) {
+        let wsGuardado = localStorage.getItem('omnimovil_ws_url') || "wss://omnimovil-backend.onrender.com";
+        wsInput.value = wsGuardado;
+    }
+
+    // Comprobar si hay usuario activo guardado en localStorage
+    let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
+    if (usuarioGuardado && typeof clientesRegistrados !== 'undefined') {
+        let cli = clientesRegistrados.find(c => 
+            (c.usuario && c.usuario.toLowerCase() === usuarioGuardado.toLowerCase()) || 
+            (c.nombre && c.nombre.toLowerCase() === usuarioGuardado.toLowerCase())
+        );
+        if (cli) {
+            vincularSesionCliente(cli);
+            return; // Entra directo al panel sin pedir nada
+        }
+    }
+
+    // Si no hay sesión, abrir el login tradicional
+    if (typeof abrirModalAuth === 'function') {
+        abrirModalAuth('login');
+    }
+};
+            cargarChatsGuardados();
+function abrirModalAuth(mode = 'login') {
+    if (typeof switchAuthMode === 'function') switchAuthMode(mode);
+    
+    const btnCerrar = document.getElementById('btn-cerrar-modal-auth');
+    if (btnCerrar) {
+        btnCerrar.style.display = (typeof clienteAutenticado !== 'undefined' && clienteAutenticado) ? 'block' : 'none';
+    }
+
+    // Forzar que el modal viejo de verificación NO aparezca jamás
+    const modalVerificacion = document.getElementById('modal-registro-inicial');
+    if (modalVerificacion) {
+        modalVerificacion.style.display = 'none';
+    }
+}
+            function abrirModalAuth(mode = 'login') {
+    if (typeof switchAuthMode === 'function') switchAuthMode(mode);
+    
+    const btnCerrar = document.getElementById('btn-cerrar-modal-auth');
+    if (btnCerrar) {
+        btnCerrar.style.display = (typeof clienteAutenticado !== 'undefined' && clienteAutenticado) ? 'block' : 'none';
+    }
+
+    // Forzar que el modal viejo de verificación NO aparezca jamás
+    const modalVerificacion = document.getElementById('modal-registro-inicial');
+    if (modalVerificacion) {
+        modalVerificacion.style.display = 'none';
+    }
+}
             document.getElementById('ws-server-url').value = wsGuardado;
 
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
