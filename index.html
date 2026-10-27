@@ -881,7 +881,9 @@
         function abrirModalAuth(mode = 'login') {
             switchAuthMode(mode);
             document.getElementById('btn-cerrar-modal-auth').style.display = clienteAutenticado ? 'block' : 'none';
-            document.getElementById('modal-registro-inicial').style.display = 'flex';
+            <div id="modal-registro-inicial" style="display: none;">
+    <!-- Todo el contenido viejo del teléfono y el botón de enviar código -->
+</div>
         }
 
         function cerrarModalAuth() {
