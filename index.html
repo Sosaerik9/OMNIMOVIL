@@ -1355,30 +1355,47 @@ function activarSuscripcionRealtimeChat() {
 
         let telefonoActual = '';
 
-        async function enviarCodigo() {
-            telefonoActual = document.getElementById('input-telefono').value.trim();
-            const mensaje = document.getElementById('mensaje-estado');
-            if (!telefonoActual) { mensaje.innerText = "Ingresa un número válido."; return; }
+async function enviarCodigo() {
+    try {
+        const inputTel = document.getElementById('input-telefono');
+        const mensaje = document.getElementById('mensaje-estado');
+        if (!inputTel || !mensaje) return;
 
-            const codigo = String(Math.floor(100000 + Math.random() * 900000));
-
-            const { error } = await _supabase
-                .from('verificaciones_omnimovil')
-                .upsert({ telefono: telefonoActual, codigo: codigo, estado: 'pendiente', intentos: 0 }, { onConflict: 'telefono' });
-
-            if (error) { mensaje.innerText = "Error: " + error.message; return; }
-
-            document.getElementById('seccion-telefono').style.display = 'none';
-            document.getElementById('seccion-codigo').style.display = 'block';
-            mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400";
-            mensaje.innerText = "¡Código enviado! (Prueba: " + codigo + ")";
+        telefonoActual = inputTel.value.trim();
+        if (!telefonoActual) { 
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "Ingresa un número válido."; 
+            return; 
         }
 
-        async function validarCodigo() {
+        const codigo = String(Math.floor(100000 + Math.random() * 900000));
+
+        const { error } = await _supabase
+            .from('verificaciones_omnimovil')
+            .upsert({ telefono: telefonoActual, codigo: codigo, estado: 'pendiente', intentos: 0 }, { onConflict: 'telefono' });
+
+        if (error) { 
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "Error: " + error.message; 
+            return; 
+        }
+
+        const secTel = document.getElementById('seccion-telefono');
+        const secCod = document.getElementById('seccion-codigo');
+        if (secTel) secTel.style.display = 'none';
+        if (secCod) secCod.style.display = 'block';
+        
+        mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400";
+        mensaje.innerText = "¡Código enviado! (Prueba: " + codigo + ")";
+    } catch (errEnvio) {
+        console.error("Error al enviar código:", errEnvio);
+    }
+}
+
+async function validarCodigo() {
     try {
         const inputCodigo = document.getElementById('input-codigo');
         const mensaje = document.getElementById('mensaje-estado');
-        
         if (!inputCodigo || !mensaje) return;
 
         const codigoIngresado = inputCodigo.value.trim();
@@ -1406,19 +1423,16 @@ function activarSuscripcionRealtimeChat() {
             mensaje.innerText = "✔ ¡Verificación exitosa! Entrando a tu panel...";
             
             setTimeout(() => {
-                // Ocultar de forma segura todas las secciones de verificación posibles
                 ['seccion-codigo', 'seccion-telefono', 'seccion-verificacion'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.style.display = 'none';
                 });
 
-                // Mostrar de forma segura el panel del cliente o la app
                 ['panel-cliente', 'seccion-app', 'panel-principal', 'dashboard'].forEach(id => {
                     const el = document.getElementById(id);
                     if (el) el.style.display = 'block';
                 });
 
-                // Intentar vincular la sesión si la función existe globalmente
                 if (typeof vincularSesionCliente === 'function') {
                     try {
                         vincularSesionCliente({
