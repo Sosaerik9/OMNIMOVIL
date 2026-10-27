@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-title" content="OmniMovil">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://tailwindcss.com"></script>
 
     <style>
         :root {
@@ -734,34 +734,51 @@
             </div>
         </div>
 
-        <!-- MODAL DE AUTENTICACIÓN LIBRE -->
-        <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center;">
+        <!-- MODAL DE BIENVENIDA / DESCARGA DE APP PRIMERO -->
+        <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; position: relative; border-color: #0284c7;">
                 <i class="fa-solid fa-xmark" id="btn-cerrar-modal-auth" style="position: absolute; top: 18px; right: 18px; cursor: pointer; color: #94a3b8; font-size: 1.2rem; display: none;" onclick="cerrarModalAuth()"></i>
                 
-                <h1 style="color: #38bdf8; font-size: 1.5rem; margin: 0 0 4px 0; font-weight: bold;">OmniMovil</h1>
-                <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Plataforma de Comunicaciones IP</p>
+                <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Plataforma de Comunicaciones IP</p>
 
-                <!-- Pestañas de selección -->
-                <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
-                    <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 48%;">🔑 Iniciar Sesión</button>
-                    <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 48%;">📝 Registrarse</button>
+                <!-- BOTONES DE ACCIÓN PRINCIPALES (INSTALAR Y NOTIFICACIONES PRIMERO) -->
+                <div id="welcome-action-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
+                    <button class="btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="instalarPWA()">
+                        <i class="fa-solid fa-cloud-arrow-down"></i> 📲 Instalar App en tu Dispositivo
+                    </button>
+                    <button class="btn" style="background: #1e293b; border: 1px solid #334155; color: #38bdf8; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="solicitarPermisoNotificaciones()">
+                        <i class="fa-solid fa-bell"></i> 🔔 Activar Notificaciones Push
+                    </button>
+                    <hr style="border-color: #1e293b; margin: 10px 0;">
+                    <button class="btn" style="background: #0284c7; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="mostrarFormularioAuth()">
+                        <i class="fa-solid fa-right-to-bracket"></i> 🔑 Iniciar Sesión / Registrarse
+                    </button>
                 </div>
 
-                <!-- Formulario de Login -->
-                <div id="form-login-container" style="display: block;">
-                    <input type="text" id="auth-login-user" placeholder="Usuario o Nombre" />
-                    <input type="password" id="auth-login-pass" placeholder="Contraseña" />
-                    <button class="btn" style="background: #0284c7; font-weight: bold; margin-top: 6px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
+                <!-- FORMULARIO DE AUTH (OCULTO HASTA QUE SE PULSE EL BOTÓN) -->
+                <div id="auth-forms-wrapper" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
+                        <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 48%;">🔑 Iniciar Sesión</button>
+                        <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; font-size: 0.85rem; cursor: pointer; width: 48%;">📝 Registrarse</button>
+                    </div>
+
+                    <!-- Formulario de Login -->
+                    <div id="form-login-container" style="display: block;">
+                        <input type="text" id="auth-login-user" placeholder="Usuario o Nombre" />
+                        <input type="password" id="auth-login-pass" placeholder="Contraseña" />
+                        <button class="btn" style="background: #0284c7; font-weight: bold; margin-top: 6px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
+                    </div>
+
+                    <!-- Formulario de Registro -->
+                    <div id="form-registro-container" style="display: none;">
+                        <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                        <input type="text" id="init-reg-user" placeholder="Nombre de usuario" />
+                        <input type="password" id="init-reg-pass" placeholder="Contraseña" />
+                        <button class="btn" style="background: var(--accent-green); font-weight: bold; margin-top: 6px;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro</button>
+                    </div>
                 </div>
 
-                <!-- Formulario de Registro -->
-                <div id="form-registro-container" style="display: none;">
-                    <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
-                    <input type="text" id="init-reg-user" placeholder="Nombre de usuario" />
-                    <input type="password" id="init-reg-pass" placeholder="Contraseña" />
-                    <button class="btn" style="background: var(--accent-green); font-weight: bold; margin-top: 6px;" onclick="ejecutarRegistroInicialPaso1()">Completar Registro</button>
-                </div>
             </div>
         </div>
     </div>
@@ -833,6 +850,13 @@
             return num.replace(/[^\d+]/g, '');
         }
 
+        function mostrarFormularioAuth() {
+            document.getElementById('welcome-action-buttons').style.display = 'none';
+            document.getElementById('auth-forms-wrapper').style.display = 'block';
+            let btnCerrar = document.getElementById('btn-cerrar-modal-auth');
+            if (btnCerrar) btnCerrar.style.display = 'block';
+        }
+
         function switchAuthMode(mode) {
             const btnLogin = document.getElementById('tab-btn-login');
             const btnRegistro = document.getElementById('tab-btn-registro');
@@ -861,7 +885,9 @@
         }
 
         function abrirModalAuth(mode = 'login') {
-            switchAuthMode(mode);
+            document.getElementById('welcome-action-buttons').style.display = 'flex';
+            document.getElementById('auth-forms-wrapper').style.display = 'none';
+            
             const btnCerrar = document.getElementById('btn-cerrar-modal-auth');
             if (btnCerrar) {
                 btnCerrar.style.display = clienteAutenticado ? 'block' : 'none';
@@ -1431,14 +1457,21 @@
         }
 
         function solicitarPermisoNotificaciones() {
-            if (!('Notification' in window)) return;
+            if (!('Notification' in window)) {
+                alert("Tu navegador no soporta notificaciones.");
+                return;
+            }
             Notification.requestPermission().then(permission => {
-                if (permission === 'granted') alert("¡Notificaciones activadas!");
+                if (permission === 'granted') {
+                    alert("¡Notificaciones activadas con éxito!");
+                } else {
+                    alert("Permiso de notificaciones denegado.");
+                }
             });
         }
 
         function instalarPWA() {
-            alert("Para instalar la App, abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.");
+            alert("Para instalar la App en tu dispositivo:\n\n• En Android/PC: Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.\n• En iPhone (Safari): Pulsa el botón de compartir y selecciona 'Agregar a inicio'.");
         }
     </script>
 </body>
