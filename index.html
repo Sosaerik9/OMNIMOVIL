@@ -879,10 +879,12 @@
         }
 
         function abrirModalAuth(mode = 'login') {
-            switchAuthMode(mode);
-            document.getElementById('btn-cerrar-modal-auth').style.display = clienteAutenticado ? 'block' : 'none';
-            <div id="modal-registro-inicial" style="display: none;">
-    <!-- Todo el contenido viejo del teléfono y el botón de enviar código -->
+    switchAuthMode(mode);
+    document.getElementById('btn-cerrar-modal-auth').style.display = clienteAutenticado ? 'block' : 'none';
+    // Aquí ya no abrimos el modal de verificación viejo, evitamos que aparezca:
+    const modalReg = document.getElementById('modal-registro-inicial');
+    if (modalReg) modalReg.style.display = 'none';
+}
 </div>
         }
 
