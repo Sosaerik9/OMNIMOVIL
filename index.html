@@ -1390,24 +1390,27 @@ function activarSuscripcionRealtimeChat() {
     if (data.codigo === codigoIngresado) {
         await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
         mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
-        mensaje.innerText = "✔ ¡Número verificado con éxito! Ya puedes iniciar sesión.";
+        mensaje.innerText = "✔ ¡Verificación exitosa! Entrando a tu panel...";
         
         setTimeout(() => {
-            document.getElementById('seccion-codigo').style.display = 'none';
-            if (typeof abrirModalLogin === 'function') {
-                abrirModalLogin();
-            }
-        }, 1500);
+            // Ocultar sección de verificación
+            let secCodigo = document.getElementById('seccion-codigo');
+            if (secCodigo) secCodigo.style.display = 'none';
+
+            let secTel = document.getElementById('seccion-telefono');
+            if (secTel) secTel.style.display = 'none';
+
+            // Iniciar sesión y abrir el panel automáticamente
+            vincularSesionCliente({
+                nombre: "Usuario " + telefonoActual,
+                usuario: telefonoActual,
+                numero: telefonoActual,
+                saldo: 5.00,
+                estado: "Activa"
+            });
+        }, 1000);
     } else {
         mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
         mensaje.innerText = "Código incorrecto.";
     }
 }
-        function reiniciarProceso() {
-            document.getElementById('seccion-codigo').style.display = 'none';
-            document.getElementById('seccion-telefono').style.display = 'block';
-            document.getElementById('mensaje-estado').innerText = '';
-        }
-    </script>
-</body>
-</html>
