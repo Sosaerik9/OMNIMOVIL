@@ -1390,17 +1390,14 @@ function activarSuscripcionRealtimeChat() {
     if (data.codigo === codigoIngresado) {
         await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
         mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
-        mensaje.innerText = "✔ ¡Número verificado con éxito! Ingresando a la red...";
+        mensaje.innerText = "✔ ¡Número verificado con éxito! Ya puedes iniciar sesión.";
+        
         setTimeout(() => {
-            vincularSesionCliente({
-                nombre: "Usuario Verificado",
-                usuario: telefonoActual,
-                numero: telefonoActual,
-                saldo: 5.00,
-                estado: "Activa"
-            });
-        }, 1200);
-        document.getElementById('seccion-codigo').style.display = 'none';
+            document.getElementById('seccion-codigo').style.display = 'none';
+            if (typeof abrirModalLogin === 'function') {
+                abrirModalLogin();
+            }
+        }, 1500);
     } else {
         mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
         mensaje.innerText = "Código incorrecto.";
