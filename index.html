@@ -1254,5 +1254,96 @@
             alert("Para instalar OmniMovil, abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.");
         }
     </script>
+    <!-- SECCIÓN DE VERIFICACIÓN OMNIMÓVIL -->
+<div class="bg-slate-900 border border-slate-800 p-6 rounded-2xl shadow-xl w-full max-w-md mx-auto my-6 text-slate-100">
+    <div class="text-center mb-4">
+        <h2 class="text-xl font-bold text-emerald-400">Verificación de Número</h2>
+        <p class="text-xs text-slate-400">Valida tu línea en la red de OmniMóvil</p>
+    </div>
+
+    <!-- Paso 1: Teléfono -->
+    <div id="seccion-telefono">
+        <input type="text" id="input-telefono" placeholder="+58 412 0000000" 
+            class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-slate-100 focus:outline-none focus:border-emerald-500 mb-3 text-sm">
+        <button onclick="enviarCodigo()" 
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2 rounded-lg text-sm transition">
+            Enviar Código
+        </button>
+    </div>
+
+    <!-- Paso 2: Código (Oculto al inicio) -->
+    <div id="seccion-codigo" class="hidden">
+        <input type="text" id="input-codigo" placeholder="123456" maxlength="6"
+            class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-center text-xl tracking-widest text-emerald-400 focus:outline-none focus:border-emerald-500 mb-3">
+        <button onclick="validarCodigo()" 
+            class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-2 rounded-lg text-sm transition">
+            Verificar
+        </button>
+        <button onclick="reiniciarProceso()" class="w-full text-xs text-slate-400 hover:text-slate-200 mt-3 transition">
+            Cambiar número
+        </button>
+    </div>
+
+    <div id="mensaje-estado" class="mt-3 text-center text-xs font-medium"></div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://pgpcjspbzfjslylcwyju.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8';
+    
+    const { createClient } = supabase;
+    const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    let telefonoActual = '';
+
+    async function enviarCodigo() {
+        telefonoActual = document.getElementById('input-telefono').value.trim();
+        const mensaje = document.getElementById('mensaje-estado');
+        if (!telefonoActual) { mensaje.innerText = "Ingresa un número válido."; return; }
+
+        const codigo = String(Math.floor(100000 + Math.random() * 900000));
+
+        const { error } = await _supabase
+            .from('verificaciones_omnimovil')
+            .upsert({ telefono: telefonoActual, codigo: codigo, estado: 'pendiente', intentos: 0 }, { onConflict: 'telefono' });
+
+        if (error) { mensaje.innerText = "Error: " + error.message; return; }
+
+        document.getElementById('seccion-telefono').classList.add('hidden');
+        document.getElementById('seccion-codigo').classList.remove('hidden');
+        mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400";
+        mensaje.innerText = "¡Código enviado! (Prueba: " + codigo + ")";
+    }
+
+    async function validarCodigo() {
+        const codigoIngresado = document.getElementById('input-codigo').value.trim();
+        const mensaje = document.getElementById('mensaje-estado');
+        if (codigoIngresado.length !== 6) { mensaje.innerText = "El código debe ser de 6 dígitos."; return; }
+
+        const { data, error } = await _supabase
+            .from('verificaciones_omnimovil')
+            .select('*')
+            .eq('telefono', telefonoActual)
+            .single();
+
+        if (error || !data) { mensaje.innerText = "No se encontró el registro."; return; }
+
+        if (data.codigo === codigoIngresado) {
+            await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
+            mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
+            mensaje.innerText = "✔ ¡Número verificado en verde con éxito!";
+            document.getElementById('seccion-codigo').classList.add('hidden');
+        } else {
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "Código incorrecto.";
+        }
+    }
+
+    function reiniciarProceso() {
+        document.getElementById('seccion-codigo').classList.add('hidden');
+        document.getElementById('seccion-telefono').classList.remove('hidden');
+        document.getElementById('mensaje-estado').innerText = '';
+    }
+</script>
 </body>
 </html>
