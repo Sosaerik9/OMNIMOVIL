@@ -781,7 +781,65 @@
         let callTimerInterval = null;
         let callSeconds = 0;
         let costoPorSegundo = 0;
+let costoPorSegundo = 0;
 
+        // --- FUNCIONES DE AUTENTICACIÓN LIMPIAS ---
+        function switchAuthMode(mode) {
+            const btnLogin = document.getElementById('tab-btn-login');
+            const btnRegistro = document.getElementById('tab-btn-registro');
+            const formLogin = document.getElementById('form-login-container');
+            const formRegistro = document.getElementById('form-registro-container');
+
+            if (btnLogin && btnRegistro && formLogin && formRegistro) {
+                if (mode === 'login') {
+                    btnLogin.classList.add('active');
+                    btnRegistro.classList.remove('active');
+                    formLogin.style.display = 'block';
+                    formRegistro.style.display = 'none';
+                } else {
+                    btnRegistro.classList.add('active');
+                    btnLogin.classList.remove('active');
+                    formRegistro.style.display = 'block';
+                    formLogin.style.display = 'none';
+                }
+            }
+        }
+
+        function ejecutarInicioSesion() {
+            let inputUser = document.getElementById('auth-login-user');
+            let inputPass = document.getElementById('auth-login-pass');
+
+            if (!inputUser || !inputPass) {
+                alert("Error en los campos de inicio de sesión.");
+                return;
+            }
+
+            let userVal = inputUser.value.trim();
+            let passVal = inputPass.value.trim();
+
+            if (!userVal) {
+                alert("Por favor ingresa tu usuario.");
+                return;
+            }
+
+            let clienteEncontrado = clientesRegistrados.find(c => 
+                c.usuario.toLowerCase() === userVal.toLowerCase() || c.nombre.toLowerCase() === userVal.toLowerCase()
+            );
+
+            if (!clienteEncontrado) {
+                clienteEncontrado = { 
+                    nombre: userVal, 
+                    usuario: userVal, 
+                    pass: passVal, 
+                    numero: `+58 500-${Math.floor(1000 + Math.random() * 9000)}`, 
+                    saldo: 5.00, 
+                    estado: "Activa" 
+                };
+                clientesRegistrados.push(clienteEncontrado);
+            }
+
+            vincularSesionCliente(clienteEncontrado);
+        }
         let wsSocket = null;
         let peerConnection = null;
         let localStream = null;
