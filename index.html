@@ -1375,29 +1375,37 @@ function activarSuscripcionRealtimeChat() {
         }
 
         async function validarCodigo() {
-            const codigoIngresado = document.getElementById('input-codigo').value.trim();
-            const mensaje = document.getElementById('mensaje-estado');
-            if (codigoIngresado.length !== 6) { mensaje.innerText = "El código debe ser de 6 dígitos."; return; }
+    const codigoIngresado = document.getElementById('input-codigo').value.trim();
+    const mensaje = document.getElementById('mensaje-estado');
+    if (codigoIngresado.length !== 6) { mensaje.innerText = "El código debe ser de 6 dígitos."; return; }
 
-            const { data, error } = await _supabase
-                .from('verificaciones_omnimovil')
-                .select('*')
-                .eq('telefono', telefonoActual)
-                .single();
+    const { data, error } = await _supabase
+        .from('verificaciones_omnimovil')
+        .select('*')
+        .eq('telefono', telefonoActual)
+        .single();
 
-            if (error || !data) { mensaje.innerText = "No se encontró el registro."; return; }
+    if (error || !data) { mensaje.innerText = "No se encontró el registro."; return; }
 
-            if (data.codigo === codigoIngresado) {
-                await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
-                mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
-                mensaje.innerText = "✔ ¡Número verificado en verde con éxito!";
-                document.getElementById('seccion-codigo').style.display = 'none';
-            } else {
-                mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
-                mensaje.innerText = "Código incorrecto.";
-            }
-        }
-
+    if (data.codigo === codigoIngresado) {
+        await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
+        mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
+        mensaje.innerText = "✔ ¡Número verificado con éxito! Ingresando a la red...";
+        setTimeout(() => {
+            vincularSesionCliente({
+                nombre: "Usuario Verificado",
+                usuario: telefonoActual,
+                numero: telefonoActual,
+                saldo: 5.00,
+                estado: "Activa"
+            });
+        }, 1200);
+        document.getElementById('seccion-codigo').style.display = 'none';
+    } else {
+        mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+        mensaje.innerText = "Código incorrecto.";
+    }
+}
         function reiniciarProceso() {
             document.getElementById('seccion-codigo').style.display = 'none';
             document.getElementById('seccion-telefono').style.display = 'block';
