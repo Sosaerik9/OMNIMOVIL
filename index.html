@@ -1375,34 +1375,74 @@ function activarSuscripcionRealtimeChat() {
         }
 
         async function validarCodigo() {
-    const codigoIngresado = document.getElementById('input-codigo').value.trim();
-    const mensaje = document.getElementById('mensaje-estado');
-    if (codigoIngresado.length !== 6) { mensaje.innerText = "El código debe ser de 6 dígitos."; return; }
-
-    const { data, error } = await _supabase
-        .from('verificaciones_omnimovil')
-        .select('*')
-        .eq('telefono', telefonoActual)
-        .single();
-
-    if (error || !data) { mensaje.innerText = "No se encontró el registro."; return; }
-
-    if (data.codigo === codigoIngresado) {
-        await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
-        mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
-        mensaje.innerText = "✔ ¡Verificación exitosa! Entrando a tu panel...";
+    try {
+        const inputCodigo = document.getElementById('input-codigo');
+        const mensaje = document.getElementById('mensaje-estado');
         
-        setTimeout(() => {
-            // Ocultar la sección de verificación
-            const seccionVerif = document.getElementById('seccion-verificacion') || document.getElementById('seccion-codigo');
-            if (seccionVerif) seccionVerif.style.display = 'none';
+        if (!inputCodigo || !mensaje) return;
 
-            // Mostrar el panel de cliente si existe en la página
-            const panelCliente = document.getElementById('panel-cliente') || document.getElementById('seccion-app');
-            if (panelCliente) panelCliente.style.display = 'block';
-        }, 1000);
-    } else {
-        mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
-        mensaje.innerText = "Código incorrecto.";
+        const codigoIngresado = inputCodigo.value.trim();
+        if (codigoIngresado.length !== 6) { 
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "El código debe ser de 6 dígitos."; 
+            return; 
+        }
+
+        const { data, error } = await _supabase
+            .from('verificaciones_omnimovil')
+            .select('*')
+            .eq('telefono', telefonoActual)
+            .single();
+
+        if (error || !data) { 
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "No se encontró el registro."; 
+            return; 
+        }
+
+        if (data.codigo === codigoIngresado) {
+            await _supabase.from('verificaciones_omnimovil').update({ estado: 'verificado' }).eq('telefono', telefonoActual);
+            mensaje.className = "mt-3 text-center text-xs font-medium text-emerald-400 font-bold";
+            mensaje.innerText = "✔ ¡Verificación exitosa! Entrando a tu panel...";
+            
+            setTimeout(() => {
+                // Ocultar de forma segura todas las secciones de verificación posibles
+                ['seccion-codigo', 'seccion-telefono', 'seccion-verificacion'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+
+                // Mostrar de forma segura el panel del cliente o la app
+                ['panel-cliente', 'seccion-app', 'panel-principal', 'dashboard'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'block';
+                });
+
+                // Intentar vincular la sesión si la función existe globalmente
+                if (typeof vincularSesionCliente === 'function') {
+                    try {
+                        vincularSesionCliente({
+                            nombre: "Usuario " + telefonoActual,
+                            usuario: telefonoActual,
+                            numero: telefonoActual,
+                            saldo: 5.00,
+                            estado: "Activa"
+                        });
+                    } catch (errSesion) {
+                        console.log("Sesion vinculada por defecto", errSesion);
+                    }
+                }
+            }, 1000);
+        } else {
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "Código incorrecto.";
+        }
+    } catch (errGeneral) {
+        console.error("Error en validación:", errGeneral);
+        const mensaje = document.getElementById('mensaje-estado');
+        if (mensaje) {
+            mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
+            mensaje.innerText = "Ocurrió un error inesperado.";
+        }
     }
 }
