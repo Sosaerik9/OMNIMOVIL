@@ -1393,21 +1393,13 @@ function activarSuscripcionRealtimeChat() {
         mensaje.innerText = "✔ ¡Verificación exitosa! Entrando a tu panel...";
         
         setTimeout(() => {
-            // Ocultar sección de verificación
-            let secCodigo = document.getElementById('seccion-codigo');
-            if (secCodigo) secCodigo.style.display = 'none';
+            // Ocultar la sección de verificación
+            const seccionVerif = document.getElementById('seccion-verificacion') || document.getElementById('seccion-codigo');
+            if (seccionVerif) seccionVerif.style.display = 'none';
 
-            let secTel = document.getElementById('seccion-telefono');
-            if (secTel) secTel.style.display = 'none';
-
-            // Iniciar sesión y abrir el panel automáticamente
-            vincularSesionCliente({
-                nombre: "Usuario " + telefonoActual,
-                usuario: telefonoActual,
-                numero: telefonoActual,
-                saldo: 5.00,
-                estado: "Activa"
-            });
+            // Mostrar el panel de cliente si existe en la página
+            const panelCliente = document.getElementById('panel-cliente') || document.getElementById('seccion-app');
+            if (panelCliente) panelCliente.style.display = 'block';
         }, 1000);
     } else {
         mensaje.className = "mt-3 text-center text-xs font-medium text-red-400";
