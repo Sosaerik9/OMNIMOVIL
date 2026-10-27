@@ -1242,13 +1242,33 @@
         }
 
         async function enviarReportePagoAutomatico() {
-            let monto = parseFloat(document.getElementById('monto-pago').value);
-            let ref = document.getElementById('ref-pago').value.trim();
-            if(!monto || !ref) { alert("Ingresa monto y referencia."); return; }
-            saldoActual += monto;
-            actualizarVistaCliente();
-            alert(`¡Recarga procesada!\nNuevo saldo: $${saldoActual.toFixed(2)}`);
-        }
+    let monto = parseFloat(document.getElementById('monto-pago').value);
+    let ref = document.getElementById('ref-pago').value.trim();
+    
+    if(!monto || !ref) { 
+        alert("Por favor ingresa el monto y el número de referencia del pago."); 
+        return; 
+    }
+
+    // Registrar el pago en Supabase para que aparezca en el panel de administración
+    const { error } = await _supabase
+        .from('verificaciones_omnimovil')
+        .upsert({ 
+            telefono: miNumeroAsignado, 
+            codigo: "REC-" + ref, 
+            estado: 'pago_pendiente', 
+            intentos: monto 
+        }, { onConflict: 'telefono' });
+
+    if (error) {
+        alert("Error al enviar el reporte: " + error.message);
+        return;
+    }
+
+    alert(`¡Reporte de pago enviado con éxito!\n\nMonto: $${monto.toFixed(2)} USD\nReferencia: ${ref}\n\nUn administrador verificará el pago y acreditará el saldo a la brevedad.`);
+    document.getElementById('monto-pago').value = '';
+    document.getElementById('ref-pago').value = '';
+}
 
         function instalarPWA() {
             alert("Para instalar OmniMovil, abre el menú de tu navegador y selecciona 'Agregar a la pantalla de inicio'.");
