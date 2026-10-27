@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificación - OmniMóvil</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería oficial de Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-slate-900 border border-slate-800 p-8 rounded-2xl shadow-2xl w-full max-w-md">
+        <div class="text-center mb-6">
+            <h1 class="text-2xl font-bold tracking-wider text-emerald-400">OMNIMÓVIL</h1>
+            <p class="text-sm text-slate-400 mt-1">Verificación segura de números</p>
+        </div>
+
+        <!-- Paso 1: Ingresar Teléfono -->
+        <div id="seccion-telefono">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Número de Teléfono</label>
+            <input type="text" id="input-telefono" placeholder="+58 412 0000000" 
+                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-slate-100 focus:outline-none focus:border-emerald-500 mb-4 transition">
+            <button onclick="enviarCodigo()" 
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg shadow-emerald-900/20">
+                Enviar Código de Verificación
+            </button>
+        </div>
+
+        <!-- Paso 2: Ingresar Código (Oculto inicialmente) -->
+        <div id="seccion-codigo" class="hidden">
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-2">Ingresa el código de 6 dígitos</label>
+            <input type="text" id="input-codigo" placeholder="123456" maxlength="6"
+                class="w-full bg-slate-950 border border-slate-700 rounded-lg px-4 py-3 text-center text-2xl tracking-widest text-emerald-400 focus:outline-none focus:border-emerald-500 mb-4 transition">
+            <button onclick="validarCodigo()" 
+                class="w-full bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold py-3 rounded-lg transition shadow-lg shadow-emerald-900/20">
+                Verificar Número
+            </button>
+            <button onclick="reiniciarProceso()" class="w-full text-xs text-slate-400 hover:text-slate-200 mt-4 transition">
+                ¿Te equivocaste de número? Cambiar
+            </button>
+        </div>
+
+        <!-- Mensaje de estado -->
+        <div id="mensaje-estado" class="mt-4 text-center text-sm font-medium"></div>
+    </div>
+
+    <script>
+        // CONFIGURACIÓN DE SUPABASE (Sustituye con tus datos reales)
+        const SUPABASE_URL = 'TU_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'TU_SUPABASE_ANON_KEY';
+        
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let telefonoActual = '';
+
+        async function enviarCodigo() {
+            telefonoActual = document.getElementById('input-telefono').value.trim();
+            const mensaje = document.getElementById('mensaje-estado');
+
+            if (!telefonoActual) {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = "Por favor, ingresa un número válido.";
+                return;
+            }
+
+            mensaje.className = "mt-4 text-center text-sm font-medium text-slate-400";
+            mensaje.innerText = "Generando código...";
+
+            // Generar un código aleatorio de 6 dígitos
+            const codigo = String(Math.floor(100000 + Math.random() * 900000));
+
+            // Guardar o actualizar directamente en la tabla de Supabase que acabamos de crear
+            const { error } = await _supabase
+                .from('verificaciones_omnimovil')
+                .upsert({ 
+                    telefono: telefonoActual, 
+                    codigo: codigo, 
+                    estado: 'pendiente', 
+                    intentos: 0 
+                }, { onConflict: 'telefono' });
+
+            if (error) {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = "Error en la base de datos: " + error.message;
+                return;
+            }
+
+            // Cambiar a la vista para ingresar el código
+            document.getElementById('seccion-telefono').classList.add('hidden');
+            document.getElementById('seccion-codigo').classList.remove('hidden');
+            mensaje.className = "mt-4 text-center text-sm font-medium text-emerald-400";
+            mensaje.innerText = "¡Código generado con éxito! (Código de prueba: " + codigo + ")";
+        }
+
+        async function validarCodigo() {
+            const codigoIngresado = document.getElementById('input-codigo').value.trim();
+            const mensaje = document.getElementById('mensaje-estado');
+
+            if (codigoIngresado.length !== 6) {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = "El código debe tener 6 dígitos.";
+                return;
+            }
+
+            // Consultar el registro en Supabase
+            const { data, error } = await _supabase
+                .from('verificaciones_omnimovil')
+                .select('*')
+                .eq('telefono', telefonoActual)
+                .single();
+
+            if (error || !data) {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = "No se encontró el registro para este número.";
+                return;
+            }
+
+            if (data.estado === 'verificado') {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-emerald-400 text-lg font-bold";
+                mensaje.innerText = "✔ El número ya se encuentra verificado.";
+                document.getElementById('seccion-codigo').classList.add('hidden');
+                return;
+            }
+
+            if (data.intentos >= 3) {
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = "Demasiados intentos fallidos. Solicita un nuevo código.";
+                return;
+            }
+
+            if (data.codigo === codigoIngresado) {
+                // Actualizar el estado a 'verificado' en Supabase
+                await _supabase
+                    .from('verificaciones_omnimovil')
+                    .update({ estado: 'verificado' })
+                    .eq('telefono', telefonoActual);
+
+                mensaje.className = "mt-4 text-center text-sm font-medium text-emerald-400 text-lg font-bold";
+                mensaje.innerText = "✔ ¡Número verificado con éxito en verde!";
+                document.getElementById('seccion-codigo').classList.add('hidden');
+            } else {
+                // Sumar un intento fallido por seguridad
+                const nuevoIntentos = data.intentos + 1;
+                await _supabase
+                    .from('verificaciones_omnimovil')
+                    .update({ intentos: nuevoIntentos })
+                    .eq('telefono', telefonoActual);
+
+                mensaje.className = "mt-4 text-center text-sm font-medium text-red-400";
+                mensaje.innerText = `Código incorrecto. Intentos fallidos: ${nuevoIntentos}/3`;
+            }
+        }
+
+        function reiniciarProceso() {
+            document.getElementById('seccion-codigo').classList.add('hidden');
+            document.getElementById('seccion-telefono').classList.remove('hidden');
+            document.getElementById('mensaje-estado').innerText = '';
+            document.getElementById('input-codigo').value = '';
+        }
+    </script>
+</body>
+</html>
