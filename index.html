@@ -828,6 +828,11 @@
             abrirModalAuth('login');
         };
 
+        function normalizarNumero(num) {
+            if (!num) return "";
+            return num.replace(/[^\d+]/g, '');
+        }
+
         function switchAuthMode(mode) {
             const btnLogin = document.getElementById('tab-btn-login');
             const btnRegistro = document.getElementById('tab-btn-registro');
@@ -1175,9 +1180,10 @@
                 wsSocket = new WebSocket(url);
 
                 wsSocket.onopen = () => {
+                    let numLimpio = normalizarNumero(miNumeroAsignado);
                     document.getElementById('sip-status-indicator').innerText = "● WEBRTC (CONECTADO)";
                     document.getElementById('sip-status-indicator').style.color = "#25d366";
-                    wsSocket.send(JSON.stringify({ type: 'register', userId: miNumeroAsignado }));
+                    wsSocket.send(JSON.stringify({ type: 'register', userId: numLimpio }));
                 };
 
                 wsSocket.onmessage = async (event) => {
@@ -1186,6 +1192,7 @@
                     if (message.type === 'offer') {
                         numeroDestinoActual = message.from || message.targetId;
                         abrirPantallaLlamada(numeroDestinoActual, "¡Llamada Entrante!");
+                        
                         if (!peerConnection) createPeerConnection(numeroDestinoActual);
                         
                         await peerConnection.setRemoteDescription(new RTCSessionDescription(message.payload));
@@ -1195,7 +1202,11 @@
                         let answer = await peerConnection.createAnswer();
                         await peerConnection.setLocalDescription(answer);
 
-                        wsSocket.send(JSON.stringify({ type: 'answer', target: numeroDestinoActual, payload: answer }));
+                        wsSocket.send(JSON.stringify({ 
+                            type: 'answer', 
+                            target: normalizarNumero(numeroDestinoActual), 
+                            payload: answer 
+                        }));
                         document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
                     } 
                     else if (message.type === 'answer') {
@@ -1219,16 +1230,21 @@
                     document.getElementById('sip-status-indicator').style.color = "#ef4444";
                 };
             } catch(err) {
-                console.warn("WebSocket connection notice:", err);
+                console.warn("WebSocket notice:", err);
             }
         }
 
         function createPeerConnection(targetId) {
+            let numTargetLimpio = normalizarNumero(targetId);
             peerConnection = new RTCPeerConnection(rtcConfig);
 
             peerConnection.onicecandidate = (event) => {
                 if (event.candidate && wsSocket && wsSocket.readyState === WebSocket.OPEN) {
-                    wsSocket.send(JSON.stringify({ type: 'candidate', target: targetId, payload: event.candidate }));
+                    wsSocket.send(JSON.stringify({ 
+                        type: 'candidate', 
+                        target: numTargetLimpio, 
+                        payload: event.candidate 
+                    }));
                 }
             };
 
@@ -1276,23 +1292,24 @@
         function makeZoiperCall() {
             let num = document.getElementById('zoiper-input-display').value.trim();
             if (num.length < 7) { alert("Ingresa un número válido para discar."); return; }
-            let infoTarifa = obtenerTarifaPorMinuto(num);
+            let numLimpio = normalizarNumero(num);
+            let infoTarifa = obtenerTarifaPorMinuto(numLimpio);
             if (confirm(`🌐 Llamada saliente:\nDestino: ${num}\nRed: ${infoTarifa.tipo}\nTarifa: $${infoTarifa.tarifaMin.toFixed(2)}/min\n\n¿Proceder?`)) {
-                iniciarLlamadaVozHD(num);
+                iniciarLlamadaVozHD(numLimpio);
             }
         }
 
         async function iniciarLlamadaVozHD(numDestino) {
-            numeroDestinoActual = numDestino || numeroDestinoActual;
-            let infoTarifa = obtenerTarifaPorMinuto(numeroDestinoActual);
+            let numLimpioDestino = normalizarNumero(numDestino || numeroDestinoActual);
+            let infoTarifa = obtenerTarifaPorMinuto(numLimpioDestino);
             
             if (infoTarifa.tarifaMin > 0 && saldoActual < infoTarifa.tarifaMin) {
                 alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${infoTarifa.tarifaMin}.`);
                 return;
             }
 
-            abrirPantallaLlamada(numeroDestinoActual, `Conectando con ${infoTarifa.tipo}...`);
-            createPeerConnection(numeroDestinoActual);
+            abrirPantallaLlamada(numLimpioDestino, `Conectando con ${infoTarifa.tipo}...`);
+            createPeerConnection(numLimpioDestino);
 
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -1302,7 +1319,12 @@
                 await peerConnection.setLocalDescription(offer);
 
                 if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
-                    wsSocket.send(JSON.stringify({ type: 'offer', target: numeroDestinoActual, payload: offer }));
+                    wsSocket.send(JSON.stringify({ 
+                        type: 'offer', 
+                        target: numLimpioDestino, 
+                        from: normalizarNumero(miNumeroAsignado),
+                        payload: offer 
+                    }));
                 }
             } catch (err) {
                 console.error("Error micrófono:", err);
@@ -1340,7 +1362,7 @@
 
         function finalizarLlamada() {
             if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
-                wsSocket.send(JSON.stringify({ type: 'hangup', target: numeroDestinoActual }));
+                wsSocket.send(JSON.stringify({ type: 'hangup', target: normalizarNumero(numeroDestinoActual) }));
             }
             if (peerConnection) { peerConnection.close(); peerConnection = null; }
             if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
