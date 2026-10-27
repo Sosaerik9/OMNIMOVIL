@@ -1179,133 +1179,87 @@
 
         function toggleSpeaker() { document.getElementById('btn-speaker').classList.toggle('active'); }
 
-        function cargarChatsGuardados() {
-            let chatsRaw = localStorage.getItem('omnimovil_chats');
-            let msgsRaw = localStorage.getItem('omnimovil_mensajes');
-            if (chatsRaw) chatsActivos = JSON.parse(chatsRaw);
-            if (msgsRaw) mensajesPorChat = JSON.parse(msgsRaw);
-        }
+        // Cargar chats y mensajes sincronizados desde Supabase
+async function cargarChatsGuardados() {
+    if (!miNumeroAsignado) return;
 
-        function guardarChatsEnStorage() {
-            localStorage.setItem('omnimovil_chats', JSON.stringify(chatsActivos));
-            localStorage.setItem('omnimovil_mensajes', JSON.stringify(mensajesPorChat));
-        }
+    // Consultar mensajes donde el usuario actual sea remitente o receptor
+    let { data, error } = await _supabase
+        .from('mensajes_omnimovil')
+        .select('*')
+        .or(`remitente.eq.${miNumeroAsignado},receptor.eq.${miNumeroAsignado}`)
+        .order('created_at', { ascending: true });
 
-        function abrirModalNuevoChat() {
-            let contenedor = document.getElementById('modal-lista-contactos');
-            contenedor.innerHTML = '';
+    if (error) {
+        console.error("Error al cargar mensajes:", error);
+        return;
+    }
 
-            let redContactos = clientesRegistrados.filter(c => c.numero !== miNumeroAsignado);
-            if (redContactos.length === 0) {
-                contenedor.innerHTML = `<div style="font-size: 0.75rem; color: #94a3b8;">No hay otros usuarios en la red local. Ingresa cualquier número arriba para chatear.</div>`;
-            } else {
-                redContactos.forEach(c => {
-                    let div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `<div><strong>${c.nombre}</strong> <span style="font-size: 0.7rem; color: #94a3b8;">${c.numero}</span></div><button class="btn btn-small" onclick="seleccionarContactoModal('${c.nombre}', '${c.numero}')">Chat</button>`;
-                    contenedor.appendChild(div);
-                });
+    mensajesPorChat = {};
+    chatsActivos = [];
+
+    if (data) {
+        data.forEach(m => {
+            let otroNumero = m.remitente === miNumeroAsignado ? m.receptor : m.remitente;
+            
+            if (!mensajesPorChat[otroNumero]) {
+                mensajesPorChat[otroNumero] = [];
+                chatsActivos.push({ nombre: otroNumero, numero: otroNumero });
             }
 
-            document.getElementById('modal-select-contact').style.display = 'flex';
-        }
-
-        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-
-        function seleccionarContactoModal(nombre, numero) {
-            document.getElementById('input-nuevo-nombre-contacto').value = nombre;
-            document.getElementById('input-nuevo-numero-chat').value = numero;
-            guardarNuevoContactoChat();
-        }
-
-        function guardarNuevoContactoChat() {
-            let nombre = document.getElementById('input-nuevo-nombre-contacto').value.trim();
-            let numero = document.getElementById('input-nuevo-numero-chat').value.trim();
-
-            if (!numero) { alert("Ingresa un número telefónico."); return; }
-            if (!nombre) nombre = numero;
-
-            let existe = chatsActivos.find(c => c.numero.replace(/\s+|-/g, '') === numero.replace(/\s+|-/g, ''));
-            if (!existe) {
-                let nuevoChat = { nombre, numero };
-                chatsActivos.unshift(nuevoChat);
-                if (!mensajesPorChat[numero]) mensajesPorChat[numero] = [];
-                guardarChatsEnStorage();
-            }
-
-            cerrarModalNuevoChat();
-            renderizarListaChatsWhatsApp();
-            abrirChatWhatsApp(numero, nombre);
-        }
-
-        function renderizarListaChatsWhatsApp() {
-            let container = document.getElementById('lista-chats-wa');
-            container.innerHTML = '';
-
-            if (chatsActivos.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); padding: 30px 16px; font-size: 0.85rem;">No tienes chats activos.<br/>Haz clic en el botón <strong>+</strong> para iniciar una conversación.</div>`;
-                return;
-            }
-
-            chatsActivos.forEach(chat => {
-                let msgs = mensajesPorChat[chat.numero] || [];
-                let ultimoMsg = msgs.length > 0 ? msgs[msgs.length - 1].texto : "Chat OmniMovil Activo";
-                let inicial = chat.nombre.charAt(0).toUpperCase();
-
-                let item = document.createElement('div');
-                item.className = 'wa-chat-item';
-                item.onclick = () => abrirChatWhatsApp(chat.numero, chat.nombre);
-                item.innerHTML = `
-                    <div class="wa-avatar-wrap">
-                        <div class="wa-avatar-img">${inicial}</div>
-                    </div>
-                    <div class="wa-chat-info">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="font-size: 0.9rem; color: var(--wa-text);">${chat.nombre}</strong>
-                            <span style="font-size: 0.65rem; color: var(--wa-muted);">OmniChat</span>
-                        </div>
-                        <div style="font-size: 0.75rem; color: var(--wa-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">
-                            ${ultimoMsg}
-                        </div>
-                    </div>
-                `;
-                container.appendChild(item);
+            let tipoMsg = m.remitente === miNumeroAsignado ? 'sent' : 'received';
+            mensajesPorChat[otroNumero].push({
+                tipo: tipoMsg,
+                texto: m.texto,
+                fecha: new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
             });
-        }
+        });
+    }
 
-        function abrirChatWhatsApp(numero, nombre) {
-            chatSeleccionado = { numero, nombre };
-            numeroDestinoActual = numero;
+    renderizarListaChatsWhatsApp();
+    if (chatSeleccionado) {
+        renderizarMensajesChat(chatSeleccionado.numero);
+    }
+}
 
-            document.getElementById('chat-nombre-receptor-wa').innerText = nombre;
-            document.getElementById('chat-numero-receptor-wa').innerText = `${numero} (OmniMovil IP)`;
-            document.getElementById('chat-header-avatar-wa').innerText = nombre.charAt(0).toUpperCase();
+// Enviar mensaje a través de Supabase en tiempo real
+async function enviarMensajeWhatsApp() {
+    let input = document.getElementById('chat-input-texto-wa');
+    let texto = input.value.trim();
+    if (!texto || !chatSeleccionado || !miNumeroAsignado) return;
 
-            renderizarMensajesChat(numero);
-            document.getElementById('pantalla-chat-abierto').classList.add('active');
-        }
+    let numDestino = chatSeleccionado.numero;
 
-        function renderizarMensajesChat(numero) {
-            let container = document.getElementById('contenedor-mensajes-wa');
-            container.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; margin-bottom: 10px;">🔒 Mensajes cifrados guardados localmente en OmniMovil.</div>`;
+    // Insertar en la base de datos de Supabase
+    let { error } = await _supabase
+        .from('mensajes_omnimovil')
+        .insert([
+            { remitente: miNumeroAsignado, receptor: numDestino, texto: texto }
+        ]);
 
-            let msgs = mensajesPorChat[numero] || [];
-            msgs.forEach(m => {
-                let msgDiv = document.createElement('div');
-                msgDiv.className = `wa-msg-bubble ${m.tipo === 'sent' ? 'wa-msg-sent' : 'wa-msg-received'}`;
-                msgDiv.innerText = m.texto;
-                container.appendChild(msgDiv);
-            });
+    if (error) {
+        alert("Error al enviar mensaje: " + error.message);
+        return;
+    }
 
-            container.scrollTop = container.scrollHeight;
-        }
+    input.value = '';
+    await cargarChatsGuardados();
+    abrirChatWhatsApp(numDestino, chatSeleccionado.nombre);
+}
 
-        function cerrarChatAbierto() {
-            document.getElementById('pantalla-chat-abierto').classList.remove('active');
-            chatSeleccionado = null;
-        }
-
-        async function enviarMensajeWhatsApp() {
+// Suscribirse a cambios en tiempo real (Realtime) para recibir mensajes al instante
+function activarSuscripcionRealtimeChat() {
+    _supabase
+        .channel('public:mensajes_omnimovil')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
+            let nuevoMsg = payload.new;
+            // Si el mensaje es para mí o lo envié yo, recargamos los chats de inmediato
+            if (nuevoMsg.receptor === miNumeroAsignado || nuevoMsg.remitente === miNumeroAsignado) {
+                cargarChatsGuardados();
+            }
+        })
+        .subscribe();
+} {
             let input = document.getElementById('chat-input-texto-wa');
             let texto = input.value.trim();
             if (!texto || !chatSeleccionado) return;
