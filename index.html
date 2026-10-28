@@ -319,7 +319,7 @@
 
         .wa-search-box { padding: 10px 14px; background: var(--wa-bg); }
         .wa-search-input-wrap { background: #202c33; border-radius: 24px; padding: 8px 16px; display: flex; align-items: center; gap: 12px; }
-        .wa-search-input-wrap input { background: transparent; border: none; color: var(--wa-text); padding: 0; margin: 0; font-size: 0.85rem; outline: none; }
+        .wa-search-input-wrap input { background: transparent; border: none; color: var(--wa-text); padding: 0; margin: 0; font-size: 0.85rem; outline: none; width: 100%; }
 
         .wa-filter-chips { display: flex; gap: 8px; padding: 6px 14px 10px 14px; overflow-x: auto; }
         .wa-chip { background: #202c33; color: var(--wa-muted); padding: 6px 14px; border-radius: 18px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; }
@@ -393,7 +393,7 @@
         </div>
     </div>
 
-    <!-- MODAL NUEVO CONTACTO CHAT -->
+    <!-- MODAL NUEVO CONTACTO OMNICHAT -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -455,10 +455,11 @@
                     </div>
 
                     <div id="wa-tab-chats" class="wa-tab-content active">
+                        <!-- BUSCADOR DE CONTACTOS ESTILO WHATSAPP -->
                         <div class="wa-search-box">
                             <div class="wa-search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass" style="color: var(--wa-muted);"></i>
-                                <input type="text" id="wa-search-input" placeholder="Buscar chats..." onkeyup="filtrarChatsWhatsApp()">
+                                <input type="text" id="wa-search-input" placeholder="Buscar chats o contactos..." onkeyup="filtrarChatsWhatsApp()">
                             </div>
                         </div>
 
@@ -467,6 +468,7 @@
                             <span class="wa-chip">No leídos</span>
                         </div>
 
+                        <!-- LISTA DE CHATS GUARDADOS -->
                         <div class="wa-content-area" id="lista-chats-wa">
                             <div class="wa-chat-item" onclick="abrirChatWhatsApp('+58 500-0001', 'Soporte OmniMovil')">
                                 <div class="wa-avatar-wrap"><div class="wa-avatar-img">S</div></div>
@@ -477,7 +479,8 @@
                             </div>
                         </div>
 
-                        <div class="wa-fab" onclick="abrirModalNuevoChat()">
+                        <!-- BOTÓN FLOTANTE PARA INICIAR NUEVO CHAT -->
+                        <div class="wa-fab" onclick="abrirModalNuevoChat()" title="Iniciar nuevo chat">
                             <i class="fa-solid fa-comment-medical"></i>
                         </div>
                     </div>
@@ -667,6 +670,11 @@
         let isSpeakerOn = false;
         let localStream = null;
 
+        // Contactos guardados de OmniChat en localStorage
+        let contactosOmniChat = JSON.parse(localStorage.getItem('omnimovil_contactos_chat')) || [
+            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
+        ];
+
         window.onload = async function() {
             try {
                 let res = await fetch('https://pydolarvenezuela-api.vercel.app/api/v1/dollar?monitor=bcv');
@@ -675,6 +683,8 @@
             } catch(e) {}
 
             document.getElementById('tasa-bcv-header').innerText = tasaBCV.toFixed(2);
+            renderizarContactosChat();
+
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if (usuarioGuardado) {
                 if (usuarioGuardado.toLowerCase() === 'admin') {
@@ -684,6 +694,40 @@
                 buscarClienteSupabase(usuarioGuardado);
             }
         };
+
+        function renderizarContactosChat(filtro = '') {
+            let listaBox = document.getElementById('lista-chats-wa');
+            listaBox.innerHTML = '';
+
+            let filtrados = contactosOmniChat.filter(c => 
+                c.nombre.toLowerCase().includes(filtro.toLowerCase()) || 
+                c.numero.includes(filtro)
+            );
+
+            if (filtrados.length === 0) {
+                listaBox.innerHTML = `<div style="color:var(--wa-muted); text-align:center; padding:20px; font-size:0.8rem;">No se encontraron chats guardados.</div>`;
+                return;
+            }
+
+            filtrados.forEach(c => {
+                let div = document.createElement('div');
+                div.className = 'wa-chat-item';
+                div.onclick = () => abrirChatWhatsApp(c.numero, c.nombre);
+                div.innerHTML = `
+                    <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.nombre.charAt(0).toUpperCase()}</div></div>
+                    <div class="wa-chat-info">
+                        <strong style="font-size: 0.9rem;">${c.nombre}</strong><br/>
+                        <span style="font-size: 0.75rem; color: var(--wa-muted);">${c.ultimo || c.numero}</span>
+                    </div>
+                `;
+                listaBox.appendChild(div);
+            });
+        }
+
+        function filtrarChatsWhatsApp() {
+            let texto = document.getElementById('wa-search-input').value;
+            renderizarContactosChat(texto);
+        }
 
         function abrirModalAuth() {
             document.getElementById('modal-registro-inicial').style.display = 'flex';
@@ -930,15 +974,66 @@
             alert("Para instalar la App: Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.");
         }
 
-        function abrirModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'flex'; }
-        function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-        function guardarNuevoContactoChat() { cerrarModalNuevoChat(); alert("Contacto guardado."); }
-        function abrirChatWhatsApp(num, nom) { document.getElementById('pantalla-chat-abierto').classList.add('active'); document.getElementById('chat-nombre-receptor-wa').innerText = nom; document.getElementById('chat-numero-receptor-wa').innerText = num; document.getElementById('chat-header-avatar-wa').innerText = nom[0]; }
-        function cerrarChatAbierto() { document.getElementById('pantalla-chat-abierto').classList.remove('active'); }
-        function togglePickerPanel() { let p = document.getElementById('wa-picker-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
-        function insertarEmojiOrSticker(v) { document.getElementById('chat-input-texto-wa').value += v; document.getElementById('wa-picker-panel').style.display = 'none'; }
-        function enviarMensajeWhatsApp() { let txt = document.getElementById('chat-input-texto-wa').value.trim(); if (!txt) return; let box = document.getElementById('contenedor-mensajes-wa'); box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; document.getElementById('chat-input-texto-wa').value = ''; box.scrollTop = box.scrollHeight; }
-        function filtrarChatsWhatsApp() {}
+        // FUNCIONES DE CONTACTOS OMNICHAT
+        function abrirModalNuevoChat() { 
+            document.getElementById('modal-select-contact').style.display = 'flex'; 
+        }
+
+        function cerrarModalNuevoChat() { 
+            document.getElementById('modal-select-contact').style.display = 'none'; 
+        }
+
+        function guardarNuevoContactoChat() {
+            let nombre = document.getElementById('input-nuevo-nombre-contacto').value.trim();
+            let numero = document.getElementById('input-nuevo-numero-chat').value.trim();
+
+            if (!nombre || !numero) {
+                alert("Por favor ingresa el nombre y el número del contacto.");
+                return;
+            }
+
+            // Guardar en el arreglo y en localStorage
+            contactosOmniChat.push({ nombre, numero, ultimo: "Nuevo chat iniciado" });
+            localStorage.setItem('omnimovil_contactos_chat', JSON.stringify(contactosOmniChat));
+
+            document.getElementById('input-nuevo-nombre-contacto').value = '';
+            document.getElementById('input-nuevo-numero-chat').value = '';
+            cerrarModalNuevoChat();
+            renderizarContactosChat();
+
+            // Abrir el chat inmediatamente
+            abrirChatWhatsApp(numero, nombre);
+        }
+
+        function abrirChatWhatsApp(num, nom) { 
+            document.getElementById('pantalla-chat-abierto').classList.add('active'); 
+            document.getElementById('chat-nombre-receptor-wa').innerText = nom; 
+            document.getElementById('chat-numero-receptor-wa').innerText = num; 
+            document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
+        }
+
+        function cerrarChatAbierto() { 
+            document.getElementById('pantalla-chat-abierto').classList.remove('active'); 
+        }
+
+        function togglePickerPanel() { 
+            let p = document.getElementById('wa-picker-panel'); 
+            p.style.display = p.style.display === 'block' ? 'none' : 'block'; 
+        }
+
+        function insertarEmojiOrSticker(v) { 
+            document.getElementById('chat-input-texto-wa').value += v; 
+            document.getElementById('wa-picker-panel').style.display = 'none'; 
+        }
+
+        function enviarMensajeWhatsApp() { 
+            let txt = document.getElementById('chat-input-texto-wa').value.trim(); 
+            if (!txt) return; 
+            let box = document.getElementById('contenedor-mensajes-wa'); 
+            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; 
+            document.getElementById('chat-input-texto-wa').value = ''; 
+            box.scrollTop = box.scrollHeight; 
+        }
     </script>
 </body>
 </html>
