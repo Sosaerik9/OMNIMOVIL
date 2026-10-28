@@ -1261,9 +1261,19 @@
         }
 
         function makeZoiperCall() {
-            let num = document.getElementById('zoiper-input-display').value.trim();
-            if (num.length < 7) { alert("Ingresa un número válido para discar."); return; }
+            let inputDisplay = document.getElementById('zoiper-input-display');
+            if (!inputDisplay) return;
+            
+            let num = inputDisplay.value.trim();
+            if (num.length < 7) { 
+                alert("Ingresa un número válido para discar."); 
+                return; 
+            }
+            
+            // Limpiamos absolutamente todo (dejamos solo el signo + y números)
             let numLimpio = normalizarNumero(num);
+            console.log("Número marcado y normalizado:", numLimpio);
+            
             iniciarLlamadaVozHD(numLimpio);
         }
 
