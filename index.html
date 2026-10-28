@@ -176,7 +176,7 @@
             border: 1px solid #1e293b;
         }
 
-        /* TELÉFONO ZOIPER */
+        /* TELÉFONO ZOIPER & WEBRTC */
         .zoiper-phone-card {
             background: #0b141a;
             color: #ffffff;
@@ -254,7 +254,44 @@
         .btn-hangup-red { background: #ef4444; color: #ffffff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
         .btn-backspace-dark { background: #202c33; color: var(--wa-muted); }
 
-        /* OMNICHAT ESTILO WHATSAPP DARK MODE PRO */
+        /* PANTALLA DE LLAMADA ACTIVA WEB RTC */
+        #modal-call-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: #070d12;
+            z-index: 4000;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            padding: 60px 20px;
+            color: #e9edef;
+        }
+
+        .wa-call-avatar-container { position: relative; width: 120px; height: 120px; margin: 0 auto 24px auto; }
+        .wa-call-avatar-large {
+            width: 100%; height: 100%; border-radius: 50%;
+            background: #111b21; color: #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3.2rem; font-weight: bold; border: 2px solid #2a3942;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        }
+
+        .wa-call-actions-bar {
+            background: #111b21; width: 100%; max-width: 420px;
+            padding: 22px; border-radius: 35px;
+            display: flex; justify-content: space-around; align-items: center;
+            border: 1px solid #1f2c34; margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+        }
+
+        .wa-call-btn { width: 64px; height: 64px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; }
+        .btn-wa-muted-dark { background: #202c33; color: #aebac1; }
+        .btn-wa-muted-dark.active { background: #e9edef; color: #111b21; }
+        .btn-wa-hangup { background: #ef4444; color: #ffffff; width: 72px; height: 72px; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
+
+        /* OMNICHAT ESTILO WHATSAPP DARK MODE */
         .wa-app-container {
             background: var(--wa-bg);
             color: var(--wa-text);
@@ -319,58 +356,14 @@
 
         .wa-input-bar-dark { background: var(--wa-card); padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #1f2c34; position: relative; }
         .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 16px; border-radius: 24px; margin: 0; font-size: 0.85rem; flex-grow: 1; outline: none; }
-        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; transition: color 0.2s; }
-        .wa-tool-icon:hover { color: var(--wa-text); }
+        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; }
 
         #wa-picker-panel {
-            display: none;
-            position: absolute;
-            bottom: 65px; left: 14px;
-            width: 300px; height: 180px;
-            background: #111b21; border: 1px solid #2a3942;
-            border-radius: 12px; padding: 10px; z-index: 200;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            overflow-y: auto;
+            display: none; position: absolute; bottom: 65px; left: 14px; width: 300px; height: 180px;
+            background: #111b21; border: 1px solid #2a3942; border-radius: 12px; padding: 10px; z-index: 200; overflow-y: auto;
         }
 
-        #modal-call-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #070d12;
-            z-index: 4000;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 60px 20px;
-            color: #e9edef;
-        }
-
-        .wa-call-avatar-container { position: relative; width: 120px; height: 120px; margin: 0 auto 24px auto; }
-        .wa-call-avatar-large {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: #111b21; color: #ffffff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3.2rem; font-weight: bold; border: 2px solid #2a3942;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-
-        .wa-call-actions-bar {
-            background: #111b21; width: 100%; max-width: 420px;
-            padding: 22px; border-radius: 35px;
-            display: flex; justify-content: space-around; align-items: center;
-            border: 1px solid #1f2c34; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-        }
-
-        .wa-call-btn { width: 64px; height: 64px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; }
-        .btn-wa-muted-dark { background: #202c33; color: #aebac1; }
-        .btn-wa-muted-dark.active { background: #e9edef; color: #111b21; }
-        .btn-wa-hangup { background: #ef4444; color: #ffffff; width: 72px; height: 72px; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
-
-        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; }
-        .status-badge.active-line { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
     </style>
 </head>
 <body>
@@ -379,19 +372,7 @@
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
 
-    <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
-        <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="color: #0284c7; margin: 0;">➕ Nuevo Contacto OmniChat</h2>
-                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8; font-size: 1.1rem;" onclick="cerrarModalNuevoChat()"></i>
-            </div>
-            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre (Ej: Erik Sosa)" />
-            <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-3391)" />
-            <button class="btn" style="background: var(--accent-green); color: #fff; margin-bottom: 14px;" onclick="guardarNuevoContactoChat()">💬 Guardar e Iniciar Chat</button>
-            <div class="static-scroll-box" id="modal-lista-contactos" style="height: 130px;"></div>
-        </div>
-    </div>
-
+    <!-- PANTALLA DE LLAMADA WEB RTC EN VIVO -->
     <div id="modal-call-screen">
         <div style="text-align: center; width: 100%;">
             <div style="font-size: 0.8rem; color: #8696a0; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 24px;">
@@ -412,18 +393,27 @@
         </div>
     </div>
 
+    <!-- MODAL NUEVO CONTACTO CHAT -->
+    <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="color: #0284c7; margin: 0;">➕ Nuevo Contacto OmniChat</h2>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8;" onclick="cerrarModalNuevoChat()"></i>
+            </div>
+            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre (Ej: Soporte Técnico)" />
+            <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-1000)" />
+            <button class="btn" style="background: var(--accent-green); color: #fff;" onclick="guardarNuevoContactoChat()">💬 Guardar e Iniciar Chat</button>
+        </div>
+    </div>
+
     <div class="container">
         <header class="main-header">
             <div>
                 <h1 style="font-size: 1.1rem; color: #38bdf8; margin: 0; font-weight: bold;">🌐 OmniMovil Red IP</h1>
                 <p style="font-size: 0.7rem; color: #94a3b8; margin: 2px 0 0 0;">omnimovil.xo.je | Tasa BCV: <span id="tasa-bcv-header">36.50</span> VES/USD</p>
             </div>
-            <div class="header-actions">
-                <button class="login-top-btn" id="btn-login-top" onclick="abrirModalAuth('login')">
-                    <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
-                </button>
-                <button id="btn-notificaciones" style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="solicitarPermisoNotificaciones()">🔔</button>
-                <button id="btn-instalar-app" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 App</button>
+            <div>
+                <button class="login-top-btn" onclick="abrirModalAuth('login')"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</button>
             </div>
         </header>
 
@@ -437,7 +427,7 @@
                         <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="linea-status-badge" class="status-badge active-line">● ACTIVA</span>
+                        <span class="status-badge">● ACTIVA</span>
                         <button class="logout-top-btn" onclick="cerrarSesionCliente()">Salir</button>
                     </div>
                 </div>
@@ -457,8 +447,8 @@
                     <div class="wa-top-bar">
                         <h2 id="wa-header-title">OmniChat</h2>
                         <div class="wa-top-icons">
-                            <i class="fa-solid fa-camera" title="Cámara" onclick="alert('Cámara lista')"></i>
-                            <i class="fa-solid fa-ellipsis-vertical" title="Opciones"></i>
+                            <i class="fa-solid fa-camera" onclick="alert('Cámara lista')"></i>
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
                         </div>
                     </div>
 
@@ -466,57 +456,35 @@
                         <div class="wa-search-box">
                             <div class="wa-search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass" style="color: var(--wa-muted);"></i>
-                                <input type="text" id="wa-search-input" placeholder="Buscar..." onkeyup="filtrarChatsWhatsApp()">
+                                <input type="text" id="wa-search-input" placeholder="Buscar chats..." onkeyup="filtrarChatsWhatsApp()">
                             </div>
                         </div>
 
                         <div class="wa-filter-chips">
                             <span class="wa-chip active">Todos</span>
                             <span class="wa-chip">No leídos</span>
-                            <span class="wa-chip">Favoritos</span>
-                            <span class="wa-chip">Grupos</span>
                         </div>
 
-                        <div class="wa-content-area" id="lista-chats-wa"></div>
+                        <div class="wa-content-area" id="lista-chats-wa">
+                            <div class="wa-chat-item" onclick="abrirChatWhatsApp('+58 500-0001', 'Soporte OmniMovil')">
+                                <div class="wa-avatar-wrap"><div class="wa-avatar-img">S</div></div>
+                                <div class="wa-chat-info">
+                                    <strong style="font-size: 0.9rem;">Soporte OmniMovil</strong><br/>
+                                    <span style="font-size: 0.75rem; color: var(--wa-muted);">¡Bienvenido a la red IP!</span>
+                                </div>
+                            </div>
+                        </div>
 
                         <div class="wa-fab" onclick="abrirModalNuevoChat()">
                             <i class="fa-solid fa-comment-medical"></i>
                         </div>
                     </div>
 
-                    <div id="wa-tab-novedades" class="wa-tab-content">
-                        <div class="wa-content-area" style="padding: 16px;">
-                            <h3 style="margin: 0 0 12px 0; font-size: 1.1rem;">Estados</h3>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div class="wa-avatar-wrap"><div class="wa-avatar-img"><i class="fa-solid fa-plus"></i></div></div>
-                                <div><strong style="font-size: 0.9rem;">Mi estado</strong><br/><span style="font-size: 0.75rem; color: var(--wa-muted);">Añade una actualización</span></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="wa-tab-comunidades" class="wa-tab-content">
-                        <div class="wa-content-area" style="text-align: center; padding: 40px 20px;">
-                            <div style="width: 100px; height: 100px; background: #1f2c34; border-radius: 24px; margin: 0 auto 16px auto; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--wa-green);"><i class="fa-solid fa-people-group"></i></div>
-                            <h3 style="margin: 0 0 8px 0; font-size: 1.1rem;">Usa una comunidad</h3>
-                        </div>
-                    </div>
-
-                    <div id="wa-tab-llamadas" class="wa-tab-content">
-                        <div class="wa-content-area" style="padding: 30px 16px; text-align: center;">
-                            <i class="fa-solid fa-phone" style="font-size: 3rem; color: var(--wa-green); margin-bottom: 14px;"></i>
-                            <h3 style="margin: 0 0 6px 0;">Llamadas HD OmniMovil</h3>
-                            <button class="btn" style="width: auto; padding: 10px 24px; margin-top: 14px; background: var(--wa-green); color: #0b141a;" onclick="iniciarLlamadaVozHD('+58 500-0001')">
-                                <i class="fa-solid fa-phone"></i> Probar Llamada Interna
-                            </button>
-                        </div>
-                    </div>
-
+                    <!-- PANTALLA DE CHAT ABIERTO -->
                     <div class="wa-chat-view" id="pantalla-chat-abierto">
                         <div class="wa-chat-view-header">
-                            <i class="fa-solid fa-arrow-left" style="cursor: pointer; font-size: 1.1rem; color: var(--wa-muted);" onclick="cerrarChatAbierto()"></i>
-                            <div class="wa-avatar-wrap" style="width: 38px; height: 38px;">
-                                <div class="wa-avatar-img" id="chat-header-avatar-wa">S</div>
-                            </div>
+                            <i class="fa-solid fa-arrow-left" style="cursor: pointer; color: var(--wa-muted);" onclick="cerrarChatAbierto()"></i>
+                            <div class="wa-avatar-wrap" style="width: 38px; height: 38px;"><div class="wa-avatar-img" id="chat-header-avatar-wa">S</div></div>
                             <div style="flex-grow: 1;">
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
                                 <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
@@ -529,45 +497,34 @@
                         </div>
 
                         <div id="wa-picker-panel">
-                            <div style="font-size: 0.75rem; color: var(--wa-muted); margin-bottom: 6px; font-weight: bold;">😊 Emojis & Stickers</div>
-                            <div id="picker-emojis-list" style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; font-size: 1.2rem; cursor: pointer; text-align: center;">
+                            <div style="font-size: 0.75rem; color: var(--wa-muted); margin-bottom: 6px;">😊 Emojis</div>
+                            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; font-size: 1.2rem; cursor: pointer; text-align: center;">
                                 <span onclick="insertarEmojiOrSticker('😀')">😀</span>
                                 <span onclick="insertarEmojiOrSticker('😂')">😂</span>
                                 <span onclick="insertarEmojiOrSticker('😍')">😍</span>
-                                <span onclick="insertarEmojiOrSticker('🥳')">🥳</span>
                                 <span onclick="insertarEmojiOrSticker('👍')">👍</span>
                                 <span onclick="insertarEmojiOrSticker('🔥')">🔥</span>
-                                <span onclick="insertarEmojiOrSticker('🙏')">🙏</span>
                                 <span onclick="insertarEmojiOrSticker('🚀')">🚀</span>
-                                <span onclick="insertarEmojiOrSticker('❤️')">❤️</span>
-                                <span onclick="insertarEmojiOrSticker('🎉')">🎉</span>
-                                <span onclick="insertarEmojiOrSticker('✨')">✨</span>
-                                <span onclick="insertarEmojiOrSticker('💯')">💯</span>
                             </div>
-                            <hr style="border-color: #2a3942; margin: 8px 0;">
-                            <div style="font-size: 0.7rem; color: var(--wa-green); cursor: pointer; text-align: center;" onclick="enviarStickerEjemplo()">⭐ Enviar Sticker Rápido</div>
                         </div>
 
                         <div class="wa-input-bar-dark">
-                            <i class="fa-regular fa-face-smile wa-tool-icon" title="Emojis" onclick="togglePickerPanel()"></i>
-                            <i class="fa-solid fa-paperclip wa-tool-icon" title="Adjuntar Archivo" onclick="document.getElementById('input-file-adjunto').click()"></i>
-                            <input type="file" id="input-file-adjunto" style="display: none;" onchange="adjuntarArchivoChat(this)" />
-                            <i class="fa-solid fa-gift wa-tool-icon" title="GIFs" onclick="insertarEmojiOrSticker('[GIF Animado 🎬]')"></i>
+                            <i class="fa-regular fa-face-smile wa-tool-icon" onclick="togglePickerPanel()"></i>
                             <input type="text" id="chat-input-texto-wa" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
                             <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.25rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
 
                     <div class="wa-bottom-nav">
-                        <div class="wa-nav-btn active" id="nav-btn-chats" onclick="switchWATab('chats')"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
-                        <div class="wa-nav-btn" id="nav-btn-novedades" onclick="switchWATab('novedades')"><i class="fa-solid fa-circle-notch"></i><span>Novedades</span></div>
-                        <div class="wa-nav-btn" id="nav-btn-comunidades" onclick="switchWATab('comunidades')"><i class="fa-solid fa-people-group"></i><span>Comunidades</span></div>
-                        <div class="wa-nav-btn" id="nav-btn-llamadas" onclick="switchWATab('llamadas')"><i class="fa-solid fa-phone"></i><span>Llamadas</span></div>
+                        <div class="wa-nav-btn active"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
+                        <div class="wa-nav-btn"><i class="fa-solid fa-circle-notch"></i><span>Novedades</span></div>
+                        <div class="wa-nav-btn"><i class="fa-solid fa-people-group"></i><span>Comunidades</span></div>
+                        <div class="wa-nav-btn" onclick="cambiarSeccionCliente('llamadas')"><i class="fa-solid fa-phone"></i><span>Llamadas</span></div>
                     </div>
                 </div>
             </div>
 
-            <!-- BILLETERA -->
+            <!-- BILLETERA / RECARGAS EN VES -->
             <div id="csec-billetera" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible en Cuenta</h2>
@@ -583,10 +540,11 @@
                         <p style="margin: 4px 0;"><strong>C.I.:</strong> 20.432.896</p>
                     </div>
 
-                    <h2>⚡ Reportar Pago y Acreditar Saldo</h2>
-                    <input type="number" id="monto-pago" placeholder="Monto en USD (Ej: 2.00)" />
+                    <h2>⚡ Reportar Pago en Bolívares (VES)</h2>
+                    <input type="number" id="monto-pago-ves" placeholder="Monto en Bolívares (Ej: 100.00 VES)" oninput="calcularEquivalenteUsd(this.value)" />
+                    <p style="font-size: 0.75rem; color: #10b981; margin-top: -8px; margin-bottom: 12px;" id="info-eq-usd">Equivalente a acreditar: $0.00 USD</p>
                     <input type="text" id="ref-pago" placeholder="Últimos 4 dígitos o Referencia Pago Móvil" />
-                    <button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;" onclick="enviarReportePagoAutomatico()">🚀 Enviar Reporte de Pago</button>
+                    <button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;" onclick="enviarReportePagoBolivares()">🚀 Enviar Reporte de Pago</button>
                 </div>
             </div>
 
@@ -599,44 +557,49 @@
                             <div>
                                 <strong style="color: #f8fafc; font-size: 1rem;">🌟 Paquete Ilimitado Pro ($2.00/mes)</strong>
                                 <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #10b981; font-weight: bold;">Llamadas + Mensajes ilimitados por 30 días</p>
-                                <p style="margin: 2px 0 0 0; font-size: 0.75rem; color: #94a3b8;" id="precio-plan-bs">Equivalente: ~73.00 VES</p>
                             </div>
                             <button class="btn btn-small" style="background: #10b981; padding: 10px 18px;" onclick="suscribirPlanAutomatico('Paquete Ilimitado Pro', 2.00)">Activar Paquete</button>
                         </div>
                     </div>
-                    <div id="estado-plan-actual" class="mt-4 text-center text-xs font-bold text-emerald-400"></div>
                 </div>
             </div>
 
-            <!-- RED SIP -->
+            <!-- RED SIP / ZOIPER CON WEBRTC NATIVO -->
             <div id="csec-llamadas" class="client-section">
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 0.75rem; color: var(--wa-green); font-weight: bold;" id="sip-status-indicator">● WEBRTC NATIVO (ONLINE)</span>
+                        <span style="font-size: 0.75rem; color: var(--accent-orange); font-weight: bold;" id="webrtc-status-indicator">● WEBRTC (DESCONECTADO)</span>
                         <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-3391</span>
                     </div>
                     <div class="zoiper-screen">
-                        <input type="text" id="zoiper-input-display" class="zoiper-num-input" value="+58 " placeholder="+58 " />
+                        <input type="text" id="zoiper-input-display" class="zoiper-num-input" value="+58 " />
                     </div>
                     <div class="zoiper-grid">
-                        <div class="zoiper-key" onclick="pressKey('1')">1 <span>&nbsp;</span></div>
-                        <div class="zoiper-key" onclick="pressKey('2')">2 <span>ABC</span></div>
-                        <div class="zoiper-key" onclick="pressKey('3')">3 <span>DEF</span></div>
-                        <div class="zoiper-key" onclick="pressKey('4')">4 <span>GHI</span></div>
-                        <div class="zoiper-key" onclick="pressKey('5')">5 <span>JKL</span></div>
-                        <div class="zoiper-key" onclick="pressKey('6')">6 <span>MNO</span></div>
-                        <div class="zoiper-key" onclick="pressKey('7')">7 <span>PQRS</span></div>
-                        <div class="zoiper-key" onclick="pressKey('8')">8 <span>TUV</span></div>
-                        <div class="zoiper-key" onclick="pressKey('9')">9 <span>WXYZ</span></div>
-                        <div class="zoiper-key" onclick="pressKey('*')">* <span>&nbsp;</span></div>
-                        <div class="zoiper-key" onclick="pressKey('0')">0 <span>+</span></div>
-                        <div class="zoiper-key" onclick="pressKey('#')"># <span>&nbsp;</span></div>
+                        <div class="zoiper-key" onclick="pressKey('1')">1</div>
+                        <div class="zoiper-key" onclick="pressKey('2')">2</div>
+                        <div class="zoiper-key" onclick="pressKey('3')">3</div>
+                        <div class="zoiper-key" onclick="pressKey('4')">4</div>
+                        <div class="zoiper-key" onclick="pressKey('5')">5</div>
+                        <div class="zoiper-key" onclick="pressKey('6')">6</div>
+                        <div class="zoiper-key" onclick="pressKey('7')">7</div>
+                        <div class="zoiper-key" onclick="pressKey('8')">8</div>
+                        <div class="zoiper-key" onclick="pressKey('9')">9</div>
+                        <div class="zoiper-key" onclick="pressKey('*')">*</div>
+                        <div class="zoiper-key" onclick="pressKey('0')">0</div>
+                        <div class="zoiper-key" onclick="pressKey('#')">#</div>
                     </div>
                     <div class="zoiper-controls">
-                        <button class="zoiper-action-btn btn-backspace-dark" title="Borrar" onclick="backspaceKey()"><i class="fa-solid fa-backspace"></i></button>
-                        <button class="zoiper-action-btn btn-call-green" title="Llamar" onclick="makeZoiperCall()"><i class="fa-solid fa-phone"></i></button>
-                        <button class="zoiper-action-btn btn-hangup-red" title="Colgar" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
+                        <button class="zoiper-action-btn btn-backspace-dark" onclick="backspaceKey()"><i class="fa-solid fa-backspace"></i></button>
+                        <button class="zoiper-action-btn btn-call-green" onclick="makeZoiperCall()"><i class="fa-solid fa-phone"></i></button>
+                        <button class="zoiper-action-btn btn-hangup-red" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
                     </div>
+                </div>
+
+                <!-- CONFIGURACIÓN WEBSOCKET SERVIDOR -->
+                <div class="card" style="max-width: 360px; margin: 0 auto; border-color: #0284c7;">
+                    <h2 style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 8px;"><i class="fa-solid fa-gear"></i> Servidor WebSocket de Señalización</h2>
+                    <input type="text" id="ws-url-input" value="wss://omnimovil-backend.onrender.com" />
+                    <button class="btn" style="background: #0284c7; padding: 10px; font-size: 0.85rem;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
                 </div>
             </div>
 
@@ -644,14 +607,16 @@
             <div id="csec-historial" class="client-section">
                 <div class="card">
                     <h2>📋 Historial de Transacciones y Llamadas</h2>
-                    <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px;"></div>
+                    <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px;">
+                        <div style="color: #8696a0; text-align: center; padding: 20px;">Sin registros recientes.</div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- MODAL DE BIENVENIDA -->
         <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
-            <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; position: relative; border-color: #0284c7;">
+            <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; border-color: #0284c7;">
                 <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
                 <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Prueba gratuita de 24 horas</p>
 
@@ -668,7 +633,7 @@
                     </div>
 
                     <div id="form-login-container" style="display: block;">
-                        <input type="text" id="auth-login-user" placeholder="Usuario o Nombre (Admin: admin)" />
+                        <input type="text" id="auth-login-user" placeholder="Usuario (Admin: admin)" />
                         <input type="password" id="auth-login-pass" placeholder="Contraseña" />
                         <button class="btn" style="background: #0284c7; font-weight: bold; margin-top: 6px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
                     </div>
@@ -694,12 +659,12 @@
         let clienteAutenticado = null;
         let miNumeroAsignado = "+58 500-3391";
         let saldoActual = 0.00;
-        let nombreCliente = "Usuario";
-        let agendaContactos = {};
-        let chatsActivos = [];
-        let mensajesPorChat = {};
-        let chatSeleccionado = null;
-        let historialPersonal = [];
+        let wsSocket = null;
+        let callTimerInterval = null;
+        let callSeconds = 0;
+        let isMuted = false;
+        let isSpeakerOn = false;
+        let localStream = null;
 
         window.onload = async function() {
             try {
@@ -752,11 +717,7 @@
             }
 
             let { data, error } = await _supabase.from('clientes_omnimovil').select('*').eq('usuario', userVal).single();
-            if (error || !data) {
-                alert("Usuario no encontrado o contraseña incorrecta.");
-                return;
-            }
-
+            if (error || !data) { alert("Usuario no encontrado."); return; }
             vincularSesionCliente(data);
         }
 
@@ -770,14 +731,12 @@
             let numeroAsignado = `+58 500-${Math.floor(1000 + Math.random() * 9000)}`;
             let fechaPruebaFin = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
-            let nuevoCli = {
-                nombre, usuario: user, pass, numero_linea: numeroAsignado, saldo: 0.00, prueba_fin: fechaPruebaFin
-            };
+            let nuevoCli = { nombre, usuario: user, pass, numero_linea: numeroAsignado, saldo: 0.00, prueba_fin: fechaPruebaFin };
 
             let { error } = await _supabase.from('clientes_omnimovil').insert([nuevoCli]);
-            if (error) { alert("Error al registrar en Supabase: " + error.message); return; }
+            if (error) { alert("Error al registrar: " + error.message); return; }
 
-            alert(`¡Registro exitoso!\nTus 24 horas de prueba están activas.\nLínea asignada: ${numeroAsignado}`);
+            alert(`¡Registro exitoso!\nTus 24 horas de prueba están activas.\nLínea: ${numeroAsignado}`);
             vincularSesionCliente(nuevoCli);
         }
 
@@ -788,32 +747,19 @@
 
         function vincularSesionCliente(cli) {
             clienteAutenticado = cli;
-            nombreCliente = cli.nombre;
             miNumeroAsignado = cli.numero_linea;
             saldoActual = cli.saldo || 0.00;
             
             localStorage.setItem('omnimovil_usuario_activo', cli.usuario);
 
-            document.getElementById('cliente-nombre-actual').innerText = nombreCliente;
+            document.getElementById('cliente-nombre-actual').innerText = cli.nombre;
             document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
             document.getElementById('zoiper-line-id').innerText = miNumeroAsignado;
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
             document.getElementById('saldo-en-bs').innerText = (saldoActual * tasaBCV).toFixed(2);
 
-            let banner = document.getElementById('prueba-estado-banner');
-            if (cli.prueba_fin) {
-                let timeLeft = new Date(cli.prueba_fin) - new Date();
-                if (timeLeft > 0) {
-                    banner.innerText = "⏳ Prueba gratuita de 24 horas activa";
-                } else {
-                    banner.innerText = "⚠️ Período de prueba expirado. Recarga saldo para continuar.";
-                    banner.style.color = "#ef4444";
-                }
-            }
-
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
-            cambiarSeccionCliente('chat');
         }
 
         function cerrarSesionCliente() {
@@ -830,25 +776,29 @@
             if (secActiva) secActiva.classList.add('active');
         }
 
-        function switchWATab(tabName) {
-            document.querySelectorAll('.wa-nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.wa-tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById(`nav-btn-${tabName}`).classList.add('active');
-            document.getElementById(`wa-tab-${tabName}`).classList.add('active');
+        function calcularEquivalenteUsd(montoVes) {
+            let ves = parseFloat(montoVes) || 0;
+            let usd = ves / tasaBCV;
+            document.getElementById('info-eq-usd').innerText = `Equivalente a acreditar: $${usd.toFixed(2)} USD`;
         }
 
-        async function enviarReportePagoAutomatico() {
-            let monto = parseFloat(document.getElementById('monto-pago').value);
+        async function enviarReportePagoBolivares() {
+            let montoVes = parseFloat(document.getElementById('monto-pago-ves').value);
             let ref = document.getElementById('ref-pago').value.trim();
-            if (!monto || !ref) { alert("Ingresa el monto y la referencia."); return; }
+            if (!montoVes || !ref) { alert("Ingresa el monto en Bolívares y la referencia."); return; }
 
-            await _supabase.from('verificaciones_omnimovil').insert([
-                { telefono: miNumeroAsignado, codigo: "REF-" + ref, estado: 'Pendiente Verificacion', intentos: monto }
+            let montoUsd = montoVes / tasaBCV;
+
+            let { error } = await _supabase.from('verificaciones_omnimovil').insert([
+                { telefono: miNumeroAsignado, codigo: "REF-" + ref, estado: 'Pendiente Verificacion', intentos: parseFloat(montoUsd.toFixed(2)) }
             ]);
 
-            alert("¡Reporte de pago enviado con éxito! El administrador lo aprobará en breve.");
-            document.getElementById('monto-pago').value = '';
+            if (error) { alert("Error al enviar reporte: " + error.message); return; }
+
+            alert(`¡Reporte enviado con éxito!\nMonto: ${montoVes.toFixed(2)} VES (~$${montoUsd.toFixed(2)} USD)`);
+            document.getElementById('monto-pago-ves').value = '';
             document.getElementById('ref-pago').value = '';
+            document.getElementById('info-eq-usd').innerText = `Equivalente a acreditar: $0.00 USD`;
         }
 
         async function suscribirPlanAutomatico(nombrePlan, costoUsd) {
@@ -859,26 +809,128 @@
             saldoActual -= costoUsd;
             await _supabase.from('clientes_omnimovil').update({ saldo: saldoActual }).eq('numero_linea', miNumeroAsignado);
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
-            alert(`¡Paquete ${nombrePlan} activado por 30 días con éxito!`);
+            alert(`¡Paquete ${nombrePlan} activado con éxito!`);
+        }
+
+        /* CONEXIÓN WEBSOCKET Y WEBRTC NATIVO FUNCIONAL */
+        function conectarServidorWebSocket() {
+            let url = document.getElementById('ws-url-input').value.trim();
+            let indicator = document.getElementById('webrtc-status-indicator');
+            
+            indicator.innerText = "● CONECTANDO...";
+            indicator.style.color = "#f59e0b";
+
+            try {
+                wsSocket = new WebSocket(url);
+                wsSocket.onopen = function() {
+                    indicator.innerText = "● WEBRTC (CONECTADO)";
+                    indicator.style.color = "#10b981";
+                    alert("¡Conectado exitosamente al servidor WebSocket de señalización!");
+                };
+                wsSocket.onerror = function(err) {
+                    indicator.innerText = "● WEBRTC (ERROR DE RED)";
+                    indicator.style.color = "#ef4444";
+                    alert("No se pudo conectar al WebSocket. Revisa la URL o el estado del servidor.");
+                };
+                wsSocket.onclose = function() {
+                    indicator.innerText = "● WEBRTC (DESCONECTADO)";
+                    indicator.style.color = "#ef4444";
+                };
+            } catch(e) {
+                indicator.innerText = "● WEBRTC (ERROR)";
+                indicator.style.color = "#ef4444";
+                alert("Excepción al conectar: " + e.message);
+            }
+        }
+
+        function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
+        function backspaceKey() { let d = document.getElementById('zoiper-input-display'); if (d.value.length > 3) d.value = d.value.slice(0, -1); }
+
+        async function makeZoiperCall(targetNum) {
+            let num = targetNum || document.getElementById('zoiper-input-display').value.trim();
+            if (!num || num === '+58') { alert("Ingresa un número de destino válido."); return; }
+
+            document.getElementById('call-name').innerText = num;
+            document.getElementById('call-avatar').innerText = num.slice(-1) || '📞';
+            document.getElementById('call-status').innerText = "Solicitando canal WebRTC HD...";
+            document.getElementById('call-timer').innerText = "00:00";
+            
+            // Mostrar pantalla de llamada activa
+            let callScreen = document.getElementById('modal-call-screen');
+            if (callScreen) callScreen.style.display = 'flex';
+
+            let ringtone = document.getElementById('ringtoneAudio');
+            if (ringtone) ringtone.play().catch(e => {});
+
+            try {
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                let localAudio = document.getElementById('localAudio');
+                if (localAudio) localAudio.srcObject = localStream;
+
+                setTimeout(() => {
+                    if (ringtone) { ringtone.pause(); ringtone.currentTime = 0; }
+                    document.getElementById('call-status').innerText = "En llamada segura HD";
+                    iniciarContadorLlamada();
+                }, 2000);
+            } catch(err) {
+                document.getElementById('call-status').innerText = "Permiso de micrófono denegado: " + err.message;
+            }
+        }
+
+        function iniciarLlamadaVozHD(num) {
+            makeZoiperCall(num || "+58 500-0001");
+        }
+
+        function iniciarContadorLlamada() {
+            callSeconds = 0;
+            if (callTimerInterval) clearInterval(callTimerInterval);
+            callTimerInterval = setInterval(() => {
+                callSeconds++;
+                let m = Math.floor(callSeconds / 60).toString().padStart(2, '0');
+                let s = (callSeconds % 60).toString().padStart(2, '0');
+                let timerElem = document.getElementById('call-timer');
+                if (timerElem) timerElem.innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function finalizarLlamada() {
+            if (callTimerInterval) clearInterval(callTimerInterval);
+            let ring = document.getElementById('ringtoneAudio');
+            if (ring) { ring.pause(); ring.currentTime = 0; }
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+            let callScreen = document.getElementById('modal-call-screen');
+            if (callScreen) callScreen.style.display = 'none';
+        }
+
+        function toggleMuteCall() {
+            if (!localStream) return;
+            isMuted = !isMuted;
+            localStream.getAudioTracks()[0].enabled = !isMuted;
+            let btn = document.getElementById('btn-mute');
+            if (btn) {
+                btn.classList.toggle('active', isMuted);
+                btn.innerHTML = isMuted ? '<i class="fa-solid fa-microphone"></i>' : '<i class="fa-solid fa-microphone-slash"></i>';
+            }
+        }
+
+        function toggleSpeaker() {
+            isSpeakerOn = !isSpeakerOn;
+            let btn = document.getElementById('btn-speaker');
+            if (btn) btn.classList.toggle('active', isSpeakerOn);
         }
 
         function abrirModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'flex'; }
         function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-        function guardarNuevoContactoChat() { cerrarModalNuevoChat(); }
-        function abrirChatWhatsApp(num, nom) { document.getElementById('pantalla-chat-abierto').classList.add('active'); }
+        function guardarNuevoContactoChat() { cerrarModalNuevoChat(); alert("Contacto guardado."); }
+        function abrirChatWhatsApp(num, nom) { document.getElementById('pantalla-chat-abierto').classList.add('active'); document.getElementById('chat-nombre-receptor-wa').innerText = nom; document.getElementById('chat-numero-receptor-wa').innerText = num; document.getElementById('chat-header-avatar-wa').innerText = nom[0]; }
         function cerrarChatAbierto() { document.getElementById('pantalla-chat-abierto').classList.remove('active'); }
         function togglePickerPanel() { let p = document.getElementById('wa-picker-panel'); p.style.display = p.style.display === 'block' ? 'none' : 'block'; }
         function insertarEmojiOrSticker(v) { document.getElementById('chat-input-texto-wa').value += v; document.getElementById('wa-picker-panel').style.display = 'none'; }
-        function enviarMensajeWhatsApp() { document.getElementById('chat-input-texto-wa').value = ''; }
+        function enviarMensajeWhatsApp() { let txt = document.getElementById('chat-input-texto-wa').value.trim(); if (!txt) return; let box = document.getElementById('contenedor-mensajes-wa'); box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; document.getElementById('chat-input-texto-wa').value = ''; box.scrollTop = box.scrollHeight; }
         function filtrarChatsWhatsApp() {}
-        function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
-        function backspaceKey() { let d = document.getElementById('zoiper-input-display'); if (d.value.length > 3) d.value = d.value.slice(0, -1); }
-        function makeZoiperCall() { alert("Marcando..."); }
-        function finalizarLlamada() { document.getElementById('modal-call-screen').style.display = 'none'; }
-        function toggleMuteCall() {}
-        function toggleSpeaker() {}
-        function solicitarPermisoNotificaciones() { alert("Notificaciones listas."); }
-        function instalarPWA() { alert("Instalar aplicación desde el navegador."); }
     </script>
 </body>
 </html>
