@@ -1138,11 +1138,10 @@
                     if (message.type === 'offer') {
                         numeroDestinoActual = message.from || message.targetId;
                         
-                        // REPRODUCIR SONIDO DE REPIQUE (RINGTONE)
                         let ringtone = document.getElementById('ringtoneAudio');
                         if (ringtone) { ringtone.currentTime = 0; ringtone.play().catch(e => console.log("Audio play error:", e)); }
 
-                        abrirPantallaLlamada(numeroDestinoActual, "¡Llamada Entrante...");
+                        abrirPantallaLlamada(numeroDestinoActual, "¡Llamada Entrante...!");
                         
                         if (!peerConnection) createPeerConnection(numeroDestinoActual);
                         
@@ -1246,10 +1245,8 @@
             let num = document.getElementById('zoiper-input-display').value.trim();
             if (num.length < 7) { alert("Ingresa un número válido para discar."); return; }
             let numLimpio = normalizarNumero(num);
-            let infoTarifa = obtenerTarifaPorMinuto(numLimpio);
-            if (confirm(`🌐 Llamada saliente:\nDestino: ${num}\nRed: ${infoTarifa.tipo}\nTarifa: $${infoTarifa.tarifaMin.toFixed(2)}/min\n\n¿Proceder?`)) {
-                iniciarLlamadaVozHD(numLimpio);
-            }
+            // Llamada directa sin ventana de confirmación para evitar bloqueos en PC
+            iniciarLlamadaVozHD(numLimpio);
         }
 
         async function iniciarLlamadaVozHD(numDestino) {
@@ -1366,7 +1363,7 @@
 
         async function suscribirPlanAutomatico(nombrePlan, costo) {
             if (saldoActual < costo) {
-                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Necesitas al menos $${costo.toFixed(2)} USD.`);
+                alert(`Saldo insuficiente ($${saldoActual.toFixed(2)}). Requieres al menos $${costo.toFixed(2)} USD.`);
                 return;
             }
 
