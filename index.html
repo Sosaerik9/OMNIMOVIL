@@ -783,23 +783,23 @@
         }
 
         async function enviarReportePagoBolivares() {
-            let montoVes = parseFloat(document.getElementById('monto-pago-ves').value);
-            let ref = document.getElementById('ref-pago').value.trim();
-            if (!montoVes || !ref) { alert("Ingresa el monto en Bolívares y la referencia."); return; }
+    let montoVes = parseFloat(document.getElementById('monto-pago-ves').value);
+    let ref = document.getElementById('ref-pago').value.trim();
+    if (!montoVes || !ref) { alert("Ingresa el monto en Bolívares y la referencia."); return; }
 
-            let montoUsd = montoVes / tasaBCV;
+    let montoUsd = parseFloat((montoVes / tasaBCV).toFixed(2));
 
-            let { error } = await _supabase.from('verificaciones_omnimovil').insert([
-                { telefono: miNumeroAsignado, codigo: "REF-" + ref, estado: 'Pendiente Verificacion', intentos: parseFloat(montoUsd.toFixed(2)) }
-            ]);
+    let { error } = await _supabase.from('verificaciones_omnimovil').insert([
+        { telefono: miNumeroAsignado, codigo: "REF-" + ref, estado: 'Pendiente Verificacion', intentos: montoUsd }
+    ]);
 
-            if (error) { alert("Error al enviar reporte: " + error.message); return; }
+    if (error) { alert("Error al enviar reporte: " + error.message); return; }
 
-            alert(`¡Reporte enviado con éxito!\nMonto: ${montoVes.toFixed(2)} VES (~$${montoUsd.toFixed(2)} USD)`);
-            document.getElementById('monto-pago-ves').value = '';
-            document.getElementById('ref-pago').value = '';
-            document.getElementById('info-eq-usd').innerText = `Equivalente a acreditar: $0.00 USD`;
-        }
+    alert(`¡Reporte enviado con éxito!\nMonto: ${montoVes.toFixed(2)} VES (~$${montoUsd} USD)\nLo verás en el panel de administrador (admin.html) para aprobarlo.`);
+    document.getElementById('monto-pago-ves').value = '';
+    document.getElementById('ref-pago').value = '';
+    document.getElementById('info-eq-usd').innerText = `Equivalente a acreditar: $0.00 USD`;
+}
 
         async function suscribirPlanAutomatico(nombrePlan, costoUsd) {
             if (saldoActual < costoUsd) {
