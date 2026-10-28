@@ -15,7 +15,6 @@
         .btn { width: 100%; background: #10b981; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .history-item { background: #020617; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; }
         
-        /* PANTALLA DE LOGIN DE ADMINISTRADOR */
         #login-admin-overlay {
             display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(7, 13, 18, 0.95); z-index: 9999;
@@ -115,7 +114,6 @@
             let boxClientes = document.getElementById('admin-lista-clientes');
             let boxPagos = document.getElementById('admin-lista-pagos');
 
-            // 1. Cargar Clientes
             let { data: clientes, error: errCli } = await _supabase.from('clientes_omnimovil').select('*');
             
             boxClientes.innerHTML = '';
@@ -132,7 +130,6 @@
                 });
             }
 
-            // 2. Cargar Recargas / Pagos
             let { data: pagos, error: errPag } = await _supabase.from('verificaciones_omnimovil').select('*');
 
             boxPagos.innerHTML = '';
