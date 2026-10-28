@@ -16,6 +16,10 @@
         .btn-csv { background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
         .history-item { background: #020617; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; flex-wrap: wrap; gap: 8px; }
         
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .stat-box { background: #0f172a; border: 1px solid #1e293b; border-radius: 15px; padding: 15px; text-align: center; }
+        .stat-value { font-size: 1.4rem; font-weight: bold; color: #38bdf8; margin-top: 5px; }
+
         #login-admin-overlay {
             display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(7, 13, 18, 0.95); z-index: 9999;
@@ -49,6 +53,26 @@
             <button onclick="cerrarSesionAdmin()" style="background: #ef4444; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cerrar Sesión Admin</button>
         </header>
 
+        <!-- TARJETAS DE MÉTRICAS FINANCIERAS -->
+        <div class="stats-grid">
+            <div class="stat-box" style="border-color: #0284c7;">
+                <div style="color: #94a3b8; font-size: 0.85rem;"><i class="fa-solid fa-users"></i> Clientes Registrados</div>
+                <div class="stat-value" id="stat-total-clientes">0</div>
+            </div>
+            <div class="stat-box" style="border-color: #10b981;">
+                <div style="color: #94a3b8; font-size: 0.85rem;"><i class="fa-solid fa-dollar-sign"></i> Recaudado Aprobado</div>
+                <div class="stat-value" style="color: #10b981;" id="stat-total-recaudado">$0.00</div>
+            </div>
+            <div class="stat-box" style="border-color: #f59e0b;">
+                <div style="color: #94a3b8; font-size: 0.85rem;"><i class="fa-solid fa-clock"></i> Solicitudes Pendientes</div>
+                <div class="stat-value" style="color: #f59e0b;" id="stat-total-pendientes">0</div>
+            </div>
+            <div class="stat-box" style="border-color: #a855f7;">
+                <div style="color: #94a3b8; font-size: 0.85rem;"><i class="fa-solid fa-bolt"></i> Tasa BCV Referencia</div>
+                <div class="stat-value" style="color: #c084fc;" id="stat-tasa-bcv">Cargando...</div>
+            </div>
+        </div>
+
         <!-- REGISTRAR CLIENTE DESDE OFICINA -->
         <div class="card" style="border-color: #0284c7;">
             <h2 style="color: #0284c7; margin-top: 0;">➕ Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
@@ -65,25 +89,44 @@
                 <h2 style="color: #38bdf8; margin: 0;">👥 Base de Líneas y Clientes Registrados</h2>
                 <button class="btn-csv" onclick="exportarClientesCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Clientes CSV</button>
             </div>
-            
             <input type="text" id="filtro-busqueda-cli" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="filtrarClientes()" />
-            
-            <div id="admin-lista-clientes" style="max-height: 300px; overflow-y: auto;">
-                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando clientes desde Supabase...</div>
+            <div id="admin-lista-clientes" style="max-height: 250px; overflow-y: auto;">
+                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando clientes...</div>
             </div>
         </div>
 
-        <!-- SOLICITUDES DE RECARGA -->
+        <!-- SOLICITUDES PENDIENTES -->
         <div class="card" style="border-color: #f59e0b;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="color: #f59e0b; margin: 0;">💳 Solicitudes de Recarga y Pagos Móviles</h2>
-                <button class="btn-csv" style="background: #d97706;" onclick="exportarPagosCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Pagos CSV</button>
+            <h2 style="color: #f59e0b; margin-top: 0;">⏳ Solicitudes Pendientes / En Espera</h2>
+            <div id="admin-lista-pendientes" style="max-height: 250px; overflow-y: auto;">
+                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando pendientes...</div>
             </div>
+        </div>
 
-            <input type="text" id="filtro-busqueda-pagos" placeholder="🔍 Buscar por Teléfono o Referencia..." onkeyup="filtrarPagos()" />
+        <!-- RECARGAS APROBADAS -->
+        <div class="card" style="border-color: #10b981;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="color: #10b981; margin: 0;">✅ Recargas Aprobadas</h2>
+                <button class="btn-csv" style="background: #10b981;" onclick="exportarPagosCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Pagos CSV</button>
+            </div>
+            <div id="admin-lista-aprobadas" style="max-height: 250px; overflow-y: auto;">
+                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando aprobadas...</div>
+            </div>
+        </div>
 
-            <div id="admin-lista-pagos" style="max-height: 300px; overflow-y: auto;">
-                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando solicitudes de pago...</div>
+        <!-- RECARGAS RECHAZADAS -->
+        <div class="card" style="border-color: #ef4444;">
+            <h2 style="color: #ef4444; margin-top: 0;">❌ Recargas Rechazadas</h2>
+            <div id="admin-lista-rechazadas" style="max-height: 250px; overflow-y: auto;">
+                <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando rechazadas...</div>
+            </div>
+        </div>
+
+        <!-- AUDITORÍA Y LOGS DEL SISTEMA -->
+        <div class="card" style="border-color: #64748b;">
+            <h2 style="color: #94a3b8; margin-top: 0;"><i class="fa-solid fa-clipboard-list"></i> Registro de Auditoría (Acciones de Admin)</h2>
+            <div id="admin-lista-logs" style="max-height: 200px; overflow-y: auto; font-size: 0.8rem; color: #94a3b8;">
+                <div style="text-align: center; padding: 15px;">Cargando registro de auditoría...</div>
             </div>
         </div>
     </div>
@@ -96,12 +139,29 @@
 
         let cacheClientes = [];
         let cachePagos = [];
+        let tasaDolarBCV = 36.50; // Valor base referencial ajustable
 
         window.onload = function() {
             if (sessionStorage.getItem('omnimovil_admin_autenticado') === 'true') {
                 mostrarPanelAdmin();
             }
+            obtenerTasaBCV();
         };
+
+        async function obtenerTasaBCV() {
+            try {
+                let res = await fetch('https://pydolarve.org/api/v1/dollar?page=bcv');
+                let data = await res.json();
+                if (data && data.monitors && data.monitors.bcv) {
+                    tasaDolarBCV = data.monitors.bcv.price;
+                    document.getElementById('stat-tasa-bcv').innerText = `Bs. ${tasaDolarBCV.toFixed(2)}`;
+                } else {
+                    document.getElementById('stat-tasa-bcv').innerText = `Bs. ${tasaDolarBCV}`;
+                }
+            } catch (e) {
+                document.getElementById('stat-tasa-bcv').innerText = `Bs. ${tasaDolarBCV}`;
+            }
+        }
 
         function validarAccesoAdmin() {
             let u = document.getElementById('admin-user').value.trim();
@@ -111,7 +171,7 @@
                 sessionStorage.setItem('omnimovil_admin_autenticado', 'true');
                 mostrarPanelAdmin();
             } else {
-                alert("Usuario o contraseña de administrador incorrectos.");
+                alert("Usuario o contraseña incorrectos.");
             }
         }
 
@@ -126,21 +186,47 @@
             location.reload();
         }
 
+        async function registrarLog(accion) {
+            let fechaHora = new Date().toLocaleString();
+            await _supabase.from('logs_omnimovil').insert([{ accion, fecha: fechaHora }]);
+        }
+
         async function cargarDatosAdminSupabase() {
-            let { data: clientes, error: errCli } = await _supabase.from('clientes_omnimovil').select('*');
-            if (!errCli && clientes) {
+            // 1. Clientes
+            let { data: clientes } = await _supabase.from('clientes_omnimovil').select('*');
+            if (clientes) {
                 cacheClientes = clientes;
                 renderizarClientes(cacheClientes);
-            } else {
-                document.getElementById('admin-lista-clientes').innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla clientes: ${errCli?.message}</div>`;
+                document.getElementById('stat-total-clientes').innerText = clientes.length;
             }
 
-            let { data: pagos, error: errPag } = await _supabase.from('verificaciones_omnimovil').select('*');
-            if (!errPag && pagos) {
+            // 2. Pagos
+            let { data: pagos } = await _supabase.from('verificaciones_omnimovil').select('*');
+            if (pagos) {
                 cachePagos = pagos;
-                renderizarPagos(cachePagos);
+                renderizarPagosSeparados(pagos);
+                
+                let pendientesCount = pagos.filter(p => !p.estado || p.estado === 'Pendiente').length;
+                let totalRecaudado = pagos.filter(p => p.estado === 'Aprobado').reduce((acc, curr) => acc + parseFloat(curr.intentos || 0), 0);
+                
+                document.getElementById('stat-total-pendientes').innerText = pendientesCount;
+                document.getElementById('stat-total-recaudado').innerText = `$${totalRecaudado.toFixed(2)}`;
+            }
+
+            // 3. Logs de Auditoría
+            let { data: logs } = await _supabase.from('logs_omnimovil').select('*').order('id', { ascending: false }).limit(10);
+            let boxLogs = document.getElementById('admin-lista-logs');
+            boxLogs.innerHTML = '';
+            if (logs && logs.length > 0) {
+                logs.forEach(l => {
+                    let d = document.createElement('div');
+                    d.style.padding = '4px 0';
+                    d.style.borderBottom = '1px solid #1e293b';
+                    d.innerHTML = `<span style="color:#38bdf8;">[${l.fecha}]</span> ${l.accion}`;
+                    boxLogs.appendChild(d);
+                });
             } else {
-                document.getElementById('admin-lista-pagos').innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla pagos: ${errPag?.message}</div>`;
+                boxLogs.innerHTML = `<div style="text-align:center; padding:10px;">Sin registros de auditoría aún.</div>`;
             }
         }
 
@@ -160,100 +246,105 @@
                 div.innerHTML = `
                     <div>
                         <strong>${c.nombre || 'Sin nombre'}</strong> (C.I: ${c.cedula || 'N/A'})<br>
-                        <span style="color:#38bdf8;">${c.numero_linea || 'Sin línea'}</span> | User: ${c.usuario} | Saldo: <strong style="color:#10b981;">$${(c.saldo || 0).toFixed(2)}</strong>
+                        <span style="color:#38bdf8;">${c.numero_linea || 'Sin línea'}</span> | Saldo: <strong style="color:#10b981;">$${(c.saldo || 0).jeva ? c.saldo : (c.saldo || 0).toFixed(2)}</strong>
                     </div>
                     <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <button onclick="asignarSaldoManual('${c.id}', '${c.nombre}', ${c.saldo || 0})" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;" title="Asignar Saldo Manual"><i class="fa-solid fa-wallet"></i> +Saldo</button>
-                        
+                        <button onclick="asignarSaldoManual('${c.id}', '${c.nombre}', ${c.saldo || 0})" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;"><i class="fa-solid fa-wallet"></i> +Saldo</button>
                         <span style="color: ${colorEstado}; font-weight: bold; font-size: 0.75rem;">${estadoLinea}</span>
-                        
-                        <select onchange="cambiarEstadoLinea('${c.id}', this.value)" style="width: auto; padding: 4px; margin: 0; font-size: 0.75rem;">
+                        <select onchange="cambiarEstadoLinea('${c.id}', this.value, '${c.nombre}')" style="width: auto; padding: 4px; margin: 0; font-size: 0.75rem;">
                             <option value="Activa" ${estadoLinea === 'Activa' ? 'selected' : ''}>Activa</option>
                             <option value="Suspendida" ${estadoLinea === 'Suspendida' ? 'selected' : ''}>Suspendida</option>
                             <option value="En Espera" ${estadoLinea === 'En Espera' ? 'selected' : ''}>En Espera</option>
                         </select>
-
-                        <button onclick="eliminarCliente('${c.id}', '${c.nombre}')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold;" title="Eliminar Cliente"><i class="fa-solid fa-trash"></i></button>
+                        <button onclick="eliminarCliente('${c.id}', '${c.nombre}')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer;" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
                     </div>`;
                 box.appendChild(div);
             });
         }
 
-        function renderizarPagos(lista) {
-            let box = document.getElementById('admin-lista-pagos');
-            box.innerHTML = '';
-            if (lista.length === 0) {
-                box.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes de recarga.</div>`;
-                return;
-            }
-            lista.forEach(p => {
-                let estadoPago = p.estado || 'Pendiente';
-                let colorPago = estadoPago === 'Aprobado' ? '#10b981' : (estadoPago === 'Rechazado' ? '#ef4444' : '#f59e0b');
+        function renderizarPagosSeparados(lista) {
+            let boxPendientes = document.getElementById('admin-lista-pendientes');
+            let boxAprobadas = document.getElementById('admin-lista-aprobadas');
+            let boxRechazadas = document.getElementById('admin-lista-rechazadas');
 
-                let div = document.createElement('div');
-                div.className = 'history-item';
-                div.innerHTML = `
-                    <div>
-                        Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong> | Monto: <strong style="color:#f59e0b;">$${p.intentos}</strong>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 6px;">
-                        <span style="color: ${colorPago}; font-weight: bold; font-size: 0.75rem;">${estadoPago}</span>
-                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Aprobado')" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Aprobar</button>
-                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Rechazado')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Rechazar</button>
-                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Pendiente')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Pendiente</button>
-                    </div>`;
-                box.appendChild(div);
-            });
+            boxPendientes.innerHTML = '';
+            boxAprobadas.innerHTML = '';
+            boxRechazadas.innerHTML = '';
+
+            let pendientes = lista.filter(p => !p.estado || p.estado === 'Pendiente');
+            let aprobadas = lista.filter(p => p.estado === 'Aprobado');
+            let rechazadas = lista.filter(p => p.estado === 'Rechazado');
+
+            if (pendientes.length === 0) boxPendientes.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes pendientes.</div>`;
+            else pendientes.forEach(p => boxPendientes.appendChild(crearItemPagoHTML(p)));
+
+            if (aprobadas.length === 0) boxAprobadas.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay recargas aprobadas.</div>`;
+            else aprobadas.forEach(p => boxAprobadas.appendChild(crearItemPagoHTML(p)));
+
+            if (rechazadas.length === 0) boxRechazadas.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay recargas rechazadas.</div>`;
+            else rechazadas.forEach(p => boxRechazadas.appendChild(crearItemPagoHTML(p)));
+        }
+
+        function crearItemPagoHTML(p) {
+            let estado = p.estado || 'Pendiente';
+            let color = estado === 'Aprobado' ? '#10b981' : (estado === 'Rechazado' ? '#ef4444' : '#f59e0b');
+            let montoBs = (parseFloat(p.intentos || 0) * tasaDolarBCV).toFixed(2);
+
+            let div = document.createElement('div');
+            div.className = 'history-item';
+            div.innerHTML = `
+                <div>
+                    Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong><br>
+                    USD: <strong style="color:#f59e0b;">$${p.intentos}</strong> | Ref. BCV: <span style="color:#c084fc;">Bs. ${montoBs}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="color: ${color}; font-weight: bold; font-size: 0.75rem;">${estado}</span>
+                    <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Aprobado')" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Aprobar</button>
+                    <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Rechazado')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Rechazar</button>
+                    <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Pendiente')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-size:0.75rem;">Pendiente</button>
+                </div>`;
+            return div;
         }
 
         async function asignarSaldoManual(idCliente, nombreCliente, saldoActual) {
-            let inputMonto = prompt(`Asignar saldo manual a: ${nombreCliente}\nSaldo actual: $${saldoActual}\n\nIngresa el monto a sumar (ej: 5.00 o 10):`);
+            let inputMonto = prompt(`Asignar saldo manual a: ${nombreCliente}\nSaldo actual: $${saldoActual}\n\nIngresa el monto a sumar (ej: 5.00):`);
             if (!inputMonto) return;
-
             let montoASumar = parseFloat(inputMonto);
-            if (isNaN(montoASumar) || montoASumar <= 0) {
-                alert("Por favor ingresa un monto válido.");
-                return;
-            }
+            if (isNaN(montoASumar) || montoASumar <= 0) { alert("Monto no válido."); return; }
 
             let nuevoSaldo = saldoActual + montoASumar;
             let { error } = await _supabase.from('clientes_omnimovil').update({ saldo: nuevoSaldo }).eq('id', idCliente);
-
-            if (error) {
-                alert("Error al actualizar saldo: " + error.message);
-            } else {
-                alert(`¡Saldo acreditado con éxito!\nNuevo saldo para ${nombreCliente}: $${nuevoSaldo.toFixed(2)}`);
+            if (!error) {
+                await registrarLog(`Admin asignó saldo manual de $${montoASumar} al cliente ${nombreCliente}`);
+                alert(`¡Saldo acreditado con éxito!`);
                 cargarDatosAdminSupabase();
             }
         }
 
-        async function cambiarEstadoLinea(id, nuevoEstado) {
-            let { error } = await _supabase.from('clientes_omnimovil').update({ estado_linea: nuevoEstado }).eq('id', id);
-            if (error) { alert("Error al actualizar estado: " + error.message); }
-            else { cargarDatosAdminSupabase(); }
+        async function cambiarEstadoLinea(id, nuevoEstado, nombre) {
+            await _supabase.from('clientes_omnimovil').update({ estado_linea: nuevoEstado }).eq('id', id);
+            await registrarLog(`Admin cambió estado de línea de ${nombre} a ${nuevoEstado}`);
+            cargarDatosAdminSupabase();
         }
 
         async function eliminarCliente(id, nombre) {
             if (confirm(`¿Estás seguro de eliminar al cliente ${nombre}?`)) {
-                let { error } = await _supabase.from('clientes_omnimovil').delete().eq('id', id);
-                if (error) { alert("Error al eliminar: " + error.message); }
-                else { alert("Cliente eliminado con éxito."); cargarDatosAdminSupabase(); }
+                await _supabase.from('clientes_omnimovil').delete().eq('id', id);
+                await registrarLog(`Admin eliminó al cliente ${nombre}`);
+                cargarDatosAdminSupabase();
             }
         }
 
         async function actualizarEstadoPago(idPago, telefono, monto, nuevoEstado) {
             let { error } = await _supabase.from('verificaciones_omnimovil').update({ estado: nuevoEstado }).eq('id', idPago);
-            if (error) { alert("Error al actualizar pago: " + error.message); return; }
-
-            if (nuevoEstado === 'Aprobado') {
+            if (!error && nuevoEstado === 'Aprobado') {
                 let { data: cli } = await _supabase.from('clientes_omnimovil').select('*').eq('numero_linea', telefono).single();
                 if (cli) {
                     let nuevoSaldo = (cli.saldo || 0) + parseFloat(monto);
                     await _supabase.from('clientes_omnimovil').update({ saldo: nuevoSaldo }).eq('numero_linea', telefono);
                 }
             }
-
-            alert(`Solicitud actualizada a: ${nuevoEstado}`);
+            await registrarLog(`Admin actualizó recarga de ${telefono} ($${monto}) a estado: ${nuevoEstado}`);
             cargarDatosAdminSupabase();
         }
 
@@ -268,23 +359,13 @@
             renderizarClientes(filtrados);
         }
 
-        function filtrarPagos() {
-            let query = document.getElementById('filtro-busqueda-pagos').value.toLowerCase();
-            let filtrados = cachePagos.filter(p => 
-                (p.telefono && p.telefono.toLowerCase().includes(query)) ||
-                (p.codigo && p.codigo.toLowerCase().includes(query))
-            );
-            renderizarPagos(filtrados);
-        }
-
         function exportarClientesCSV() {
             let csvContent = "data:text/csv;charset=utf-8,Nombre,Cedula,Usuario,Linea,Saldo,EstadoLinea\n";
             cacheClientes.forEach(c => {
                 csvContent += `"${c.nombre || ''}","${c.cedula || ''}","${c.usuario || ''}","${c.numero_linea || ''}","${c.saldo || 0}","${c.estado_linea || 'Activa'}"\n`;
             });
-            let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            link.setAttribute("href", encodeURI(csvContent));
             link.setAttribute("download", "clientes_omnimovil.csv");
             document.body.appendChild(link);
             link.click();
@@ -292,13 +373,12 @@
         }
 
         function exportarPagosCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Telefono,Referencia,Monto,Estado\n";
+            let csvContent = "data:text/csv;charset=utf-8,Telefono,Referencia,MontoUSD,Estado\n";
             cachePagos.forEach(p => {
                 csvContent += `"${p.telefono || ''}","${p.codigo || ''}","${p.intentos || 0}","${p.estado || 'Pendiente'}"\n`;
             });
-            let encodedUri = encodeURI(csvContent);
             let link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
+            link.setAttribute("href", encodeURI(csvContent));
             link.setAttribute("download", "recargas_omnimovil.csv");
             document.body.appendChild(link);
             link.click();
@@ -320,9 +400,10 @@
                 { nombre, cedula, usuario, pass, numero_linea: numeroAsignado, saldo: 0.00, prueba_fin: fechaPruebaFin, estado_linea: 'Activa' }
             ]);
 
-            if (error) { alert("Error al registrar: " + error.message); return; }
+            if (error) { alert("Error: " + error.message); return; }
 
-            alert(`¡Cliente registrado con éxito!\nLínea asignada: ${numeroAsignado}`);
+            await registrarLog(`Admin registró nuevo cliente: ${nombre} (${numeroAsignado})`);
+            alert(`¡Cliente registrado con éxito!\nLínea: ${numeroAsignado}`);
             document.getElementById('admin-reg-nombre').value = '';
             document.getElementById('admin-reg-cedula').value = '';
             document.getElementById('admin-reg-usuario').value = '';
