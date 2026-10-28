@@ -14,13 +14,39 @@
         input, select { width: 100%; background: #020617; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: #f8fafc; margin-bottom: 12px; outline: none; }
         .btn { width: 100%; background: #10b981; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .history-item { background: #020617; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; }
+        
+        /* PANTALLA DE LOGIN DE ADMINISTRADOR */
+        #login-admin-overlay {
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(7, 13, 18, 0.95); z-index: 9999;
+            justify-content: center; align-items: center; padding: 20px;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+
+    <!-- MODAL ACCESO ADMINISTRADOR -->
+    <div id="login-admin-overlay">
+        <div class="card" style="width: 100%; max-width: 380px; text-align: center; border-color: #0284c7; padding: 30px;">
+            <h1 style="color: #38bdf8; font-size: 1.5rem; margin-bottom: 8px; font-weight: bold;">
+                <i class="fa-solid fa-user-shield"></i> Acceso Administrador
+            </h1>
+            <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 20px;">Control Central Operadora OmniMovil</p>
+            
+            <input type="text" id="admin-user" placeholder="Usuario" value="admin" />
+            <input type="password" id="admin-pass" placeholder="Contraseña" />
+            
+            <button class="btn" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); margin-top: 8px;" onclick="validarAccesoAdmin()">
+                🔑 Entrar al Panel Operadora
+            </button>
+        </div>
+    </div>
+
+    <!-- PANEL PRINCIPAL DE ADMINISTRACIÓN -->
+    <div class="container" id="admin-main-content" style="display: none;">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1 style="color: #38bdf8; font-size: 1.2rem; font-weight: bold;"><i class="fa-solid fa-shield-halved"></i> Control Central Operadora OmniMovil</h1>
-            <button onclick="location.href='index.html'" style="background: #ef4444; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">Ir a la App</button>
+            <button onclick="cerrarSesionAdmin()" style="background: #ef4444; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cerrar Sesión Admin</button>
         </header>
 
         <!-- REGISTRAR CLIENTE DESDE OFICINA -->
@@ -57,8 +83,33 @@
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         window.onload = function() {
-            cargarDatosAdminSupabase();
+            if (sessionStorage.getItem('omnimovil_admin_autenticado') === 'true') {
+                mostrarPanelAdmin();
+            }
         };
+
+        function validarAccesoAdmin() {
+            let u = document.getElementById('admin-user').value.trim();
+            let p = document.getElementById('admin-pass').value.trim();
+
+            if (u === 'admin' && p === 'admin123') {
+                sessionStorage.setItem('omnimovil_admin_autenticado', 'true');
+                mostrarPanelAdmin();
+            } else {
+                alert("Usuario o contraseña de administrador incorrectos.");
+            }
+        }
+
+        function mostrarPanelAdmin() {
+            document.getElementById('login-admin-overlay').style.display = 'none';
+            document.getElementById('admin-main-content').style.display = 'block';
+            cargarDatosAdminSupabase();
+        }
+
+        function cerrarSesionAdmin() {
+            sessionStorage.removeItem('omnimovil_admin_autenticado');
+            location.reload();
+        }
 
         async function cargarDatosAdminSupabase() {
             let boxClientes = document.getElementById('admin-lista-clientes');
@@ -95,7 +146,7 @@
                     div.className = 'history-item';
                     div.innerHTML = `<span>Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong> | Monto: $${p.intentos}</span> 
                         <div>
-                            <span style="color:#f59e0b; margin-right: 10px;">${p.estado}</span>
+                            <span style="color:#f59e0b; margin-right: 10px;">${p.estado || 'Pendiente'}</span>
                             <button onclick="aprobarRecarga('${p.telefono}', ${p.intentos})" style="background:#10b981; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">Aprobar</button>
                         </div>`;
                     boxPagos.appendChild(div);
