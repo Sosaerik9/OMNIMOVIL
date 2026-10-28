@@ -26,7 +26,7 @@
         <!-- REGISTRAR CLIENTE DESDE OFICINA -->
         <div class="card" style="border-color: #0284c7;">
             <h2 style="color: #0284c7; margin-top: 0;">➕ Registrar Nuevo Cliente (Oficina / Venta Directa)</h2>
-            <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo (Ej: Pedro Pérez)" />
+            <input type="text" id="admin-reg-nombre" placeholder="Nombre Completo" />
             <input type="text" id="admin-reg-cedula" placeholder="Cédula / ID" />
             <input type="text" id="admin-reg-usuario" placeholder="Nombre de usuario" />
             <input type="password" id="admin-reg-pass" placeholder="Contraseña" />
@@ -61,29 +61,34 @@
         };
 
         async function cargarDatosAdminSupabase() {
-            // Cargar Clientes
             let boxClientes = document.getElementById('admin-lista-clientes');
+            let boxPagos = document.getElementById('admin-lista-pagos');
+
+            // 1. Cargar Clientes
             let { data: clientes, error: errCli } = await _supabase.from('clientes_omnimovil').select('*');
             
             boxClientes.innerHTML = '';
-            if (!clientes || clientes.length === 0) {
-                boxClientes.innerHTML = '<div style="color:#8696a0; text-align:center; padding:15px;">No hay clientes registrados en Supabase todavía.</div>';
+            if (errCli) {
+                boxClientes.innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla clientes: ${errCli.message}</div>`;
+            } else if (!clientes || clientes.length === 0) {
+                boxClientes.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay clientes registrados todavía.</div>`;
             } else {
                 clientes.forEach(c => {
                     let div = document.createElement('div');
                     div.className = 'history-item';
-                    div.innerHTML = `<span><strong>${c.nombre}</strong> (${c.numero_linea}) - C.I: ${c.cedula || 'N/A'}</span> <span style="color:#10b981; font-weight:bold;">$${(c.saldo || 0).toFixed(2)}</span>`;
+                    div.innerHTML = `<span><strong>${c.nombre || 'Sin nombre'}</strong> (${c.numero_linea || 'Sin línea'}) - User: ${c.usuario}</span> <span style="color:#10b981; font-weight:bold;">$${(c.saldo || 0).toFixed(2)}</span>`;
                     boxClientes.appendChild(div);
                 });
             }
 
-            // Cargar Recargas / Pagos
-            let boxPagos = document.getElementById('admin-lista-pagos');
+            // 2. Cargar Recargas / Pagos
             let { data: pagos, error: errPag } = await _supabase.from('verificaciones_omnimovil').select('*');
 
             boxPagos.innerHTML = '';
-            if (!pagos || pagos.length === 0) {
-                boxPagos.innerHTML = '<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes de recarga pendientes.</div>';
+            if (errPag) {
+                boxPagos.innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla pagos: ${errPag.message}</div>`;
+            } else if (!pagos || pagos.length === 0) {
+                boxPagos.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes de recarga pendientes.</div>`;
             } else {
                 pagos.forEach(p => {
                     let div = document.createElement('div');
@@ -91,7 +96,7 @@
                     div.innerHTML = `<span>Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong> | Monto: $${p.intentos}</span> 
                         <div>
                             <span style="color:#f59e0b; margin-right: 10px;">${p.estado}</span>
-                            <button onclick="aprobarRecarga('${p.telefono}', ${p.intentos})" style="background:#10b981; color:#fff; border:none; padding:4px 8px; border-radius:6px; cursor:pointer;">Aprobar</button>
+                            <button onclick="aprobarRecarga('${p.telefono}', ${p.intentos})" style="background:#10b981; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">Aprobar</button>
                         </div>`;
                     boxPagos.appendChild(div);
                 });
@@ -115,8 +120,12 @@
 
             if (error) { alert("Error al registrar: " + error.message); return; }
 
-            alert(`¡Cliente registrado con éxito!\nLínea asignada: ${numeroAsignado}\nPrueba de 24 horas activa.`);
-            location.reload();
+            alert(`¡Cliente registrado con éxito!\nLínea asignada: ${numeroAsignado}`);
+            document.getElementById('admin-reg-nombre').value = '';
+            document.getElementById('admin-reg-cedula').value = '';
+            document.getElementById('admin-reg-usuario').value = '';
+            document.getElementById('admin-reg-pass').value = '';
+            cargarDatosAdminSupabase();
         }
 
         async function aprobarRecarga(telefono, monto) {
