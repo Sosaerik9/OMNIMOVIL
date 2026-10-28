@@ -777,7 +777,8 @@
 
         function normalizarNumero(num) {
             if (!num) return "";
-            return num.replace(/[^\d+]/g, '');
+            // Remueve espacios, guiones y cualquier cosa que no sea un número o el signo más
+            return num.replace(/[^\d+]/g, '').trim();
         }
 
         function mostrarFormularioAuth() {
