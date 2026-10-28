@@ -1127,19 +1127,23 @@
 
                 wsSocket.onopen = () => {
                     let numLimpio = normalizarNumero(miNumeroAsignado);
-                    document.getElementById('sip-status-indicator').innerText = "● WEBRTC (CONECTADO)";
-                    document.getElementById('sip-status-indicator').style.color = "#25d366";
+                    let indicador = document.getElementById('sip-status-indicator');
+                    if (indicador) {
+                        indicador.innerText = "● WEBRTC (CONECTADO)";
+                        indicador.style.color = "#25d366";
+                    }
                     wsSocket.send(JSON.stringify({ type: 'register', userId: numLimpio }));
+                    console.log("Registrado en WebSocket como:", numLimpio);
                 };
 
                 wsSocket.onmessage = async (event) => {
                     let message = JSON.parse(event.data);
 
                     if (message.type === 'offer') {
-                        numeroDestinoActual = message.from || message.targetId;
+                        numeroDestinoActual = normalizarNumero(message.from || message.targetId);
                         
                         let ringtone = document.getElementById('ringtoneAudio');
-                        if (ringtone) { ringtone.currentTime = 0; ringtone.play().catch(e => console.log("Audio play error:", e)); }
+                        if (ringtone) { ringtone.currentTime = 0; ringtone.play().catch(e => console.log("Audio error:", e)); }
 
                         abrirPantallaLlamada(numeroDestinoActual, "¡Llamada Entrante...!");
                         
@@ -1157,14 +1161,16 @@
                             target: normalizarNumero(numeroDestinoActual), 
                             payload: answer 
                         }));
-                        document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
+                        let callStatus = document.getElementById('call-status');
+                        if (callStatus) callStatus.innerText = "● En llamada HD (En curso)";
                     } 
                     else if (message.type === 'answer') {
                         let ringtone = document.getElementById('ringtoneAudio');
                         if (ringtone) ringtone.pause();
                         if (peerConnection) {
                             await peerConnection.setRemoteDescription(new RTCSessionDescription(message.payload));
-                            document.getElementById('call-status').innerText = "● En llamada HD (En curso)";
+                            let callStatus = document.getElementById('call-status');
+                            if (callStatus) callStatus.innerText = "● En llamada HD (En curso)";
                         }
                     } 
                     else if (message.type === 'candidate') {
@@ -1178,11 +1184,14 @@
                 };
 
                 wsSocket.onclose = () => {
-                    document.getElementById('sip-status-indicator').innerText = "○ WEBRTC (DESCONECTADO)";
-                    document.getElementById('sip-status-indicator').style.color = "#ef4444";
+                    let indicador = document.getElementById('sip-status-indicator');
+                    if (indicador) {
+                        indicador.innerText = "○ WEBRTC (DESCONECTADO)";
+                        indicador.style.color = "#ef4444";
+                    }
                 };
             } catch(err) {
-                console.warn("WebSocket notice:", err);
+                console.warn("WebSocket error:", err);
             }
         }
 
@@ -1245,12 +1254,12 @@
             let num = document.getElementById('zoiper-input-display').value.trim();
             if (num.length < 7) { alert("Ingresa un número válido para discar."); return; }
             let numLimpio = normalizarNumero(num);
-            // Llamada directa sin ventana de confirmación para evitar bloqueos en PC
             iniciarLlamadaVozHD(numLimpio);
         }
 
         async function iniciarLlamadaVozHD(numDestino) {
             let numLimpioDestino = normalizarNumero(numDestino || numeroDestinoActual);
+            let miIdLimpio = normalizarNumero(miNumeroAsignado);
             let infoTarifa = obtenerTarifaPorMinuto(numLimpioDestino);
             
             if (infoTarifa.tarifaMin > 0 && saldoActual < infoTarifa.tarifaMin) {
@@ -1272,12 +1281,15 @@
                     wsSocket.send(JSON.stringify({ 
                         type: 'offer', 
                         target: numLimpioDestino, 
-                        from: normalizarNumero(miNumeroAsignado),
+                        from: miIdLimpio,
                         payload: offer 
                     }));
+                    console.log("Oferta WebRTC enviada de", miIdLimpio, "hacia", numLimpioDestino);
+                } else {
+                    alert("Error: El servidor WebSocket no está conectado.");
                 }
             } catch (err) {
-                console.error("Error micrófono:", err);
+                console.error("Error al iniciar WebRTC:", err);
             }
 
             costoPorSegundo = infoTarifa.tarifaMin / 60;
@@ -1287,7 +1299,8 @@
                 callSeconds++;
                 let mins = String(Math.floor(callSeconds / 60)).padStart(2, '0');
                 let secs = String(callSeconds % 60).padStart(2, '0');
-                document.getElementById('call-timer').innerText = `${mins}:${secs}`;
+                let callTimer = document.getElementById('call-timer');
+                if (callTimer) callTimer.innerText = `${mins}:${secs}`;
                 
                 if (costoPorSegundo > 0) {
                     saldoActual -= costoPorSegundo;
