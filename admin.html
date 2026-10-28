@@ -13,7 +13,8 @@
         .card { background: #0f172a; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #1e293b; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
         input, select { width: 100%; background: #020617; border: 1px solid #334155; border-radius: 10px; padding: 12px; color: #f8fafc; margin-bottom: 12px; outline: none; }
         .btn { width: 100%; background: #10b981; color: #fff; border: none; padding: 12px; border-radius: 10px; font-weight: bold; cursor: pointer; }
-        .history-item { background: #020617; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; }
+        .btn-csv { background: #0284c7; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.8rem; }
+        .history-item { background: #020617; padding: 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.85rem; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1e293b; flex-wrap: wrap; gap: 8px; }
         
         #login-admin-overlay {
             display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -60,16 +61,28 @@
 
         <!-- BASE DE DATOS DE CLIENTES -->
         <div class="card">
-            <h2 style="color: #38bdf8; margin-top: 0;">👥 Base de Líneas y Clientes Registrados</h2>
-            <div id="admin-lista-clientes" style="max-height: 250px; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="color: #38bdf8; margin: 0;">👥 Base de Líneas y Clientes Registrados</h2>
+                <button class="btn-csv" onclick="exportarClientesCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Clientes CSV</button>
+            </div>
+            
+            <input type="text" id="filtro-busqueda-cli" placeholder="🔍 Buscar por Nombre, Cédula o Número..." onkeyup="filtrarClientes()" />
+            
+            <div id="admin-lista-clientes" style="max-height: 300px; overflow-y: auto;">
                 <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando clientes desde Supabase...</div>
             </div>
         </div>
 
         <!-- SOLICITUDES DE RECARGA -->
         <div class="card" style="border-color: #f59e0b;">
-            <h2 style="color: #f59e0b; margin-top: 0;">💳 Solicitudes de Recarga y Pagos Móviles</h2>
-            <div id="admin-lista-pagos" style="max-height: 250px; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2 style="color: #f59e0b; margin: 0;">💳 Solicitudes de Recarga y Pagos Móviles</h2>
+                <button class="btn-csv" style="background: #d97706;" onclick="exportarPagosCSV()"><i class="fa-solid fa-file-csv"></i> Exportar Pagos CSV</button>
+            </div>
+
+            <input type="text" id="filtro-busqueda-pagos" placeholder="🔍 Buscar por Teléfono o Referencia..." onkeyup="filtrarPagos()" />
+
+            <div id="admin-lista-pagos" style="max-height: 300px; overflow-y: auto;">
                 <div style="color: #8696a0; text-align: center; padding: 20px;">Cargando solicitudes de pago...</div>
             </div>
         </div>
@@ -80,6 +93,9 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBncGNqc3BiemZqc2x5bGN3eWp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTI2Nzc4MjYsImV4cCI6MjEwODI1MzgyNn0.BfAOs8XogsXGzp4ZDIIAO9cx3npcE6ZMqsdeU2hPbH8';
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        let cacheClientes = [];
+        let cachePagos = [];
 
         window.onload = function() {
             if (sessionStorage.getItem('omnimovil_admin_autenticado') === 'true') {
@@ -111,44 +127,182 @@
         }
 
         async function cargarDatosAdminSupabase() {
-            let boxClientes = document.getElementById('admin-lista-clientes');
-            let boxPagos = document.getElementById('admin-lista-pagos');
-
             let { data: clientes, error: errCli } = await _supabase.from('clientes_omnimovil').select('*');
-            
-            boxClientes.innerHTML = '';
-            if (errCli) {
-                boxClientes.innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla clientes: ${errCli.message}</div>`;
-            } else if (!clientes || clientes.length === 0) {
-                boxClientes.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay clientes registrados todavía.</div>`;
+            if (!errCli && clientes) {
+                cacheClientes = clientes;
+                renderizarClientes(cacheClientes);
             } else {
-                clientes.forEach(c => {
-                    let div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `<span><strong>${c.nombre || 'Sin nombre'}</strong> (${c.numero_linea || 'Sin línea'}) - User: ${c.usuario}</span> <span style="color:#10b981; font-weight:bold;">$${(c.saldo || 0).toFixed(2)}</span>`;
-                    boxClientes.appendChild(div);
-                });
+                document.getElementById('admin-lista-clientes').innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla clientes: ${errCli?.message}</div>`;
             }
 
             let { data: pagos, error: errPag } = await _supabase.from('verificaciones_omnimovil').select('*');
-
-            boxPagos.innerHTML = '';
-            if (errPag) {
-                boxPagos.innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla pagos: ${errPag.message}</div>`;
-            } else if (!pagos || pagos.length === 0) {
-                boxPagos.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes de recarga pendientes.</div>`;
+            if (!errPag && pagos) {
+                cachePagos = pagos;
+                renderizarPagos(cachePagos);
             } else {
-                pagos.forEach(p => {
-                    let div = document.createElement('div');
-                    div.className = 'history-item';
-                    div.innerHTML = `<span>Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong> | Monto: $${p.intentos}</span> 
-                        <div>
-                            <span style="color:#f59e0b; margin-right: 10px;">${p.estado || 'Pendiente'}</span>
-                            <button onclick="aprobarRecarga('${p.telefono}', ${p.intentos})" style="background:#10b981; color:#fff; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;">Aprobar</button>
-                        </div>`;
-                    boxPagos.appendChild(div);
-                });
+                document.getElementById('admin-lista-pagos').innerHTML = `<div style="color:#ef4444; text-align:center; padding:15px;">Error tabla pagos: ${errPag?.message}</div>`;
             }
+        }
+
+        function renderizarClientes(lista) {
+            let box = document.getElementById('admin-lista-clientes');
+            box.innerHTML = '';
+            if (lista.length === 0) {
+                box.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No se encontraron clientes.</div>`;
+                return;
+            }
+            lista.forEach(c => {
+                let estadoLinea = c.estado_linea || 'Activa';
+                let colorEstado = estadoLinea === 'Activa' ? '#10b981' : (estadoLinea === 'Suspendida' ? '#ef4444' : '#f59e0b');
+
+                let div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div>
+                        <strong>${c.nombre || 'Sin nombre'}</strong> (C.I: ${c.cedula || 'N/A'})<br>
+                        <span style="color:#38bdf8;">${c.numero_linea || 'Sin línea'}</span> | User: ${c.usuario} | Saldo: <strong style="color:#10b981;">$${(c.saldo || 0).toFixed(2)}</strong>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                        <button onclick="asignarSaldoManual('${c.id}', '${c.nombre}', ${c.saldo || 0})" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;" title="Asignar Saldo Manual"><i class="fa-solid fa-wallet"></i> +Saldo</button>
+                        
+                        <span style="color: ${colorEstado}; font-weight: bold; font-size: 0.75rem;">${estadoLinea}</span>
+                        
+                        <select onchange="cambiarEstadoLinea('${c.id}', this.value)" style="width: auto; padding: 4px; margin: 0; font-size: 0.75rem;">
+                            <option value="Activa" ${estadoLinea === 'Activa' ? 'selected' : ''}>Activa</option>
+                            <option value="Suspendida" ${estadoLinea === 'Suspendida' ? 'selected' : ''}>Suspendida</option>
+                            <option value="En Espera" ${estadoLinea === 'En Espera' ? 'selected' : ''}>En Espera</option>
+                        </select>
+
+                        <button onclick="eliminarCliente('${c.id}', '${c.nombre}')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold;" title="Eliminar Cliente"><i class="fa-solid fa-trash"></i></button>
+                    </div>`;
+                box.appendChild(div);
+            });
+        }
+
+        function renderizarPagos(lista) {
+            let box = document.getElementById('admin-lista-pagos');
+            box.innerHTML = '';
+            if (lista.length === 0) {
+                box.innerHTML = `<div style="color:#8696a0; text-align:center; padding:15px;">No hay solicitudes de recarga.</div>`;
+                return;
+            }
+            lista.forEach(p => {
+                let estadoPago = p.estado || 'Pendiente';
+                let colorPago = estadoPago === 'Aprobado' ? '#10b981' : (estadoPago === 'Rechazado' ? '#ef4444' : '#f59e0b');
+
+                let div = document.createElement('div');
+                div.className = 'history-item';
+                div.innerHTML = `
+                    <div>
+                        Tel: <strong>${p.telefono}</strong> | Ref: <strong>${p.codigo}</strong> | Monto: <strong style="color:#f59e0b;">$${p.intentos}</strong>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <span style="color: ${colorPago}; font-weight: bold; font-size: 0.75rem;">${estadoPago}</span>
+                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Aprobado')" style="background:#10b981; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Aprobar</button>
+                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Rechazado')" style="background:#ef4444; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Rechazar</button>
+                        <button onclick="actualizarEstadoPago('${p.id}', '${p.telefono}', ${p.intentos}, 'Pendiente')" style="background:#f59e0b; color:#fff; border:none; padding:6px 10px; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.75rem;">Pendiente</button>
+                    </div>`;
+                box.appendChild(div);
+            });
+        }
+
+        async function asignarSaldoManual(idCliente, nombreCliente, saldoActual) {
+            let inputMonto = prompt(`Asignar saldo manual a: ${nombreCliente}\nSaldo actual: $${saldoActual}\n\nIngresa el monto a sumar (ej: 5.00 o 10):`);
+            if (!inputMonto) return;
+
+            let montoASumar = parseFloat(inputMonto);
+            if (isNaN(montoASumar) || montoASumar <= 0) {
+                alert("Por favor ingresa un monto válido.");
+                return;
+            }
+
+            let nuevoSaldo = saldoActual + montoASumar;
+            let { error } = await _supabase.from('clientes_omnimovil').update({ saldo: nuevoSaldo }).eq('id', idCliente);
+
+            if (error) {
+                alert("Error al actualizar saldo: " + error.message);
+            } else {
+                alert(`¡Saldo acreditado con éxito!\nNuevo saldo para ${nombreCliente}: $${nuevoSaldo.toFixed(2)}`);
+                cargarDatosAdminSupabase();
+            }
+        }
+
+        async function cambiarEstadoLinea(id, nuevoEstado) {
+            let { error } = await _supabase.from('clientes_omnimovil').update({ estado_linea: nuevoEstado }).eq('id', id);
+            if (error) { alert("Error al actualizar estado: " + error.message); }
+            else { cargarDatosAdminSupabase(); }
+        }
+
+        async function eliminarCliente(id, nombre) {
+            if (confirm(`¿Estás seguro de eliminar al cliente ${nombre}?`)) {
+                let { error } = await _supabase.from('clientes_omnimovil').delete().eq('id', id);
+                if (error) { alert("Error al eliminar: " + error.message); }
+                else { alert("Cliente eliminado con éxito."); cargarDatosAdminSupabase(); }
+            }
+        }
+
+        async function actualizarEstadoPago(idPago, telefono, monto, nuevoEstado) {
+            let { error } = await _supabase.from('verificaciones_omnimovil').update({ estado: nuevoEstado }).eq('id', idPago);
+            if (error) { alert("Error al actualizar pago: " + error.message); return; }
+
+            if (nuevoEstado === 'Aprobado') {
+                let { data: cli } = await _supabase.from('clientes_omnimovil').select('*').eq('numero_linea', telefono).single();
+                if (cli) {
+                    let nuevoSaldo = (cli.saldo || 0) + parseFloat(monto);
+                    await _supabase.from('clientes_omnimovil').update({ saldo: nuevoSaldo }).eq('numero_linea', telefono);
+                }
+            }
+
+            alert(`Solicitud actualizada a: ${nuevoEstado}`);
+            cargarDatosAdminSupabase();
+        }
+
+        function filtrarClientes() {
+            let query = document.getElementById('filtro-busqueda-cli').value.toLowerCase();
+            let filtrados = cacheClientes.filter(c => 
+                (c.nombre && c.nombre.toLowerCase().includes(query)) ||
+                (c.cedula && c.cedula.toLowerCase().includes(query)) ||
+                (c.numero_linea && c.numero_linea.toLowerCase().includes(query)) ||
+                (c.usuario && c.usuario.toLowerCase().includes(query))
+            );
+            renderizarClientes(filtrados);
+        }
+
+        function filtrarPagos() {
+            let query = document.getElementById('filtro-busqueda-pagos').value.toLowerCase();
+            let filtrados = cachePagos.filter(p => 
+                (p.telefono && p.telefono.toLowerCase().includes(query)) ||
+                (p.codigo && p.codigo.toLowerCase().includes(query))
+            );
+            renderizarPagos(filtrados);
+        }
+
+        function exportarClientesCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Nombre,Cedula,Usuario,Linea,Saldo,EstadoLinea\n";
+            cacheClientes.forEach(c => {
+                csvContent += `"${c.nombre || ''}","${c.cedula || ''}","${c.usuario || ''}","${c.numero_linea || ''}","${c.saldo || 0}","${c.estado_linea || 'Activa'}"\n`;
+            });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "clientes_omnimovil.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportarPagosCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Telefono,Referencia,Monto,Estado\n";
+            cachePagos.forEach(p => {
+                csvContent += `"${p.telefono || ''}","${p.codigo || ''}","${p.intentos || 0}","${p.estado || 'Pendiente'}"\n`;
+            });
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "recargas_omnimovil.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         }
 
         async function adminRegistrarCliente() {
@@ -163,7 +317,7 @@
             let fechaPruebaFin = new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString();
 
             let { error } = await _supabase.from('clientes_omnimovil').insert([
-                { nombre, cedula, usuario, pass, numero_linea: numeroAsignado, saldo: 0.00, prueba_fin: fechaPruebaFin }
+                { nombre, cedula, usuario, pass, numero_linea: numeroAsignado, saldo: 0.00, prueba_fin: fechaPruebaFin, estado_linea: 'Activa' }
             ]);
 
             if (error) { alert("Error al registrar: " + error.message); return; }
@@ -173,17 +327,6 @@
             document.getElementById('admin-reg-cedula').value = '';
             document.getElementById('admin-reg-usuario').value = '';
             document.getElementById('admin-reg-pass').value = '';
-            cargarDatosAdminSupabase();
-        }
-
-        async function aprobarRecarga(telefono, monto) {
-            let { data: cli } = await _supabase.from('clientes_omnimovil').select('*').eq('numero_linea', telefono).single();
-            if (cli) {
-                let nuevoSaldo = (cli.saldo || 0) + parseFloat(monto);
-                await _supabase.from('clientes_omnimovil').update({ saldo: nuevoSaldo }).eq('numero_linea', telefono);
-            }
-            await _supabase.from('verificaciones_omnimovil').update({ estado: 'Aprobado' }).eq('telefono', telefono);
-            alert(`¡Recarga aprobada! Se acreditaron $${monto} a la línea ${telefono}.`);
             cargarDatosAdminSupabase();
         }
     </script>
