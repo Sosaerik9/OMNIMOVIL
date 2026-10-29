@@ -168,12 +168,27 @@
             background: #020617;
             padding: 12px;
             border-radius: 10px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #1e293b;
+            <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-3391</strong>
+                        <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Erik</span>)</span>
+                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="status-badge">● ACTIVA</span>
+                        
+                        <!-- 🚀 PEGA ESTO AQUÍ (Entre la línea 170 y 175 aprox.) -->
+                        <button onclick="abrirChatEmergenciaMesh()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                            <span>Mesh</span>
+                        </button>
+                        <!-- FIN DEL CÓDIGO A INSERTAR -->
+
+                        <button class="logout-top-btn" onclick="cerrarSesionCliente()">Salir</button>
+                    </div>
+                </div>
+            </div>
         }
 
         /* TELÉFONO ZOIPER & WEBRTC */
