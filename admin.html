@@ -410,6 +410,78 @@
             document.getElementById('admin-reg-pass').value = '';
             cargarDatosAdminSupabase();
         }
+        // --- CENTRO DE CONTROL MESH & SATELITAL (ADMIN) ---
+function cargarPanelAdminMesh() {
+    let contenedorPrincipal = document.getElementById('panel-admin-contenido') || document.querySelector('.container');
+    
+    document.querySelectorAll('.admin-section, .panel-view').forEach(sec => sec.style.display = 'none');
+
+    let panelMesh = document.getElementById('sec-admin-mesh');
+    if (!panelMesh) {
+        panelMesh = document.createElement('div');
+        panelMesh.id = 'sec-admin-mesh';
+        panelMesh.className = 'card';
+        panelMesh.style.cssText = 'border-color: #6366f1; padding: 20px; margin-top: 16px;';
+        
+        panelMesh.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 1px solid #1e293b; padding-bottom: 12px;">
+                <div>
+                    <h2 style="color: #818cf8; margin: 0; font-size: 1.2rem; font-weight: bold;">📡 Centro de Control Mesh & Satelital</h2>
+                    <p style="color: #94a3b8; font-size: 0.75rem; margin: 4px 0 0 0;">Monitoreo de Nodos Locales y Respaldo Solar (Mérida)</p>
+                </div>
+                <span class="status-badge" style="background: rgba(99, 102, 241, 0.2); color: #818cf8; border-color: rgba(99, 102, 241, 0.4);">● RED MESH ACTIVA</span>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 20px;">
+                <div style="background: #020617; padding: 14px; border-radius: 12px; border: 1px solid #1e293b;">
+                    <span style="font-size: 0.75rem; color: #94a3b8;">Nodos Solares Activos</span>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #10b981; margin-top: 4px;">4 / 4 Nodos</div>
+                    <span style="font-size: 0.65rem; color: #10b981;">⚡ Operando a 100% Batería</span>
+                </div>
+                <div style="background: #020617; padding: 14px; border-radius: 12px; border: 1px solid #1e293b;">
+                    <span style="font-size: 0.75rem; color: #94a3b8;">Enlace Satelital LEO</span>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #38bdf8; margin-top: 4px;">En Línea (32ms)</div>
+                    <span style="font-size: 0.65rem; color: #38bdf8;">🛰️ Starlink / Respaldo Directo</span>
+                </div>
+                <div style="background: #020617; padding: 14px; border-radius: 12px; border: 1px solid #1e293b;">
+                    <span style="font-size: 0.75rem; color: #94a3b8;">Dispositivos Conectados P2P</span>
+                    <div style="font-size: 1.5rem; font-weight: bold; color: #f59e0b; margin-top: 4px;">18 Usuarios</div>
+                    <span style="font-size: 0.65rem; color: #f59e0b;">📶 Vía Wi-Fi Direct / Bluetooth</span>
+                </div>
+            </div>
+
+            <div style="background: #020617; padding: 16px; border-radius: 14px; border: 1px solid #1e293b; margin-bottom: 20px;">
+                <h3 style="color: #e2e8f0; font-size: 0.9rem; margin-top: 0; margin-bottom: 12px;">⚡ Conmutador de Emergencia por Apagón</h3>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button onclick="simularApagonAdmin(true)" style="background: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer;">🚨 Activar Modo Apagón Total</button>
+                    <button onclick="simularApagonAdmin(false)" style="background: #10b981; color: white; border: none; padding: 10px 16px; border-radius: 10px; font-weight: bold; font-size: 0.8rem; cursor: pointer;">✅ Restaurar Red Eléctrica / Normal</button>
+                </div>
+            </div>
+
+            <h3 style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 8px;">📋 Tráfico de Datos Mesh Local</h3>
+            <div class="static-scroll-box" id="logs-admin-mesh" style="height: 180px; font-family: monospace; font-size: 0.75rem; color: #38bdf8;">
+                <div>[SYSTEM] Nodo Central Mérida en línea. Carga solar: 100%.</div>
+                <div>[SATELLITE] Enlace LEO sincronizado con éxito.</div>
+                <div>[MESH P2P] Dispositivo +58 500-3391 autenticado en malla local.</div>
+            </div>
+        `;
+        contenedorPrincipal.appendChild(panelMesh);
+    } else {
+        panelMesh.style.display = 'block';
+    }
+}
+
+function simularApagonAdmin(activar) {
+    let logBox = document.getElementById('logs-admin-mesh');
+    if (activar) {
+        alert("🚨 MODO APAGÓN ACTIVADO\nSe ha forzado el paso de la red a nodos solares y enlace satelital de emergencia.");
+        if (logBox) logBox.innerHTML += `<div style="color:#ef4444;">[ALERTA] Red eléctrica fuera de servicio. Conmutando a Baterías y Satélite...</div>`;
+    } else {
+        alert("✅ MODO NORMAL RESTAURADO\nServicios conectados a la red eléctrica e internet comercial.");
+        if (logBox) logBox.innerHTML += `<div style="color:#10b981;">[SISTEMA] Red eléctrica comercial detectada. Cargando baterías solares.</div>`;
+    }
+    if (logBox) logBox.scrollTop = logBox.scrollHeight;
+}
     </script>
 </body>
 </html>
