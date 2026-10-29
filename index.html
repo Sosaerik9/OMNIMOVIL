@@ -168,26 +168,6 @@
             background: #020617;
             padding: 12px;
             border-radius: 10px;
-            <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-3391</strong>
-                        <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Erik</span>)</span>
-                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="status-badge">● ACTIVA</span>
-                        
-                        <!-- Botón de Red Mesh para el Cliente -->
-                        <button onclick="abrirChatEmergenciaMesh()" class="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition shadow-lg cursor-pointer">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
-                            <span>Mesh</span>
-                        </button>
-
-                        <button class="logout-top-btn" onclick="cerrarSesionCliente()">Salir</button>
-                    </div>
-                </div>
-            </div>
         }
 
         /* TELÉFONO ZOIPER & WEBRTC */
@@ -484,13 +464,7 @@
 
                         <!-- LISTA DE CHATS GUARDADOS -->
                         <div class="wa-content-area" id="lista-chats-wa">
-                            <div class="wa-chat-item" onclick="abrirChatWhatsApp('+58 500-0001', 'Soporte OmniMovil')">
-                                <div class="wa-avatar-wrap"><div class="wa-avatar-img">S</div></div>
-                                <div class="wa-chat-info">
-                                    <strong style="font-size: 0.9rem;">Soporte OmniMovil</strong><br/>
-                                    <span style="font-size: 0.75rem; color: var(--wa-muted);">¡Bienvenido a la red IP!</span>
-                                </div>
-                            </div>
+                            <!-- Se renderiza de manera aislada por cada usuario -->
                         </div>
 
                         <!-- BOTÓN FLOTANTE PARA INICIAR NUEVO CHAT -->
@@ -684,10 +658,34 @@
         let isSpeakerOn = false;
         let localStream = null;
 
-        // Contactos guardados de OmniChat en localStorage
-        let contactosOmniChat = JSON.parse(localStorage.getItem('omnimovil_contactos_chat')) || [
-            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
-        ];
+        // --- GESTIÓN DE CONTACTOS AISLADOS POR USUARIO ---
+        function obtenerClaveContactos() {
+            return 'omnimovil_contactos_' + (miNumeroAsignado ? miNumeroAsignado.replace(/[^0-9]/g, '') : 'default');
+        }
+
+        let contactosOmniChat = [];
+
+        function cargarContactosUsuario() {
+            let clave = obtenerClaveContactos();
+            let guardados = localStorage.getItem(clave);
+            if (guardados) {
+                try {
+                    contactosOmniChat = JSON.parse(guardados);
+                } catch(e) {
+                    contactosOmniChat = [];
+                }
+            } else {
+                contactosOmniChat = [
+                    { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
+                ];
+                guardarContactosUsuario();
+            }
+        }
+
+        function guardarContactosUsuario() {
+            let clave = obtenerClaveContactos();
+            localStorage.setItem(clave, JSON.stringify(contactosOmniChat));
+        }
 
         window.onload = async function() {
             try {
@@ -697,8 +695,7 @@
             } catch(e) {}
 
             document.getElementById('tasa-bcv-header').innerText = tasaBCV.toFixed(2);
-            renderizarContactosChat();
-
+            
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             if (usuarioGuardado) {
                 if (usuarioGuardado.toLowerCase() === 'admin') {
@@ -706,6 +703,9 @@
                     return;
                 }
                 buscarClienteSupabase(usuarioGuardado);
+            } else {
+                cargarContactosUsuario();
+                renderizarContactosChat();
             }
         };
 
@@ -823,6 +823,10 @@
 
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
+
+            // Cargar los contactos exclusivos del usuario autenticado
+            cargarContactosUsuario();
+            renderizarContactosChat();
         }
 
         function cerrarSesionCliente() {
@@ -1006,9 +1010,12 @@
                 return;
             }
 
-            // Guardar en el arreglo y en localStorage
-            contactosOmniChat.push({ nombre, numero, ultimo: "Nuevo chat iniciado" });
-            localStorage.setItem('omnimovil_contactos_chat', JSON.stringify(contactosOmniChat));
+            // Evitar duplicados y guardar en el almacenamiento local exclusivo del usuario actual
+            let existe = contactosOmniChat.find(c => c.numero === numero);
+            if (!existe) {
+                contactosOmniChat.push({ nombre, numero, ultimo: "Nuevo chat iniciado" });
+                guardarContactosUsuario();
+            }
 
             document.getElementById('input-nuevo-nombre-contacto').value = '';
             document.getElementById('input-nuevo-numero-chat').value = '';
