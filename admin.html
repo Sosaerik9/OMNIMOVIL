@@ -422,10 +422,9 @@
         }
         // --- CENTRO DE CONTROL MESH & SATELITAL (ADMIN) ---
 function cargarPanelAdminMesh() {
-    let contenedorPrincipal = document.getElementById('panel-admin-contenido') || document.querySelector('.container');
+    let contenedorPrincipal = document.getElementById('admin-main-content') || document.querySelector('.container');
     
-    document.querySelectorAll('.admin-section, .panel-view').forEach(sec => sec.style.display = 'none');
-
+    // Ocultar las otras secciones del admin si deseas que abra limpio
     let panelMesh = document.getElementById('sec-admin-mesh');
     if (!panelMesh) {
         panelMesh = document.createElement('div');
@@ -472,9 +471,26 @@ function cargarPanelAdminMesh() {
             <div class="static-scroll-box" id="logs-admin-mesh" style="height: 180px; font-family: monospace; font-size: 0.75rem; color: #38bdf8;">
                 <div>[SYSTEM] Nodo Central Mérida en línea. Carga solar: 100%.</div>
                 <div>[SATELLITE] Enlace LEO sincronizado con éxito.</div>
-                <div>[MESH P2P] Dispositivo +58 500-3391 autenticado en malla local.</div>
+                <div>[MESH P2P] Dispositivo autenticado en malla local.</div>
             </div>
         `;
+        contenedorPrincipal.prepend(panelMesh); // Lo coloca al inicio para que se vea de inmediato
+    } else {
+        panelMesh.style.display = panelMesh.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+function simularApagonAdmin(activar) {
+    let logBox = document.getElementById('logs-admin-mesh');
+    if (activar) {
+        alert("🚨 MODO APAGÓN ACTIVADO\nSe ha forzado el paso de la red a nodos solares y enlace satelital de emergencia.");
+        if (logBox) logBox.innerHTML += `<div style="color:#ef4444;">[ALERTA] Red eléctrica fuera de servicio. Conmutando a Baterías y Satélite...</div>`;
+    } else {
+        alert("✅ MODO NORMAL RESTAURADO\nServicios conectados a la red eléctrica e internet comercial.");
+        if (logBox) logBox.innerHTML += `<div style="color:#10b981;">[SISTEMA] Red eléctrica comercial detectada. Cargando baterías solares.</div>`;
+    }
+    if (logBox) logBox.scrollTop = logBox.scrollHeight;
+}
         contenedorPrincipal.appendChild(panelMesh);
     } else {
         panelMesh.style.display = 'block';
