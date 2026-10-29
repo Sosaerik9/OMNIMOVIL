@@ -50,8 +50,17 @@
     <div class="container" id="admin-main-content" style="display: none;">
         <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h1 style="color: #38bdf8; font-size: 1.2rem; font-weight: bold;"><i class="fa-solid fa-shield-halved"></i> Control Central Operadora OmniMovil</h1>
-            <button onclick="cerrarSesionAdmin()" style="background: #ef4444; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cerrar Sesión Admin</button>
-        </header>
+            <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h1 style="color: #38bdf8; font-size: 1.2rem; font-weight: bold;"><i class="fa-solid fa-shield-halved"></i> Control Central Operadora OmniMovil</h1>
+            
+            <!-- 🚀 PEGA ESTO AQUÍ (Línea 53 aprox.) -->
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <button onclick="cargarPanelAdminMesh()" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); color: #fff; border: none; padding: 8px 14px; border-radius: 8px; font-weight: bold; font-size: 0.8rem; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);">
+                    <i class="fa-solid fa-tower-broadcast"></i> 📡 Control Mesh
+                </button>
+                <button onclick="cerrarSesionAdmin()" style="background: #ef4444; color: #fff; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;">Cerrar Sesión</button>
+            </div>
+        </header> <!-- Línea 54 -->
 
         <!-- TARJETAS DE MÉTRICAS FINANCIERAS -->
         <div class="stats-grid">
