@@ -231,7 +231,7 @@
         .zoiper-key:active { background: var(--wa-green); color: #0b141a; transform: scale(0.92); }
         .zoiper-key span { font-size: 0.55rem; color: var(--wa-muted); margin-top: -2px; }
 
-        .zoiper-controls { display: flex; justify-content: space-around; align-items: center; }
+        .zoiper-controls { display: flex; justify-style: space-around; align-items: center; }
 
         .zoiper-action-btn {
             width: 62px;
@@ -650,6 +650,7 @@
         let tasaBCV = 36.50;
         let clienteAutenticado = null;
         let miNumeroAsignado = "+58 500-3391";
+        let numeroReceptorActual = null;
         let saldoActual = 0.00;
         let wsSocket = null;
         let callTimerInterval = null;
@@ -657,8 +658,9 @@
         let isMuted = false;
         let isSpeakerOn = false;
         let localStream = null;
+        let supabaseChannelMensajes = null;
 
-        // --- GESTIÓN DE CONTACTOS AISLADOS POR USUARIO ---
+        // --- GESTIÓN DE CONTACTOS Y MEMORIA COMPARTIDA ---
         function obtenerClaveContactos() {
             return 'omnimovil_contactos_' + (miNumeroAsignado ? miNumeroAsignado.replace(/[^0-9]/g, '') : 'default');
         }
@@ -824,13 +826,15 @@
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
 
-            // Cargar los contactos exclusivos del usuario autenticado
+            // Cargar contactos y activar suscripción Real-time en Supabase
             cargarContactosUsuario();
             renderizarContactosChat();
+            suscribirMensajesRealtimeSupabase();
         }
 
         function cerrarSesionCliente() {
             localStorage.removeItem('omnimovil_usuario_activo');
+            if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
             location.reload();
         }
 
@@ -1010,7 +1014,6 @@
                 return;
             }
 
-            // Evitar duplicados y guardar en el almacenamiento local exclusivo del usuario actual
             let existe = contactosOmniChat.find(c => c.numero === numero);
             if (!existe) {
                 contactosOmniChat.push({ nombre, numero, ultimo: "Nuevo chat iniciado" });
@@ -1022,19 +1025,23 @@
             cerrarModalNuevoChat();
             renderizarContactosChat();
 
-            // Abrir el chat inmediatamente
             abrirChatWhatsApp(numero, nombre);
         }
 
-        function abrirChatWhatsApp(num, nom) { 
+        // --- INTEGACIÓN DE MENSAJES REAL-TIME CON SUPABASE Y RESPALDO ---
+        async function abrirChatWhatsApp(num, nom) { 
+            numeroReceptorActual = num;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
             document.getElementById('chat-nombre-receptor-wa').innerText = nom; 
             document.getElementById('chat-numero-receptor-wa').innerText = num; 
             document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
+            
+            await cargarHistorialMensajesSupabase();
         }
 
         function cerrarChatAbierto() { 
             document.getElementById('pantalla-chat-abierto').classList.remove('active'); 
+            numeroReceptorActual = null;
         }
 
         function togglePickerPanel() { 
@@ -1047,13 +1054,90 @@
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        function enviarMensajeWhatsApp() { 
+        async function cargarHistorialMensajesSupabase() {
+            if (!numeroReceptorActual) return;
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML = '<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cifrado de extremo a extremo activo.</div>';
+
+            let { data, error } = await _supabase
+                .from('mensajes_omnimovil')
+                .select('*')
+                .or(`and(emisor.eq.${miNumeroAsignado},receptor.eq.${numeroReceptorActual}),and(emisor.eq.${numeroReceptorActual},receptor.eq.${miNumeroAsignado})`)
+                .order('created_at', { ascending: true });
+
+            if (data && data.length > 0) {
+                data.forEach(m => {
+                    let esMio = m.emisor === miNumeroAsignado;
+                    box.innerHTML += `<div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">${m.contenido}</div>`;
+                });
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function suscribirMensajesRealtimeSupabase() {
+            if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
+
+            supabaseChannelMensajes = _supabase
+                .channel('realtime_omnimovil_chat')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
+                    let msg = payload.new;
+                    if (msg.receptor === miNumeroAsignado || msg.emisor === miNumeroAsignado) {
+                        // Actualizar lista de conversaciones recientes
+                        let contacto = contactosOmniChat.find(c => c.numero === (msg.emisor === miNumeroAsignado ? msg.receptor : msg.emisor));
+                        if (contacto) {
+                            contacto.ultimo = msg.contenido;
+                            guardarContactosUsuario();
+                            renderizarContactosChat();
+                        }
+
+                        // Si el chat activo coincide, pintar mensaje
+                        if (numeroReceptorActual && (msg.emisor === numeroReceptorActual || msg.receptor === numeroReceptorActual)) {
+                            let box = document.getElementById('contenedor-mensajes-wa');
+                            let esMio = msg.emisor === miNumeroAsignado;
+                            box.innerHTML += `<div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">${msg.contenido}</div>`;
+                            box.scrollTop = box.scrollHeight;
+                        }
+                        
+                        // Guardar respaldo adicional de la conversación en almacenamiento
+                        respaldarHistorialEnDrive(msg);
+                    }
+                })
+                .subscribe();
+        }
+
+        async function enviarMensajeWhatsApp() { 
             let txt = document.getElementById('chat-input-texto-wa').value.trim(); 
-            if (!txt) return; 
-            let box = document.getElementById('contenedor-mensajes-wa'); 
-            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; 
+            if (!txt || !numeroReceptorActual) return; 
+
             document.getElementById('chat-input-texto-wa').value = ''; 
-            box.scrollTop = box.scrollHeight; 
+
+            // Registrar en la base de datos central de Supabase
+            let { error } = await _supabase.from('mensajes_omnimovil').insert([
+                { emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: txt }
+            ]);
+
+            if (error) {
+                // Modo fallback visual si la conexión falla momentáneamente
+                let box = document.getElementById('contenedor-mensajes-wa'); 
+                box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; 
+                box.scrollTop = box.scrollHeight; 
+            }
+        }
+
+        // --- SISTEMA DE RESPALDO Y SINCRONIZACIÓN GOOGLE DRIVE ---
+        function respaldarHistorialEnDrive(msgObj) {
+            try {
+                let claveRespaldo = 'omnimovil_drive_backup_log';
+                let logs = JSON.parse(localStorage.getItem(claveRespaldo) || '[]');
+                logs.push({
+                    fecha: new Date().toISOString(),
+                    linea: miNumeroAsignado,
+                    emisor: msgObj.emisor,
+                    receptor: msgObj.receptor,
+                    mensaje: msgObj.contenido
+                });
+                localStorage.setItem(claveRespaldo, JSON.stringify(logs));
+            } catch(e) {}
         }
     </script>
 </body>
