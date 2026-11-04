@@ -1124,21 +1124,63 @@
             }
         }
 
-        // --- SISTEMA DE RESPALDO Y SINCRONIZACIÓN GOOGLE DRIVE ---
-        function respaldarHistorialEnDrive(msgObj) {
-            try {
-                let claveRespaldo = 'omnimovil_drive_backup_log';
-                let logs = JSON.parse(localStorage.getItem(claveRespaldo) || '[]');
-                logs.push({
-                    fecha: new Date().toISOString(),
-                    linea: miNumeroAsignado,
-                    emisor: msgObj.emisor,
-                    receptor: msgObj.receptor,
-                    mensaje: msgObj.contenido
+        // --- FUNCIÓN DE CARGA Y FILTRADO DE MENSAJES (CORREGIDA) ---
+        async function cargarMensajesChat(receptorNum) {
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
+
+            let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
+            let recClean = receptorNum.replace(/[^0-9]/g, '');
+
+            let { data, error } = await _supabase
+                .from('mensajes_omnimovil')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados en OmniMovil.</div>`;
+
+            if (data && data.length > 0) {
+                data.forEach(m => {
+                    let remClean = m.remitente_num ? m.remitente_num.replace(/[^0-9]/g, '') : '';
+                    let recvClean = m.receptor_num ? m.receptor_num.replace(/[^0-9]/g, '') : '';
+
+                    let esMioParaEl = (remClean === mioClean && recvClean === recClean);
+                    let esElParaMio = (remClean === recClean && recvClean === mioClean);
+
+                    if (esMioParaEl || esElParaMio) {
+                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
+                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${m.mensaje}</div>`;
+                    }
                 });
-                localStorage.setItem(claveRespaldo, JSON.stringify(logs));
-            } catch(e) {}
+            }
+            box.scrollTop = box.scrollHeight;
         }
+
+        // --- CANAL EN TIEMPO REAL PARA ACTUALIZAR AL INSTANTE ---
+        function inicializarCanalRealtimeChat() {
+            _supabase
+                .channel('public:mensajes_omnimovil')
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
+                    let nuevoMsg = payload.new;
+                    let receptorActual = document.getElementById('chat-numero-receptor-wa').innerText.trim();
+
+                    let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
+                    let remClean = nuevoMsg.remitente_num ? nuevoMsg.remitente_num.replace(/[^0-9]/g, '') : '';
+                    let recClean = receptorActual.replace(/[^0-9]/g, '');
+
+                    if (remClean === recClean) {
+                        let box = document.getElementById('contenedor-mensajes-wa');
+                        box.innerHTML += `<div class="wa-msg-bubble wa-msg-received">${nuevoMsg.mensaje}</div>`;
+                        box.scrollTop = box.scrollHeight;
+                    }
+                })
+                .subscribe();
+        }
+
+        // Inicializar el canal en tiempo real al cargar la página
+        window.addEventListener('load', () => {
+            setTimeout(inicializarCanalRealtimeChat, 2000);
+        });
     </script>
 </body>
 </html>
