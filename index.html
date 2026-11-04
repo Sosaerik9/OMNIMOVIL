@@ -1028,7 +1028,7 @@
             abrirChatWhatsApp(numero, nombre);
         }
 
-        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL ---
+        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL CON SUPABASE ---
         async function abrirChatWhatsApp(num, nom) { 
             numeroReceptorActual = num;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
@@ -1054,7 +1054,7 @@
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        // --- FUNCIÓN MEJORADA PARA ENVIAR MENSAJES Y GUARDAR CONTACTO ---
+        // --- ENVIAR MENSAJE (Inserta en ambas nomenclaturas para máxima compatibilidad) ---
         async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
             let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
@@ -1063,17 +1063,22 @@
 
             document.getElementById('chat-input-texto-wa').value = '';
 
-            // 1. Insertar el mensaje en Supabase con formato unificado
+            // Insertar con doble compatibilidad de columnas en Supabase
             let { error } = await _supabase.from('mensajes_omnimovil').insert([
-                { remitente_num: miNumeroAsignado, receptor_num: receptorNum, mensaje: txt }
+                { 
+                    remitente_num: miNumeroAsignado, 
+                    receptor_num: receptorNum, 
+                    emisor: miNumeroAsignado, 
+                    receptor: receptorNum, 
+                    mensaje: txt, 
+                    contenido: txt 
+                }
             ]);
 
-            // 2. Pintar localmente el mensaje enviado
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
             box.scrollTop = box.scrollHeight;
 
-            // 3. Actualizar o agregar el contacto en la lista local de chats de este usuario
             let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
             if (index >= 0) {
                 contactosOmniChat[index].ultimo = "Tú: " + txt;
@@ -1084,7 +1089,7 @@
             renderizarContactosChat();
         }
 
-        // --- CARGAR HISTORIAL Y MENSAJES DESDE SUPABASE ---
+        // --- CARGAR HISTORIAL COMPATIBLE ENTRE DOS USUARIOS ---
         async function cargarMensajesChat(receptorNum) {
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
@@ -1120,7 +1125,7 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- TIEMPO REAL: ESCUCHAR NUEVOS MENSAJES Y ACTUALIZAR LISTA DE CHATS ---
+        // --- TIEMPO REAL: ESCUCHAR NUEVOS MENSAJES Y ACTUALIZAR VISTA EN VIVO ---
         function suscribirMensajesRealtimeSupabase() {
             if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
 
@@ -1136,9 +1141,8 @@
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = rec.replace(/[^0-9]/g, '');
 
-                    // Verificar si el mensaje va dirigido a este usuario
+                    // Si el mensaje viene dirigido a este usuario
                     if (recClean === mioClean) {
-                        // Actualizar último mensaje en la lista de contactos o agregarlo si no existe
                         let contactIndex = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remClean);
                         if (contactIndex >= 0) {
                             contactosOmniChat[contactIndex].ultimo = txt;
@@ -1148,7 +1152,7 @@
                         guardarContactosUsuario();
                         renderizarContactosChat();
 
-                        // Si el chat con este remitente está abierto actualmente en pantalla, pintarlo de inmediato
+                        // Si tiene el chat abierto con este remitente exacto, pintar el mensaje al momento
                         let receptorActual = numeroReceptorActual ? numeroReceptorActual.replace(/[^0-9]/g, '') : '';
                         if (receptorActual === remClean) {
                             let box = document.getElementById('contenedor-mensajes-wa');
