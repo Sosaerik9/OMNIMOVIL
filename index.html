@@ -783,6 +783,7 @@
 
             let { data, error } = await _supabase.from('clientes_omnimovil').select('*').eq('usuario', userVal).single();
             if (error || !data) { alert("Usuario no encontrado."); return; }
+            if (data.pass && data.pass !== passVal) { alert("Contraseña incorrecta."); return; }
             vincularSesionCliente(data);
         }
 
@@ -826,7 +827,6 @@
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
 
-            // Cargar contactos y activar suscripción Real-time en Supabase
             cargarContactosUsuario();
             renderizarContactosChat();
             suscribirMensajesRealtimeSupabase();
@@ -1028,7 +1028,7 @@
             abrirChatWhatsApp(numero, nombre);
         }
 
-        // --- INTEGACIÓN DE MENSAJES REAL-TIME CON SUPABASE Y RESPALDO ---
+        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL ---
         async function abrirChatWhatsApp(num, nom) { 
             numeroReceptorActual = num;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
@@ -1036,7 +1036,7 @@
             document.getElementById('chat-numero-receptor-wa').innerText = num; 
             document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
             
-            await cargarHistorialMensajesSupabase();
+            await cargarMensajesChat(num);
         }
 
         function cerrarChatAbierto() { 
@@ -1054,62 +1054,7 @@
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        async function cargarHistorialMensajesSupabase() {
-            if (!numeroReceptorActual) return;
-            let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML = '<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cifrado de extremo a extremo activo.</div>';
-
-            let { data, error } = await _supabase
-                .from('mensajes_omnimovil')
-                .select('*')
-                .or(`and(emisor.eq.${miNumeroAsignado},receptor.eq.${numeroReceptorActual}),and(emisor.eq.${numeroReceptorActual},receptor.eq.${miNumeroAsignado})`)
-                .order('created_at', { ascending: true });
-
-            if (data && data.length > 0) {
-                data.forEach(m => {
-                    let esMio = m.emisor === miNumeroAsignado;
-                    box.innerHTML += `<div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">${m.contenido}</div>`;
-                });
-                box.scrollTop = box.scrollHeight;
-            }
-        }
-
-        // --- FUNCIÓN UNIFICADA DE CARGA Y TIEMPO REAL ---
-        async function cargarMensajesChat(receptorNum) {
-            let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
-
-            let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
-            let recClean = receptorNum.replace(/[^0-9]/g, '');
-
-            let { data, error } = await _supabase
-                .from('mensajes_omnimovil')
-                .select('*')
-                .order('created_at', { ascending: true });
-
-            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados en OmniMovil.</div>`;
-
-            if (data && data.length > 0) {
-                data.forEach(m => {
-                    let rem = m.remitente_num || m.emisor || '';
-                    let rec = m.receptor_num || m.receptor || '';
-                    let txt = m.mensaje || m.contenido || '';
-
-                    let remClean = rem.replace(/[^0-9]/g, '');
-                    let recvClean = rec.replace(/[^0-9]/g, '');
-             
-                    let esMioParaEl = (remClean === mioClean && recvClean === recClean);
-                    let esElParaMio = (remClean === recClean && recvClean === mioClean);
-
-                    if (esMioParaEl || esElParaMio) {
-                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
-                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
-                    }
-                });
-            }
-            box.scrollTop = box.scrollHeight;
-        }
-
+        // --- FUNCIÓN MEJORADA PARA ENVIAR MENSAJES Y GUARDAR CONTACTO ---
         async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
             let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
@@ -1118,14 +1063,17 @@
 
             document.getElementById('chat-input-texto-wa').value = '';
 
+            // 1. Insertar el mensaje en Supabase con formato unificado
             let { error } = await _supabase.from('mensajes_omnimovil').insert([
                 { remitente_num: miNumeroAsignado, receptor_num: receptorNum, mensaje: txt }
             ]);
 
+            // 2. Pintar localmente el mensaje enviado
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
             box.scrollTop = box.scrollHeight;
 
+            // 3. Actualizar o agregar el contacto en la lista local de chats de este usuario
             let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
             if (index >= 0) {
                 contactosOmniChat[index].ultimo = "Tú: " + txt;
@@ -1136,6 +1084,7 @@
             renderizarContactosChat();
         }
 
+        // --- CARGAR HISTORIAL Y MENSAJES DESDE SUPABASE ---
         async function cargarMensajesChat(receptorNum) {
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
@@ -1171,6 +1120,7 @@
             box.scrollTop = box.scrollHeight;
         }
 
+        // --- TIEMPO REAL: ESCUCHAR NUEVOS MENSAJES Y ACTUALIZAR LISTA DE CHATS ---
         function suscribirMensajesRealtimeSupabase() {
             if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
 
@@ -1186,7 +1136,9 @@
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = rec.replace(/[^0-9]/g, '');
 
+                    // Verificar si el mensaje va dirigido a este usuario
                     if (recClean === mioClean) {
+                        // Actualizar último mensaje en la lista de contactos o agregarlo si no existe
                         let contactIndex = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remClean);
                         if (contactIndex >= 0) {
                             contactosOmniChat[contactIndex].ultimo = txt;
@@ -1196,6 +1148,7 @@
                         guardarContactosUsuario();
                         renderizarContactosChat();
 
+                        // Si el chat con este remitente está abierto actualmente en pantalla, pintarlo de inmediato
                         let receptorActual = numeroReceptorActual ? numeroReceptorActual.replace(/[^0-9]/g, '') : '';
                         if (receptorActual === remClean) {
                             let box = document.getElementById('contenedor-mensajes-wa');
@@ -1207,8 +1160,10 @@
                 .subscribe();
         }
 
+        // Inicializar suscripción al cargar la sesión
         window.addEventListener('load', () => {
             setTimeout(suscribirMensajesRealtimeSupabase, 2000);
         });
+    </script>
 </body>
 </html>
