@@ -1074,57 +1074,7 @@
             }
         }
 
-        function suscribirMensajesRealtimeSupabase() {
-            if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
-
-            supabaseChannelMensajes = _supabase
-                .channel('realtime_omnimovil_chat')
-                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
-                    let msg = payload.new;
-                    if (msg.receptor === miNumeroAsignado || msg.emisor === miNumeroAsignado) {
-                        // Actualizar lista de conversaciones recientes
-                        let contacto = contactosOmniChat.find(c => c.numero === (msg.emisor === miNumeroAsignado ? msg.receptor : msg.emisor));
-                        if (contacto) {
-                            contacto.ultimo = msg.contenido;
-                            guardarContactosUsuario();
-                            renderizarContactosChat();
-                        }
-
-                        // Si el chat activo coincide, pintar mensaje
-                        if (numeroReceptorActual && (msg.emisor === numeroReceptorActual || msg.receptor === numeroReceptorActual)) {
-                            let box = document.getElementById('contenedor-mensajes-wa');
-                            let esMio = msg.emisor === miNumeroAsignado;
-                            box.innerHTML += `<div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">${msg.contenido}</div>`;
-                            box.scrollTop = box.scrollHeight;
-                        }
-                        
-                        // Guardar respaldo adicional de la conversación en almacenamiento
-                        respaldarHistorialEnDrive(msg);
-                    }
-                })
-                .subscribe();
-        }
-
-        async function enviarMensajeWhatsApp() { 
-            let txt = document.getElementById('chat-input-texto-wa').value.trim(); 
-            if (!txt || !numeroReceptorActual) return; 
-
-            document.getElementById('chat-input-texto-wa').value = ''; 
-
-            // Registrar en la base de datos central de Supabase
-            let { error } = await _supabase.from('mensajes_omnimovil').insert([
-                { emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: txt }
-            ]);
-
-            if (error) {
-                // Modo fallback visual si la conexión falla momentáneamente
-                let box = document.getElementById('contenedor-mensajes-wa'); 
-                box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`; 
-                box.scrollTop = box.scrollHeight; 
-            }
-        }
-
-        // --- FUNCIÓN DE CARGA Y FILTRADO DE MENSAJES (CORREGIDA) ---
+        // --- FUNCIÓN UNIFICADA DE CARGA Y TIEMPO REAL ---
         async function cargarMensajesChat(receptorNum) {
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
@@ -1141,46 +1091,75 @@
 
             if (data && data.length > 0) {
                 data.forEach(m => {
-                    let remClean = m.remitente_num ? m.remitente_num.replace(/[^0-9]/g, '') : '';
-                    let recvClean = m.receptor_num ? m.receptor_num.replace(/[^0-9]/g, '') : '';
+                    // Compatible con ambas estructuras de columnas
+                    let rem = m.remitente_num || m.emisor || '';
+                    let rec = m.receptor_num || m.receptor || '';
+                    let txt = m.mensaje || m.contenido || '';
+
+                    let remClean = rem.replace(/[^0-9]/g, '');
+                    let recvClean = rec.replace(/[^0-9]/g, '');
 
                     let esMioParaEl = (remClean === mioClean && recvClean === recClean);
                     let esElParaMio = (remClean === recClean && recvClean === mioClean);
 
                     if (esMioParaEl || esElParaMio) {
                         let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
-                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${m.mensaje}</div>`;
+                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
                     }
                 });
             }
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- CANAL EN TIEMPO REAL PARA ACTUALIZAR AL INSTANTE ---
-        function inicializarCanalRealtimeChat() {
+        async function enviarMensajeWhatsApp() {
+            let txt = document.getElementById('chat-input-texto-wa').value.trim();
+            let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
+            if (!txt || !receptorNum) return;
+
+            document.getElementById('chat-input-texto-wa').value = '';
+
+            // Guardar usando las columnas estándar unificadas
+            let { error } = await _supabase.from('mensajes_omnimovil').insert([
+                { remitente_num: miNumeroAsignado, receptor_num: receptorNum, mensaje: txt }
+            ]);
+
+            if (error) {
+                // Fallback visual si ocurre algún error de red
+                let box = document.getElementById('contenedor-mensajes-wa');
+                box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+
+        function suscribirMensajesRealtimeSupabase() {
             _supabase
                 .channel('public:mensajes_omnimovil')
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
-                    let nuevoMsg = payload.new;
+                    let m = payload.new;
                     let receptorActual = document.getElementById('chat-numero-receptor-wa').innerText.trim();
 
+                    let rem = m.remitente_num || m.emisor || '';
+                    let rec = m.receptor_num || m.receptor || '';
+                    let txt = m.mensaje || m.contenido || '';
+
                     let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
-                    let remClean = nuevoMsg.remitente_num ? nuevoMsg.remitente_num.replace(/[^0-9]/g, '') : '';
+                    let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = receptorActual.replace(/[^0-9]/g, '');
 
-                    if (remClean === recClean) {
+                    // Si el mensaje pertenece al chat que tenemos abierto en pantalla
+                    if ((remClean === mioClean && rec.replace(/[^0-9]/g, '') === recClean) || (remClean === recClean && rec.replace(/[^0-9]/g, '') === mioClean)) {
                         let box = document.getElementById('contenedor-mensajes-wa');
-                        box.innerHTML += `<div class="wa-msg-bubble wa-msg-received">${nuevoMsg.mensaje}</div>`;
+                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
+                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
                         box.scrollTop = box.scrollHeight;
                     }
                 })
                 .subscribe();
         }
 
-        // Inicializar el canal en tiempo real al cargar la página
+        // Inicializar al cargar la página
         window.addEventListener('load', () => {
-            setTimeout(inicializarCanalRealtimeChat, 2000);
+            setTimeout(suscribirMensajesRealtimeSupabase, 2000);
         });
-    </script>
 </body>
 </html>
