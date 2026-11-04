@@ -1097,7 +1097,7 @@
 
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recvClean = rec.replace(/[^0-9]/g, '');
-
+             
                     let esMioParaEl = (remClean === mioClean && recvClean === recClean);
                     let esElParaMio = (remClean === recClean && recvClean === mioClean);
 
@@ -1113,6 +1113,7 @@
         async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
             let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
+            let receptorNom = document.getElementById('chat-nombre-receptor-wa').innerText.trim();
             if (!txt || !receptorNum) return;
 
             document.getElementById('chat-input-texto-wa').value = '';
@@ -1121,39 +1122,91 @@
                 { remitente_num: miNumeroAsignado, receptor_num: receptorNum, mensaje: txt }
             ]);
 
-            if (error) {
-                let box = document.getElementById('contenedor-mensajes-wa');
-                box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
-                box.scrollTop = box.scrollHeight;
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
+            box.scrollTop = box.scrollHeight;
+
+            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
+            if (index >= 0) {
+                contactosOmniChat[index].ultimo = "Tú: " + txt;
+            } else {
+                contactosOmniChat.push({ nombre: receptorNom, numero: receptorNum, ultimo: "Tú: " + txt });
             }
+            guardarContactosUsuario();
+            renderizarContactosChat();
+        }
+
+        async function cargarMensajesChat(receptorNum) {
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
+
+            let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
+            let recClean = receptorNum.replace(/[^0-9]/g, '');
+
+            let { data, error } = await _supabase
+                .from('mensajes_omnimovil')
+                .select('*')
+                .order('created_at', { ascending: true });
+
+            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados en OmniMovil.</div>`;
+
+            if (data && data.length > 0) {
+                data.forEach(m => {
+                    let rem = m.remitente_num || m.emisor || '';
+                    let rec = m.receptor_num || m.receptor || '';
+                    let txt = m.mensaje || m.contenido || '';
+
+                    let remClean = rem.replace(/[^0-9]/g, '');
+                    let recvClean = rec.replace(/[^0-9]/g, '');
+
+                    let esMioParaEl = (remClean === mioClean && recvClean === recClean);
+                    let esElParaMio = (remClean === recClean && recvClean === mioClean);
+
+                    if (esMioParaEl || esElParaMio) {
+                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
+                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
+                    }
+                });
+            }
+            box.scrollTop = box.scrollHeight;
         }
 
         function suscribirMensajesRealtimeSupabase() {
-            _supabase
-                .channel('public:mensajes_omnimovil')
+            if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
+
+            supabaseChannelMensajes = _supabase
+                .channel('public:mensajes_omnimovil_' + miNumeroAsignado)
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
                     let m = payload.new;
-                    let receptorActual = document.getElementById('chat-numero-receptor-wa').innerText.trim();
-
                     let rem = m.remitente_num || m.emisor || '';
                     let rec = m.receptor_num || m.receptor || '';
                     let txt = m.mensaje || m.contenido || '';
 
                     let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
                     let remClean = rem.replace(/[^0-9]/g, '');
-                    let recClean = receptorActual.replace(/[^0-9]/g, '');
+                    let recClean = rec.replace(/[^0-9]/g, '');
 
-                    if ((remClean === mioClean && rec.replace(/[^0-9]/g, '') === recClean) || (remClean === recClean && rec.replace(/[^0-9]/g, '') === mioClean)) {
-                        let box = document.getElementById('contenedor-mensajes-wa');
-                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
-                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
-                        box.scrollTop = box.scrollHeight;
+                    if (recClean === mioClean) {
+                        let contactIndex = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remClean);
+                        if (contactIndex >= 0) {
+                            contactosOmniChat[contactIndex].ultimo = txt;
+                        } else {
+                            contactosOmniChat.push({ nombre: "Usuario " + rem.slice(-4), numero: rem, ultimo: txt });
+                        }
+                        guardarContactosUsuario();
+                        renderizarContactosChat();
+
+                        let receptorActual = numeroReceptorActual ? numeroReceptorActual.replace(/[^0-9]/g, '') : '';
+                        if (receptorActual === remClean) {
+                            let box = document.getElementById('contenedor-mensajes-wa');
+                            box.innerHTML += `<div class="wa-msg-bubble wa-msg-received">${txt}</div>`;
+                            box.scrollTop = box.scrollHeight;
+                        }
                     }
                 })
                 .subscribe();
         }
 
-        // Inicializar al cargar la página
         window.addEventListener('load', () => {
             setTimeout(suscribirMensajesRealtimeSupabase, 2000);
         });
