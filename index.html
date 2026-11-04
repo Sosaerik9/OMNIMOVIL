@@ -231,7 +231,7 @@
         .zoiper-key:active { background: var(--wa-green); color: #0b141a; transform: scale(0.92); }
         .zoiper-key span { font-size: 0.55rem; color: var(--wa-muted); margin-top: -2px; }
 
-        .zoiper-controls { display: flex; justify-style: space-around; align-items: center; }
+        .zoiper-controls { display: flex; justify-content: space-between; align-items: center; }
 
         .zoiper-action-btn {
             width: 62px;
@@ -1091,7 +1091,6 @@
 
             if (data && data.length > 0) {
                 data.forEach(m => {
-                    // Compatible con ambas estructuras de columnas
                     let rem = m.remitente_num || m.emisor || '';
                     let rec = m.receptor_num || m.receptor || '';
                     let txt = m.mensaje || m.contenido || '';
@@ -1118,13 +1117,11 @@
 
             document.getElementById('chat-input-texto-wa').value = '';
 
-            // Guardar usando las columnas estándar unificadas
             let { error } = await _supabase.from('mensajes_omnimovil').insert([
                 { remitente_num: miNumeroAsignado, receptor_num: receptorNum, mensaje: txt }
             ]);
 
             if (error) {
-                // Fallback visual si ocurre algún error de red
                 let box = document.getElementById('contenedor-mensajes-wa');
                 box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
                 box.scrollTop = box.scrollHeight;
@@ -1146,7 +1143,6 @@
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = receptorActual.replace(/[^0-9]/g, '');
 
-                    // Si el mensaje pertenece al chat que tenemos abierto en pantalla
                     if ((remClean === mioClean && rec.replace(/[^0-9]/g, '') === recClean) || (remClean === recClean && rec.replace(/[^0-9]/g, '') === mioClean)) {
                         let box = document.getElementById('contenedor-mensajes-wa');
                         let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
@@ -1161,5 +1157,6 @@
         window.addEventListener('load', () => {
             setTimeout(suscribirMensajesRealtimeSupabase, 2000);
         });
+    </script>
 </body>
 </html>
