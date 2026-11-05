@@ -1212,8 +1212,15 @@
         }
 
         window.addEventListener('load', () => {
-            setTimeout(suscribirMensajesRealtimeSupabase, 2000);
-        });
+    // Autoconectar el servidor WebSocket de la Red SIP al iniciar la app
+    setTimeout(() => {
+        let inputUrl = document.getElementById('ws-url-input');
+        if (inputUrl && typeof conectarServidorWebSocket === 'function') {
+            conectarServidorWebSocket();
+            console.log("Auto-conectando Red SIP en segundo plano...");
+        }
+    }, 1000);
+});
     </script>
 </body>
 </html>
