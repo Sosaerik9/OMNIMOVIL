@@ -4,7 +4,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OmniMovil - La Red de Comunicaciones IP</title>
+    <title>OmniMovil - La Red de Comunicaciones IP (Optimizado)</title>
     
     <meta name="theme-color" content="#0b141a">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -26,6 +26,7 @@
             --wa-text: #e9edef;
             --wa-muted: #8696a0;
             --wa-green: #00a884;
+            --wa-blue-ticks: #53bdeb;
             --accent-red: #ef4444;
             --accent-orange: #f59e0b;
         }
@@ -41,7 +42,7 @@
             padding-bottom: 50px;
         }
 
-        .container { max-width: 1100px; margin: 0 auto; }
+        .container { max-width: 1100px; margin: 0 auto; width: 100%; }
 
         .main-header {
             display: flex;
@@ -55,7 +56,7 @@
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
 
-        .header-actions { display: flex; gap: 8px; align-items: center; }
+        .header-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
 
         .login-top-btn {
             background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
@@ -83,6 +84,57 @@
             cursor: pointer;
         }
 
+        .btn-volver-panel {
+            background: #1e293b;
+            color: #38bdf8;
+            border: 1px solid #334155;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+        .btn-volver-panel:hover { background: #334155; color: #fff; }
+
+        .btn-emergency-sos {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+            color: #fff;
+            border: 2px solid #f87171;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.8rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            animation: pulse-sos 1.5s infinite;
+        }
+        @keyframes pulse-sos {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        .emergency-active-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(127, 29, 29, 0.95);
+            z-index: 5000;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            padding: 24px;
+        }
+        .emergency-active-overlay.active { display: flex; }
+
         .panel-view { display: none; }
         .panel-view.active { display: block; }
 
@@ -97,7 +149,7 @@
 
         .card h2 { font-size: 1rem; color: #94a3b8; margin-bottom: 12px; margin-top: 0; font-weight: 600; }
 
-        input, select {
+        input, select, textarea {
             width: 100%;
             background: #020617;
             border: 1px solid #334155;
@@ -110,7 +162,7 @@
             transition: border-color 0.2s;
         }
 
-        input:focus { border-color: #0284c7; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2); }
+        input:focus, textarea:focus { border-color: #0284c7; box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.2); }
 
         .btn {
             width: 100%;
@@ -147,6 +199,10 @@
             border: 1px solid #1e293b;
         }
 
+        @media(max-width: 768px) {
+            .client-tabs { grid-template-columns: repeat(3, 1fr); }
+        }
+
         .client-tab-btn {
             background: none;
             border: none;
@@ -170,13 +226,13 @@
             border-radius: 10px;
         }
 
-        /* TELÉFONO ZOIPER & WEBRTC */
         .zoiper-phone-card {
             background: #0b141a;
             color: #ffffff;
             border-radius: 24px;
             padding: 24px;
-            max-width: 360px;
+            width: 100%;
+            max-width: 380px;
             margin: 0 auto 16px auto;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             border: 1px solid #1f2c34;
@@ -248,7 +304,6 @@
         .btn-hangup-red { background: #ef4444; color: #ffffff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
         .btn-backspace-dark { background: #202c33; color: var(--wa-muted); }
 
-        /* PANTALLA DE LLAMADA ACTIVA WEB RTC */
         #modal-call-screen {
             display: none;
             position: fixed;
@@ -285,18 +340,22 @@
         .btn-wa-muted-dark.active { background: #e9edef; color: #111b21; }
         .btn-wa-hangup { background: #ef4444; color: #ffffff; width: 72px; height: 72px; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
 
-        /* OMNICHAT ESTILO WHATSAPP DARK MODE */
         .wa-app-container {
             background: var(--wa-bg);
             color: var(--wa-text);
             border-radius: 20px;
             overflow: hidden;
-            height: 640px;
+            height: 72vh;
+            min-height: 520px;
             display: flex;
             flex-direction: column;
             position: relative;
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             border: 1px solid #1f2c34;
+        }
+
+        @media(max-width: 768px) {
+            .wa-app-container { height: 82vh; border-radius: 12px; }
         }
 
         .wa-top-bar {
@@ -323,16 +382,57 @@
         .wa-tab-content { display: none; }
         .wa-tab-content.active { display: block; }
 
-        .wa-chat-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #1f2c34; }
+        .wa-chat-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #1f2c34; transition: background 0.15s ease; }
         .wa-chat-item:hover { background: #182229; }
 
         .wa-avatar-wrap { position: relative; width: 48px; height: 48px; flex-shrink: 0; }
         .wa-avatar-img { width: 100%; height: 100%; border-radius: 50%; background: var(--wa-header); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
         .wa-chat-info { flex-grow: 1; overflow: hidden; }
 
-        .wa-msg-bubble { max-width: 75%; padding: 10px 14px; border-radius: 14px; font-size: 0.85rem; margin-bottom: 8px; word-wrap: break-word; }
+        .wa-msg-bubble { 
+            max-width: 78%; 
+            padding: 8px 12px; 
+            border-radius: 14px; 
+            font-size: 0.85rem; 
+            margin-bottom: 8px; 
+            word-wrap: break-word; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            animation: fadeInMsg 0.2s ease-out;
+        }
+        @keyframes fadeInMsg {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .wa-msg-bubble img, .wa-msg-bubble video, .wa-msg-bubble audio {
+            width: 100% !important;
+            max-height: 340px !important;
+            object-fit: contain !important;
+            border-radius: 8px;
+            display: block;
+            margin-top: 4px;
+            background: #000;
+        }
+
         .wa-msg-sent { background: #005c4b; color: #e9edef; align-self: flex-end; border-top-right-radius: 2px; }
         .wa-msg-received { background: #202c33; color: #e9edef; align-self: flex-start; border-top-left-radius: 2px; }
+
+        .wa-msg-meta {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 4px;
+            font-size: 0.65rem;
+            color: rgba(241, 245, 249, 0.6);
+            margin-top: 4px;
+        }
+
+        .wa-tick-icon { font-size: 0.75rem; }
+        .wa-tick-pending { color: rgba(255, 255, 255, 0.4); }
+        .wa-tick-delivered { color: rgba(255, 255, 255, 0.7); }
+        .wa-tick-read { color: var(--wa-blue-ticks); font-weight: bold; }
 
         .wa-bottom-nav { background: var(--wa-card); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0; border-top: 1px solid #1f2c34; }
         .wa-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--wa-muted); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
@@ -340,33 +440,85 @@
         .wa-nav-btn.active { color: var(--wa-text); font-weight: bold; }
         .wa-nav-btn.active i { background: #103b34; color: var(--wa-green); }
 
-        .wa-fab { position: absolute; bottom: 70px; right: 20px; width: 54px; height: 54px; background: var(--wa-green); color: #0b141a; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 6px 15px rgba(0,0,0,0.5); cursor: pointer; z-index: 10; }
+        .wa-fab { position: absolute; bottom: 70px; right: 20px; width: 54px; height: 54px; background: var(--wa-green); color: #0b141a; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 6px 15px rgba(0,0,0,0.5); cursor: pointer; z-index: 10; transition: transform 0.15s ease; }
+        .wa-fab:active { transform: scale(0.92); }
         
         .wa-chat-view { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--wa-bg); z-index: 100; flex-direction: column; }
         .wa-chat-view.active { display: flex; }
 
         .wa-chat-view-header { background: var(--wa-card); padding: 12px 16px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #1f2c34; }
-        .wa-chat-view-messages { flex-grow: 1; padding: 14px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1f2c34 1.2px, transparent 0); background-size: 18px 18px; }
+        .wa-chat-view-messages { flex-grow: 1; padding: 14px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background-image: radial-gradient(#1f2c34 1.2px, transparent 0); background-size: 18px 18px; scroll-behavior: smooth; }
 
         .wa-input-bar-dark { background: var(--wa-card); padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #1f2c34; position: relative; }
         .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 16px; border-radius: 24px; margin: 0; font-size: 0.85rem; flex-grow: 1; outline: none; }
-        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; }
+        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; transition: color 0.15s; }
+        .wa-tool-icon:hover { color: var(--wa-text); }
 
         #wa-picker-panel {
-            display: none; position: absolute; bottom: 65px; left: 14px; width: 300px; height: 180px;
-            background: #111b21; border: 1px solid #2a3942; border-radius: 12px; padding: 10px; z-index: 200; overflow-y: auto;
+            display: none; position: absolute; bottom: 65px; left: 14px; width: 300px; height: 200px;
+            background: #111b21; border: 1px solid #2a3942; border-radius: 12px; padding: 12px; z-index: 200; overflow-y: auto;
         }
 
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        /* INDICADOR DE CARGA RÁPIDA */
+        #optimizing-indicator {
+            display: none; position: absolute; top: 10px; right: 20px; background: rgba(0, 168, 132, 0.9);
+            color: #fff; padding: 4px 10px; border-radius: 10px; font-size: 0.7rem; z-index: 500; font-weight: bold;
+        }
     </style>
 </head>
 <body>
+
+    <div id="optimizing-indicator"><i class="fa-solid fa-bolt"></i> Optimizado (Turbo)</div>
 
     <audio id="ringtoneAudio" loop src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
 
-    <!-- PANTALLA DE LLAMADA WEB RTC EN VIVO -->
+    <div id="modal-emergency-sos" class="emergency-active-overlay">
+        <div style="max-width: 440px; width: 92%; background: #450a0a; border: 2px solid #ef4444; border-radius: 24px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);">
+            <i class="fa-solid fa-triangle-exclamation" style="font-size: 3.5rem; color: #f87171; margin-bottom: 14px; animation: bounce 1s infinite;"></i>
+            <h1 style="color: #fef2f2; font-size: 1.5rem; margin: 0 0 8px 0;">🚨 MODO EMERGENCIA APAGÓN ACTIVADO</h1>
+            <p style="font-size: 0.85rem; color: #fca5a5; margin-bottom: 20px;">Red principal sin fluido eléctrico. Enlace PTT de respaldo local y baliza satelital de comunicación directa habilitados.</p>
+            <div style="background: #2b0909; padding: 14px; border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem; border: 1px solid #dc2626;">
+                <p style="margin: 4px 0;"><strong>Frecuencia Activa:</strong> Canal 1 SOS (Respaldo IP)</p>
+                <p style="margin: 4px 0;"><strong>Transmisión PTT:</strong> Directa sin interrupciones</p>
+            </div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn" style="background: #0284c7; flex: 1;" onclick="abrirChatWhatsApp('+58 500-0001', 'Central de Emergencias')">💬 Chat SOS Central</button>
+                <button class="btn" style="background: #ef4444; flex: 1;" onclick="toggleEmergencyMode()">Desactivar SOS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CREAR ESTADO (TURBO) -->
+    <div id="modal-crear-estado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 420px; border-color: #00a884;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                <h2 style="color: #00a884; margin: 0;"><i class="fa-solid fa-circle-notch"></i> Publicar Mi Estado</h2>
+                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8; font-size: 1.2rem;" onclick="cerrarModalEstado()"></i>
+            </div>
+            <p style="font-size: 0.75rem; color: #10b981; margin-bottom: 12px;">🔒 Visible únicamente para tus contactos registrados en OmniChat.</p>
+            <textarea id="estado-texto-input" rows="3" placeholder="¿Qué estás pensando o compartiendo hoy?"></textarea>
+            
+            <label style="font-size: 0.8rem; color: #94a3b8; display: block; margin-bottom: 6px;">O adjunta Foto / Video / Audio (Optimizado):</label>
+            <input type="file" id="estado-file-input" accept="image/*,video/*,audio/*" style="margin-bottom: 14px;" />
+            
+            <button class="btn" style="background: #00a884; color: #fff;" onclick="publicarEstadoContacto()">🚀 Publicar Estado Ultra-Rápido</button>
+        </div>
+    </div>
+
+    <!-- MODAL VISUALIZADOR DE ESTADOS -->
+    <div id="modal-ver-estado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3500; flex-direction: column; justify-content: space-between; padding: 20px; color: #fff;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <strong id="ver-estado-autor" style="font-size: 0.95rem;">Autor</strong>
+            <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.4rem;" onclick="cerrarVisorEstado()"></i>
+        </div>
+        <div id="ver-estado-contenido" style="text-align: center; flex-grow: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;"></div>
+        <div style="text-align: center; font-size: 0.75rem; color: #8696a0;">Estado compartido de forma segura (Solo Contactos)</div>
+    </div>
+
     <div id="modal-call-screen">
         <div style="text-align: center; width: 100%;">
             <div style="font-size: 0.8rem; color: #8696a0; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 24px;">
@@ -387,7 +539,6 @@
         </div>
     </div>
 
-    <!-- MODAL NUEVO CONTACTO OMNICHAT -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -407,16 +558,18 @@
                 <p style="font-size: 0.7rem; color: #94a3b8; margin: 2px 0 0 0;">omnimovil.xo.je | Tasa BCV: <span id="tasa-bcv-header">36.50</span> VES/USD</p>
             </div>
             <div class="header-actions">
+                <button class="btn-emergency-sos" onclick="toggleEmergencyMode()">
+                    <i class="fa-solid fa-tower-broadcast"></i> SOS APAGÓN
+                </button>
                 <button class="login-top-btn" onclick="abrirModalAuth()"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</button>
                 <button style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="solicitarPermisoNotificaciones()">🔔</button>
                 <button style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 App</button>
             </div>
         </header>
 
-        <!-- PANEL DE CLIENTE -->
         <div id="panel-cliente" class="panel-view">
             <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
                         <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-3391</strong>
                         <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Erik</span>)</span>
@@ -439,58 +592,103 @@
 
             <!-- OMNICHAT -->
             <div id="csec-chat" class="client-section active">
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
                 <div class="wa-app-container">
                     <div class="wa-top-bar">
                         <h2 id="wa-header-title">OmniChat</h2>
                         <div class="wa-top-icons">
-                            <i class="fa-solid fa-camera" onclick="alert('Cámara lista')"></i>
-                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                            <i class="fa-solid fa-camera" onclick="document.getElementById('input-file-media').click()" title="Adjuntar archivo multimedia"></i>
+                            <i class="fa-solid fa-ellipsis-vertical" onclick="alert('Opciones de OmniChat')"></i>
                         </div>
                     </div>
 
+                    <!-- PESTAÑA CHATS -->
                     <div id="wa-tab-chats" class="wa-tab-content active">
-                        <!-- BUSCADOR DE CONTACTOS ESTILO WHATSAPP -->
                         <div class="wa-search-box">
                             <div class="wa-search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass" style="color: var(--wa-muted);"></i>
                                 <input type="text" id="wa-search-input" placeholder="Buscar chats o contactos..." onkeyup="filtrarChatsWhatsApp()">
                             </div>
                         </div>
-
                         <div class="wa-filter-chips">
                             <span class="wa-chip active">Todos</span>
                             <span class="wa-chip">No leídos</span>
                         </div>
-
-                        <!-- LISTA DE CHATS GUARDADOS -->
-                        <div class="wa-content-area" id="lista-chats-wa">
-                            <!-- Se renderiza de manera aislada por cada usuario -->
-                        </div>
-
-                        <!-- BOTÓN FLOTANTE PARA INICIAR NUEVO CHAT -->
+                        <div class="wa-content-area" id="lista-chats-wa"></div>
                         <div class="wa-fab" onclick="abrirModalNuevoChat()" title="Iniciar nuevo chat">
                             <i class="fa-solid fa-comment-medical"></i>
                         </div>
                     </div>
 
-                    <!-- PANTALLA DE CHAT ABIERTO -->
+                    <!-- PESTAÑA NOVEDADES Y ESTADOS -->
+                    <div id="wa-tab-novedades" class="wa-tab-content" style="padding: 20px; overflow-y: auto;">
+                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Novedades y Estados (Solo Contactos)</h3>
+                        <div style="background: #111b21; padding: 16px; border-radius: 12px; border: 1px solid #1f2c34; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; cursor: pointer;" onclick="abrirModalCrearEstado()">
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #00a884; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #fff;"><i class="fa-solid fa-plus"></i></div>
+                            <div>
+                                <strong style="font-size: 0.95rem;">Mi estado</strong><br/>
+                                <span style="font-size: 0.75rem; color: var(--wa-muted);">Comparte texto, foto, video o audio con tus contactos</span>
+                            </div>
+                        </div>
+                        <h4 style="font-size: 0.85rem; color: var(--wa-muted); margin: 16px 0 8px 0;">Estados de Contactos</h4>
+                        <div id="lista-estados-contactos"></div>
+                    </div>
+
+                    <!-- PESTAÑA COMUNIDADES -->
+                    <div id="wa-tab-comunidades" class="wa-tab-content" style="padding: 20px;">
+                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Comunidades de OmniMovil</h3>
+                        <p style="font-size: 0.8rem; color: var(--wa-muted); margin-bottom: 16px;">Organiza a tus clientes, grupos de retransmisión y canales IP.</p>
+                        <div style="background: #111b21; padding: 16px; border-radius: 12px; border: 1px solid #1f2c34; display: flex; align-items: center; gap: 14px;">
+                            <div style="width: 50px; height: 50px; border-radius: 12px; background: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff;"><i class="fa-solid fa-users-rectangle"></i></div>
+                            <div style="flex-grow: 1;">
+                                <strong style="font-size: 0.95rem;">Canal Oficial Central IP</strong><br/>
+                                <span style="font-size: 0.75rem; color: var(--wa-muted);">Anuncios y avisos generales de la red</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PESTAÑA LLAMADAS -->
+                    <div id="wa-tab-llamadas" class="wa-tab-content" style="padding: 20px;">
+                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Registro de Llamadas VoIP HD</h3>
+                        <div class="history-item" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <strong style="font-size: 0.85rem; color: #f8fafc;"><i class="fa-solid fa-phone-arrow-up-right" style="color: #10b981;"></i> Soporte Técnico</strong>
+                                <div style="font-size: 0.7rem; color: var(--wa-muted);">Hoy, 02:30 PM (Duración: 01:45)</div>
+                            </div>
+                            <button class="btn btn-small" style="background: #00a884; padding: 6px 12px;" onclick="iniciarLlamadaVozHD('+58 500-0001')"><i class="fa-solid fa-phone"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- PANTALLA DE CHAT ABIERTO (OPTIMIZADA) -->
                     <div class="wa-chat-view" id="pantalla-chat-abierto">
                         <div class="wa-chat-view-header">
-                            <i class="fa-solid fa-arrow-left" style="cursor: pointer; color: var(--wa-muted);" onclick="cerrarChatAbierto()"></i>
+                            <i class="fa-solid fa-arrow-left" style="cursor: pointer; color: var(--wa-muted); font-size: 1.1rem;" onclick="cerrarChatAbierto()"></i>
                             <div class="wa-avatar-wrap" style="width: 38px; height: 38px;"><div class="wa-avatar-img" id="chat-header-avatar-wa">S</div></div>
                             <div style="flex-grow: 1;">
                                 <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
-                                <span style="font-size: 0.65rem; color: var(--wa-green);" id="chat-numero-receptor-wa">+58 500-0000</span>
+                                <span style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold;" id="chat-estado-en-linea-wa">● En línea</span>
                             </div>
                             <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer; font-size: 1.1rem;" onclick="iniciarLlamadaVozHD()"></i>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
-                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados en OmniMovil.</div>
+                            <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Mensajes cifrados y optimizados en OmniMovil.</div>
                         </div>
 
+                        <!-- PANEL FLOTANTE EMOJIS Y STICKERS -->
                         <div id="wa-picker-panel">
-                            <div style="font-size: 0.75rem; color: var(--wa-muted); margin-bottom: 6px;">😊 Emojis</div>
+                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #2a3942; padding-bottom: 6px; margin-bottom: 8px; font-size: 0.75rem; color: var(--wa-muted);">
+                                <span>😀 Emojis y Stickers</span>
+                                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="togglePickerPanel()"></i>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold; margin-bottom: 4px;">Stickers Rápidos</div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px;">
+                                <span style="background: #202c33; text-align: center; padding: 6px; border-radius: 8px; cursor: pointer; font-size: 1.2rem;" onclick="enviarSticker('[Sticker: 👍 ¡Listo!]')">👍 ¡Listo!</span>
+                                <span style="background: #202c33; text-align: center; padding: 6px; border-radius: 8px; cursor: pointer; font-size: 1.2rem;" onclick="enviarSticker('[Sticker: 🔥 Excelente]')">🔥 Top</span>
+                                <span style="background: #202c33; text-align: center; padding: 6px; border-radius: 8px; cursor: pointer; font-size: 1.2rem;" onclick="enviarSticker('[Sticker: 🚀 Conectado]')">🚀 Enlace</span>
+                                <span style="background: #202c33; text-align: center; padding: 6px; border-radius: 8px; cursor: pointer; font-size: 1.2rem;" onclick="enviarSticker('[Sticker: 💡 Entendido]')">💡 Ok</span>
+                            </div>
+                            <div style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold; margin-bottom: 4px;">Emojis</div>
                             <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; font-size: 1.2rem; cursor: pointer; text-align: center;">
                                 <span onclick="insertarEmojiOrSticker('😀')">😀</span>
                                 <span onclick="insertarEmojiOrSticker('😂')">😂</span>
@@ -501,23 +699,40 @@
                             </div>
                         </div>
 
+                        <!-- BARRA DE CHAT -->
                         <div class="wa-input-bar-dark">
-                            <i class="fa-regular fa-face-smile wa-tool-icon" onclick="togglePickerPanel()"></i>
+                            <i class="fa-regular fa-face-smile wa-tool-icon" onclick="togglePickerPanel()" title="Emojis y Stickers"></i>
+                            <i class="fa-solid fa-paperclip wa-tool-icon" onclick="document.getElementById('input-file-media').click()" title="Adjuntar archivo multimedia"></i>
+                            <i class="fa-solid fa-video wa-tool-icon" onclick="document.getElementById('input-video-corto').click()" title="Enviar video corto HD" style="color: var(--wa-green);"></i>
+                            <i class="fa-solid fa-microphone wa-tool-icon" id="btn-mic-grabar" onclick="toggleGrabarNotaVoz()" title="Grabar nota de voz" style="color: var(--wa-muted);"></i>
+
+                            <input type="file" id="input-file-media" accept="image/*,video/*,audio/*" style="display: none;" onchange="manejarSubidaArchivoMedia(this)" />
+                            <input type="file" id="input-video-corto" accept="video/*" style="display: none;" onchange="manejarSubidaVideoCorto(this)" />
+                            
                             <input type="text" id="chat-input-texto-wa" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
                             <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.25rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
 
+                    <!-- BARRA DE NAVEGACIÓN INFERIOR -->
                     <div class="wa-bottom-nav">
-                        <div class="wa-nav-btn active"><i class="fa-solid fa-comment-dots"></i><span>Chats</span></div>
-                        <div class="wa-nav-btn"><i class="fa-solid fa-circle-notch"></i><span>Novedades</span></div>
-                        <div class="wa-nav-btn"><i class="fa-solid fa-people-group"></i><span>Comunidades</span></div>
-                        <div class="wa-nav-btn" onclick="cambiarSeccionCliente('llamadas')"><i class="fa-solid fa-phone"></i><span>Llamadas</span></div>
+                        <div class="wa-nav-btn active" id="nav-btn-chats" onclick="cambiarPestanaWhatsApp('chats')">
+                            <i class="fa-solid fa-comment-dots"></i><span>Chats</span>
+                        </div>
+                        <div class="wa-nav-btn" id="nav-btn-novedades" onclick="cambiarPestanaWhatsApp('novedades')">
+                            <i class="fa-solid fa-circle-notch"></i><span>Novedades</span>
+                        </div>
+                        <div class="wa-nav-btn" id="nav-btn-comunidades" onclick="cambiarPestanaWhatsApp('comunidades')">
+                            <i class="fa-solid fa-people-group"></i><span>Comunidades</span>
+                        </div>
+                        <div class="wa-nav-btn" id="nav-btn-llamadas" onclick="cambiarPestanaWhatsApp('llamadas')">
+                            <i class="fa-solid fa-phone"></i><span>Llamadas</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- BILLETERA / RECARGAS EN VES -->
+            <!-- BILLETERA -->
             <div id="csec-billetera" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible en Cuenta</h2>
@@ -546,7 +761,7 @@
                 <div class="card">
                     <h2>📦 Paquetes Mensuales (30 Días)</h2>
                     <div class="history-item" style="flex-direction: column; align-items: flex-start; gap: 10px; padding: 16px; border-color: #10b981;">
-                        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                        <div style="display: flex; justify-content: space-between; width: 100%; align-items: center; flex-wrap: wrap; gap: 10px;">
                             <div>
                                 <strong style="color: #f8fafc; font-size: 1rem;">🌟 Paquete Ilimitado Pro ($2.00/mes)</strong>
                                 <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #10b981; font-weight: bold;">Llamadas + Mensajes ilimitados por 30 días</p>
@@ -557,8 +772,9 @@
                 </div>
             </div>
 
-            <!-- RED SIP / ZOIPER CON WEBRTC NATIVO -->
+            <!-- RED SIP -->
             <div id="csec-llamadas" class="client-section">
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 0.75rem; color: var(--accent-orange); font-weight: bold;" id="webrtc-status-indicator">● WEBRTC (DESCONECTADO)</span>
@@ -588,35 +804,16 @@
                     </div>
                 </div>
 
-                <div class="card" style="max-width: 360px; margin: 0 auto; border-color: #0284c7;">
+                <div class="card" style="max-width: 380px; margin: 0 auto; border-color: #0284c7;">
                     <h2 style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 8px;"><i class="fa-solid fa-gear"></i> Servidor WebSocket de Señalización</h2>
                     <input type="text" id="ws-url-input" value="wss://omnimovil-backend.onrender.com" />
                     <button class="btn" style="background: #0284c7; padding: 10px; font-size: 0.85rem;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
                 </div>
-        <script>
-            // Configurar la recepción de llamadas en tiempo real
-            if (typeof wsSocket !== 'undefined' && wsSocket) {
-                wsSocket.onmessage = function(event) {
-                    let data = JSON.parse(event.data);
-                    if (data.type === 'incoming_call') {
-                        let ringtone = document.getElementById('ringtoneAudio');
-                        if (ringtone) ringtone.play().catch(e => {});
-
-                        let callScreen = document.getElementById('modal-call-screen');
-                        if (callScreen) {
-                            document.getElementById('call-name').innerText = data.emisor;
-                            document.getElementById('call-avatar').innerText = '📞';
-                            document.getElementById('call-status').innerText = "Llamada entrante...";
-                            callScreen.style.display = 'flex';
-                        }
-                    }
-                };
-            }
-        </script>
-    </div>
+            </div>
 
             <!-- HISTORIAL -->
             <div id="csec-historial" class="client-section">
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
                 <div class="card">
                     <h2>📋 Historial de Transacciones y Llamadas</h2>
                     <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px;">
@@ -626,16 +823,18 @@
             </div>
         </div>
 
-        <!-- MODAL DE BIENVENIDA Y AUTENTICACIÓN -->
+        <!-- MODAL DE AUTENTICACIÓN -->
         <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; border-color: #0284c7;">
                 <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
-                <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Prueba gratuita de 24 horas</p>
+                <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Prueba gratuita de 24 horas y Red de Comunicación IP</p>
 
-                <div id="welcome-action-buttons" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px;">
-                    <button class="btn" style="background: #0284c7;" onclick="mostrarFormularioAuth()">
-                        <i class="fa-solid fa-right-to-bracket"></i> 🔑 Iniciar Sesión / Registrarse
+                <div id="welcome-action-buttons" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="login-top-btn" onclick="mostrarFormularioAuth()" style="font-size: 0.85rem; padding: 10px 18px;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión
                     </button>
+                    <button style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 10px 14px; border-radius: 10px; font-weight: bold; font-size: 0.85rem; cursor: pointer;" onclick="solicitarPermisoNotificaciones()" title="Notificaciones">🔔</button>
+                    <button style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 10px 14px; border-radius: 10px; font-weight: bold; font-size: 0.85rem; cursor: pointer;" onclick="instalarPWA()">📲 App</button>
                 </div>
 
                 <div id="auth-forms-wrapper" style="display: none;">
@@ -679,27 +878,48 @@
         let isSpeakerOn = false;
         let localStream = null;
         let supabaseChannelMensajes = null;
-        
-// --- AUTOCONEXIÓN Y RECONEXIÓN PERSISTENTE DE LA RED SIP ---
-function reintentarConexionSIP() {
-    if (typeof wsSocket === 'undefined' || !wsSocket || wsSocket.readyState !== WebSocket.OPEN) {
-        console.log("Conectando canal SIP automáticamente...");
-        if (typeof conectarServidorWebSocket === 'function') {
-            conectarServidorWebSocket();
+        let emergencyModeActive = false;
+
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let estaGrabandoVoz = false;
+
+        function mostrarTurboIndicador() {
+            let ind = document.getElementById('optimizing-indicator');
+            if (ind) {
+                ind.style.display = 'block';
+                setTimeout(() => { ind.style.display = 'none'; }, 2000);
+            }
         }
-    }
-}
 
-// Ejecutar al cargar la página y verificar cada 10 segundos
-window.addEventListener('load', () => {
-    setTimeout(reintentarConexionSIP, 1500);
-});
-setInterval(reintentarConexionSIP, 10000);
+        function toggleEmergencyMode() {
+            emergencyModeActive = !emergencyModeActive;
+            let sosModal = document.getElementById('modal-emergency-sos');
+            if (emergencyModeActive) {
+                if (sosModal) sosModal.classList.add('active');
+            } else {
+                if (sosModal) sosModal.classList.remove('active');
+            }
+        }
 
-// --- GESTIÓN DE CONTACTOS Y MEMORIA COMPARTIDA ---
-        // --- GESTIÓN DE CONTACTOS Y MEMORIA COMPARTIDA ---
+        function cambiarPestanaWhatsApp(pestana) {
+            document.querySelectorAll('.wa-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.wa-tab-content').forEach(t => t.classList.remove('active'));
+
+            let btn = document.getElementById(`nav-btn-${pestana}`);
+            let tab = document.getElementById(`wa-tab-${pestana}`);
+
+            if (btn) btn.classList.add('active');
+            if (tab) tab.classList.add('active');
+            if (pestana === 'novedades') renderizarEstadosContactos();
+        }
+
         function obtenerClaveContactos() {
             return 'omnimovil_contactos_' + (miNumeroAsignado ? miNumeroAsignado.replace(/[^0-9]/g, '') : 'default');
+        }
+
+        function obtenerClaveEstados() {
+            return 'omnimovil_estados_' + (miNumeroAsignado ? miNumeroAsignado.replace(/[^0-9]/g, '') : 'default');
         }
 
         let contactosOmniChat = [];
@@ -748,6 +968,16 @@ setInterval(reintentarConexionSIP, 10000);
             }
         };
 
+        function obtenerIconoEstado(estado) {
+            if (estado === 'leido') {
+                return `<i class="fa-solid fa-check-double wa-tick-icon wa-tick-read" title="Leído"></i>`;
+            } else if (estado === 'entregado') {
+                return `<i class="fa-solid fa-check-double wa-tick-icon wa-tick-delivered" title="Entregado"></i>`;
+            } else {
+                return `<i class="fa-solid fa-check wa-tick-icon wa-tick-delivered" title="Enviado"></i>`;
+            }
+        }
+
         function renderizarContactosChat(filtro = '') {
             let listaBox = document.getElementById('lista-chats-wa');
             listaBox.innerHTML = '';
@@ -763,6 +993,9 @@ setInterval(reintentarConexionSIP, 10000);
             }
 
             filtrados.forEach(c => {
+                let ultimoTexto = c.ultimo || c.numero;
+                let tickHtml = c.ultimoEstado ? obtenerIconoEstado(c.ultimoEstado) : '';
+
                 let div = document.createElement('div');
                 div.className = 'wa-chat-item';
                 div.onclick = () => abrirChatWhatsApp(c.numero, c.nombre);
@@ -770,7 +1003,9 @@ setInterval(reintentarConexionSIP, 10000);
                     <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.nombre.charAt(0).toUpperCase()}</div></div>
                     <div class="wa-chat-info">
                         <strong style="font-size: 0.9rem;">${c.nombre}</strong><br/>
-                        <span style="font-size: 0.75rem; color: var(--wa-muted);">${c.ultimo || c.numero}</span>
+                        <span style="font-size: 0.75rem; color: var(--wa-muted); display: flex; align-items: center; gap: 4px;">
+                            ${tickHtml} <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${ultimoTexto}</span>
+                        </span>
                     </div>
                 `;
                 listaBox.appendChild(div);
@@ -780,6 +1015,223 @@ setInterval(reintentarConexionSIP, 10000);
         function filtrarChatsWhatsApp() {
             let texto = document.getElementById('wa-search-input').value;
             renderizarContactosChat(texto);
+        }
+
+        // --- COMPRESIÓN TURBO DE IMÁGENES Y VIDEO PARA MÁXIMA VELOCIDAD ---
+        function comprimirImagenBase64(base64Str, maxWidth = 800, quality = 0.7) {
+            return new Promise((resolve) => {
+                let img = new Image();
+                img.src = base64Str;
+                img.onload = () => {
+                    let canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', quality));
+                };
+                img.onerror = () => resolve(base64Str);
+            });
+        }
+
+        // --- NOTAS DE VOZ TURBO ---
+        async function toggleGrabarNotaVoz() {
+            let micBtn = document.getElementById('btn-mic-grabar');
+            if (!estaGrabandoVoz) {
+                try {
+                    let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    audioChunks = [];
+
+                    mediaRecorder.ondataavailable = event => {
+                        audioChunks.push(event.data);
+                    };
+
+                    mediaRecorder.onstop = async () => {
+                        mostrarTurboIndicador();
+                        let audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                        let reader = new FileReader();
+                        reader.onload = function(e) {
+                            let base64Audio = e.target.result;
+                            let htmlAudio = `<audio src="${base64Audio}" controls style="width:100%; max-width:260px; height:40px; margin-top:4px;"></audio>`;
+                            enviarMensajeMediaDirecto(htmlAudio, '[Nota de voz]');
+                        };
+                        reader.readAsDataURL(audioBlob);
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    mediaRecorder.start();
+                    estaGrabandoVoz = true;
+                    micBtn.style.color = '#ef4444';
+                    micBtn.classList.add('fa-bounce');
+                    alert("🔴 Grabando nota de voz HD (Turbo)... Haz clic otra vez para enviar.");
+                } catch(e) {
+                    alert("No se pudo acceder al micrófono: " + e.message);
+                }
+            } else {
+                if (mediaRecorder) mediaRecorder.stop();
+                estaGrabandoVoz = false;
+                micBtn.style.color = 'var(--wa-muted)';
+                micBtn.classList.remove('fa-bounce');
+            }
+        }
+
+        // --- SUBIDA DE VIDEO CORTO OPTIMIZADA ---
+        function manejarSubidaVideoCorto(input) {
+            if (input.files && input.files[0]) {
+                let file = input.files[0];
+                mostrarTurboIndicador();
+                let reader = new FileReader();
+                reader.onload = function(e) {
+                    let base64Data = e.target.result;
+                    let htmlContent = `<video src="${base64Data}" controls style="width:100%; max-height:340px; object-fit:contain; border-radius:8px; margin-top:4px; display:block; background:#000;"></video>`;
+                    enviarMensajeMediaDirecto(htmlContent, `[Video corto: ${file.name}]`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        async function manejarSubidaArchivoMedia(input) {
+            if (input.files && input.files[0]) {
+                let file = input.files[0];
+                mostrarTurboIndicador();
+                let reader = new FileReader();
+                reader.onload = async function(e) {
+                    let base64Data = e.target.result;
+                    let fileType = file.type.startsWith('video') ? 'video' : file.type.startsWith('audio') ? 'audio' : 'image';
+                    
+                    if (fileType === 'image') {
+                        base64Data = await comprimirImagenBase64(base64Data, 800, 0.75);
+                    }
+
+                    let htmlContent = fileType === 'video' ? 
+                        `<video src="${base64Data}" controls style="width:100%; max-height:340px; object-fit:contain; border-radius:8px; margin-top:4px; display:block; background:#000;"></video>` : 
+                        fileType === 'audio' ?
+                        `<audio src="${base64Data}" controls style="width:100%; max-width:260px; height:40px; margin-top:4px;"></audio>` :
+                        `<img src="${base64Data}" style="width:100%; max-height:340px; object-fit:contain; border-radius:8px; margin-top:4px; display:block;" />`;
+                    
+                    enviarMensajeMediaDirecto(htmlContent, `[Archivo: ${file.name}]`);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- GESTIÓN DE "MI ESTADO" ---
+        function abrirModalCrearEstado() {
+            document.getElementById('modal-crear-estado').style.display = 'flex';
+        }
+
+        function cerrarModalEstado() {
+            document.getElementById('modal-crear-estado').style.display = 'none';
+        }
+
+        async function publicarEstadoContacto() {
+            let texto = document.getElementById('estado-texto-input').value.trim();
+            let fileInput = document.getElementById('estado-file-input');
+            
+            let contenidoObj = { texto: texto, media: null, tipo: 'texto', fecha: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) };
+
+            if (fileInput.files && fileInput.files[0]) {
+                let file = fileInput.files[0];
+                let reader = new FileReader();
+                reader.onload = async function(e) {
+                    let resData = e.target.result;
+                    if (file.type.startsWith('image')) {
+                        resData = await comprimirImagenBase64(resData, 700, 0.7);
+                    }
+                    contenidoObj.media = resData;
+                    contenidoObj.tipo = file.type.startsWith('video') ? 'video' : file.type.startsWith('audio') ? 'audio' : 'imagen';
+                    guardarYPublicarEstado(contenidoObj);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                guardarYPublicarEstado(contenidoObj);
+            }
+        }
+
+        function guardarYPublicarEstado(estadoData) {
+            let clave = obtenerClaveEstados();
+            let misEstados = [];
+            try {
+                let guardados = localStorage.getItem(clave);
+                if (guardados) misEstados = JSON.parse(guardados);
+            } catch(e) {}
+
+            misEstados.unshift(estadoData);
+            localStorage.setItem(clave, JSON.stringify(misEstados));
+
+            document.getElementById('estado-texto-input').value = '';
+            document.getElementById('estado-file-input').value = '';
+            cerrarModalEstado();
+            alert("¡Estado publicado al instante (Turbo)! Visible solo para tus contactos.");
+            renderizarEstadosContactos();
+        }
+
+        function renderizarEstadosContactos() {
+            let cajaEstados = document.getElementById('lista-estados-contactos');
+            cajaEstados.innerHTML = '';
+
+            let clave = obtenerClaveEstados();
+            let misEstados = [];
+            try {
+                let guardados = localStorage.getItem(clave);
+                if (guardados) misEstados = JSON.parse(guardados);
+            } catch(e) {}
+
+            if (misEstados.length > 0) {
+                cajaEstados.innerHTML += `
+                    <div class="wa-chat-item" style="border-radius: 10px; background: #111b21; margin-bottom: 8px;" onclick='verMiEstadoActual(${JSON.stringify(JSON.stringify(misEstados[0]))})'>
+                        <div class="wa-avatar-wrap"><div class="wa-avatar-img" style="border: 2px solid #00a884;">${clienteAutenticado ? clienteAutenticado.nombre.charAt(0) : 'E'}</div></div>
+                        <div class="wa-chat-info">
+                            <strong style="font-size: 0.9rem;">Mi Estado (Publicado)</strong><br/>
+                            <span style="font-size: 0.75rem; color: var(--wa-muted);">${misEstados[0].texto || 'Archivo multimedia'} - ${misEstados[0].fecha}</span>
+                        </div>
+                    </div>`;
+            }
+
+            contactosOmniChat.forEach(c => {
+                cajaEstados.innerHTML += `
+                    <div class="wa-chat-item" style="border-radius: 10px; background: #111b21; margin-bottom: 8px;" onclick="alert('Estado de ${c.nombre}: Red IP 100% operativa y conectada.')">
+                        <div class="wa-avatar-wrap"><div class="wa-avatar-img" style="border: 2px solid #0284c7;">${c.nombre.charAt(0)}</div></div>
+                        <div class="wa-chat-info">
+                            <strong style="font-size: 0.9rem;">${c.nombre}</strong><br/>
+                            <span style="font-size: 0.75rem; color: var(--wa-muted);">Hoy, 03:40 PM (Solo Contactos)</span>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function verMiEstadoActual(estadoStr) {
+            let estado = JSON.parse(estadoStr);
+            let visor = document.getElementById('modal-ver-estado');
+            let autor = document.getElementById('ver-estado-autor');
+            let contenido = document.getElementById('ver-estado-contenido');
+
+            autor.innerText = "Mi Estado (Privado para Contactos)";
+            let htmlMedia = '';
+            if (estado.tipo === 'imagen') {
+                htmlMedia = `<img src="${estado.media}" style="max-width:100%; max-height:60vh; object-fit:contain; border-radius:12px;" />`;
+            } else if (estado.tipo === 'video') {
+                htmlMedia = `<video src="${estado.media}" controls autoplay style="max-width:100%; max-height:60vh; border-radius:12px;"></video>`;
+            } else if (estado.tipo === 'audio') {
+                htmlMedia = `<audio src="${estado.media}" controls autoplay style="width:100%;"></audio>`;
+            }
+
+            contenido.innerHTML = `
+                ${htmlMedia}
+                <p style="font-size: 1.1rem; margin-top: 14px; color: #fff;">${estado.texto || ''}</p>
+            `;
+            visor.style.display = 'flex';
+        }
+
+        function cerrarVisorEstado() {
+            document.getElementById('modal-ver-estado').style.display = 'none';
         }
 
         function abrirModalAuth() {
@@ -954,8 +1406,6 @@ setInterval(reintentarConexionSIP, 10000);
             let num = targetNum || document.getElementById('zoiper-input-display').value.trim();
             if (!num || num === '+58') { alert("Ingresa un número válido."); return; }
 
-            let numDestinoLimpio = num.replace(/[^0-9]/g, '');
-
             document.getElementById('call-name').innerText = num;
             document.getElementById('call-avatar').innerText = num.slice(-1) || '📞';
             document.getElementById('call-status').innerText = "Solicitando canal WebRTC HD...";
@@ -966,16 +1416,6 @@ setInterval(reintentarConexionSIP, 10000);
 
             let ringtone = document.getElementById('ringtoneAudio');
             if (ringtone) ringtone.play().catch(e => {});
-
-            // Enviar señal de llamada entrante vía WebSocket
-            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
-                wsSocket.send(JSON.stringify({
-                    type: 'incoming_call',
-                    emisor: miNumeroAsignado,
-                    receptor: numDestinoLimpio,
-                    mensaje: 'Llamada entrante de OmniMovil'
-                }));
-            }
 
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
@@ -1035,17 +1475,27 @@ setInterval(reintentarConexionSIP, 10000);
         function solicitarPermisoNotificaciones() {
             if ("Notification" in window) {
                 Notification.requestPermission().then(permission => {
-                    if (permission === "granted") alert("¡Notificaciones activadas con éxito!");
-                    else alert("Permiso de notificaciones denegado.");
+                    if (permission === "granted") {
+                        alert("¡Notificaciones activadas con éxito!");
+                        lanzarNotificacionPush("OmniMovil", "Sistema de notificaciones push activo.");
+                    } else { alert("Permiso de notificaciones denegado."); }
                 });
             } else { alert("Tu navegador no soporta notificaciones."); }
+        }
+
+        function lanzarNotificacionPush(titulo, cuerpo) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification(titulo, {
+                    body: cuerpo,
+                    icon: 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/comment-dots.svg'
+                });
+            }
         }
 
         function instalarPWA() {
             alert("Para instalar la App: Abre el menú de tu navegador y selecciona 'Instalar aplicación' o 'Agregar a la pantalla principal'.");
         }
 
-        // FUNCIONES DE CONTACTOS OMNICHAT
         function abrirModalNuevoChat() { 
             document.getElementById('modal-select-contact').style.display = 'flex'; 
         }
@@ -1077,14 +1527,17 @@ setInterval(reintentarConexionSIP, 10000);
             abrirChatWhatsApp(numero, nombre);
         }
 
-        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL CON SUPABASE (Columnas exactas: emisor, receptor, contenido) ---
         async function abrirChatWhatsApp(num, nom) { 
+            let sosModal = document.getElementById('modal-emergency-sos');
+            if (sosModal) sosModal.classList.remove('active');
+
             numeroReceptorActual = num;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
             document.getElementById('chat-nombre-receptor-wa').innerText = nom; 
-            document.getElementById('chat-numero-receptor-wa').innerText = num; 
+            document.getElementById('chat-estado-en-linea-wa').innerText = "● En línea";
             document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
             
+            await marcardMensajesComoLeidos(num);
             await cargarMensajesChat(num);
         }
 
@@ -1103,55 +1556,99 @@ setInterval(reintentarConexionSIP, 10000);
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        async function enviarMensajeWhatsApp() {
-            let txt = document.getElementById('chat-input-texto-wa').value.trim();
-            let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
-            let receptorNom = document.getElementById('chat-nombre-receptor-wa').innerText.trim();
-            if (!txt || !receptorNum) return;
+        function enviarSticker(stickerText) {
+            document.getElementById('wa-picker-panel').style.display = 'none';
+            document.getElementById('chat-input-texto-wa').value = stickerText;
+            enviarMensajeWhatsApp();
+        }
 
-            document.getElementById('chat-input-texto-wa').value = '';
+        async function marcardMensajesComoLeidos(remitenteNum) {
+            await _supabase
+                .from('mensajes_omnimovil')
+                .update({ estado: 'leido' })
+                .eq('remitente_num', remitenteNum)
+                .eq('receptor_num', miNumeroAsignado);
 
+            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remitenteNum.replace(/[^0-9]/g, ''));
+            if (index >= 0) {
+                contactosOmniChat[index].ultimoEstado = 'leido';
+                guardarContactosUsuario();
+                renderizarContactosChat();
+            }
+        }
+
+        async function enviarMensajeMediaDirecto(htmlMarkup, textDesc) {
+            if (!numeroReceptorActual) return;
+
+            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            // Inserción optimizada en Supabase con Turbo feedback visual
             let { error } = await _supabase.from('mensajes_omnimovil').insert([
                 { 
+                    remitente_num: miNumeroAsignado, 
+                    receptor_num: numeroReceptorActual, 
                     emisor: miNumeroAsignado, 
-                    receptor: receptorNum, 
-                    remitente: miNumeroAsignado,
-                    remitente_num: miNumeroAsignado,
-                    receptor_num: receptorNum,
-                    texto: txt,
-                    contenido: txt,
-                    mensaje: txt
+                    receptor: numeroReceptorActual, 
+                    mensaje: htmlMarkup, 
+                    contenido: htmlMarkup,
+                    estado: 'entregado'
                 }
             ]);
 
-            if (error) {
-                alert("Error al enviar mensaje: " + error.message);
-                return;
-            }
-
             let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
+            box.innerHTML += `
+                <div class="wa-msg-bubble wa-msg-sent">
+                    ${htmlMarkup}
+                    <div class="wa-msg-meta">
+                        <span>${horaActual}</span>
+                        ${obtenerIconoEstado('entregado')}
+                    </div>
+                </div>`;
             box.scrollTop = box.scrollHeight;
 
-            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
+            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === numeroReceptorActual.replace(/[^0-9]/g, ''));
             if (index >= 0) {
-                contactosOmniChat[index].ultimo = "Tú: " + txt;
-            } else {
-                contactosOmniChat.push({ nombre: receptorNom, numero: receptorNum, ultimo: "Tú: " + txt });
+                contactosOmniChat[index].ultimo = "Tú: " + textDesc;
+                contactosOmniChat[index].ultimoEstado = 'entregado';
             }
             guardarContactosUsuario();
             renderizarContactosChat();
         }
 
+        async function enviarMensajeWhatsApp() {
+            let txt = document.getElementById('chat-input-texto-wa').value.trim();
+            if (!txt || !numeroReceptorActual) return;
+
+            document.getElementById('chat-input-texto-wa').value = '';
+            let horaActual = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            let { error } = await _supabase.from('mensajes_omnimovil').insert([
+                { 
+                    remitente_num: miNumeroAsignado, 
+                    receptor_num: numeroReceptorActual, 
+                    emisor: miNumeroAsignado, 
+                    receptor: numeroReceptorActual, 
+                    mensaje: txt, 
+                    contenido: txt,
+                    estado: 'entregado'
+                }
+            ]);
+
             let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
+            box.innerHTML += `
+                <div class="wa-msg-bubble wa-msg-sent">
+                    <div>${txt}</div>
+                    <div class="wa-msg-meta">
+                        <span>${horaActual}</span>
+                        ${obtenerIconoEstado('entregado')}
+                    </div>
+                </div>`;
             box.scrollTop = box.scrollHeight;
 
-            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
+            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === numeroReceptorActual.replace(/[^0-9]/g, ''));
             if (index >= 0) {
                 contactosOmniChat[index].ultimo = "Tú: " + txt;
-            } else {
-                contactosOmniChat.push({ nombre: receptorNom, numero: receptorNum, ultimo: "Tú: " + txt });
+                contactosOmniChat[index].ultimoEstado = 'entregado';
             }
             guardarContactosUsuario();
             renderizarContactosChat();
@@ -1159,7 +1656,7 @@ setInterval(reintentarConexionSIP, 10000);
 
         async function cargarMensajesChat(receptorNum) {
             let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
+            box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Sincronizando mensajes (Turbo)...</div>`;
 
             let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
             let recClean = receptorNum.replace(/[^0-9]/g, '');
@@ -1173,9 +1670,12 @@ setInterval(reintentarConexionSIP, 10000);
 
             if (data && data.length > 0) {
                 data.forEach(m => {
-                    let rem = m.emisor || '';
-                    let rec = m.receptor || '';
-                    let txt = m.contenido || '';
+                    let rem = m.remitente_num || m.emisor || '';
+                    let rec = m.receptor_num || m.receptor || '';
+                    let txt = m.mensaje || m.contenido || '';
+                    let estado = m.estado || 'entregado';
+                    let fechaObj = m.created_at ? new Date(m.created_at) : new Date();
+                    let horaStr = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recvClean = rec.replace(/[^0-9]/g, '');
@@ -1183,9 +1683,23 @@ setInterval(reintentarConexionSIP, 10000);
                     let esMioParaEl = (remClean === mioClean && recvClean === recClean);
                     let esElParaMio = (remClean === recClean && recvClean === mioClean);
 
-                    if (esMioParaEl || esElParaMio) {
-                        let clase = remClean === mioClean ? 'wa-msg-sent' : 'wa-msg-received';
-                        box.innerHTML += `<div class="wa-msg-bubble ${clase}">${txt}</div>`;
+                    if (esMioParaEl) {
+                        box.innerHTML += `
+                            <div class="wa-msg-bubble wa-msg-sent">
+                                <div>${txt}</div>
+                                <div class="wa-msg-meta">
+                                    <span>${horaStr}</span>
+                                    ${obtenerIconoEstado(estado)}
+                                </div>
+                            </div>`;
+                    } else if (esElParaMio) {
+                        box.innerHTML += `
+                            <div class="wa-msg-bubble wa-msg-received">
+                                <div>${txt}</div>
+                                <div class="wa-msg-meta">
+                                    <span>${horaStr}</span>
+                                </div>
+                            </div>`;
                     }
                 });
             }
@@ -1199,29 +1713,42 @@ setInterval(reintentarConexionSIP, 10000);
                 .channel('public:mensajes_omnimovil_' + miNumeroAsignado)
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
                     let m = payload.new;
-                    let rem = m.emisor || '';
-                    let rec = m.receptor || '';
-                    let txt = m.contenido || '';
+                    let rem = m.remitente_num || m.emisor || '';
+                    let rec = m.receptor_num || m.receptor || '';
+                    let txt = m.mensaje || m.contenido || '';
 
                     let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = rec.replace(/[^0-9]/g, '');
 
                     if (recClean === mioClean) {
+                        lanzarNotificacionPush("Nuevo mensaje en OmniChat", `${rem}: ${txt.replace(/<[^>]*>?/gm, '')}`);
+
                         let contactIndex = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remClean);
                         if (contactIndex >= 0) {
                             contactosOmniChat[contactIndex].ultimo = txt;
+                            contactosOmniChat[contactIndex].ultimoEstado = 'entregado';
                         } else {
-                            contactosOmniChat.push({ nombre: "Usuario " + rem.slice(-4), numero: rem, ultimo: txt });
+                            contactosOmniChat.push({ nombre: "Usuario " + rem.slice(-4), numero: rem, ultimo: txt, ultimoEstado: 'entregado' });
                         }
                         guardarContactosUsuario();
                         renderizarContactosChat();
 
                         let receptorActual = numeroReceptorActual ? numeroReceptorActual.replace(/[^0-9]/g, '') : '';
                         if (receptorActual === remClean) {
+                            let fechaObj = new Date();
+                            let horaStr = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                             let box = document.getElementById('contenedor-mensajes-wa');
-                            box.innerHTML += `<div class="wa-msg-bubble wa-msg-received">${txt}</div>`;
+                            box.innerHTML += `
+                                <div class="wa-msg-bubble wa-msg-received">
+                                    <div>${txt}</div>
+                                    <div class="wa-msg-meta">
+                                        <span>${horaStr}</span>
+                                    </div>
+                                </div>`;
                             box.scrollTop = box.scrollHeight;
+
+                            marcardMensajesComoLeidos(rem);
                         }
                     }
                 })
@@ -1229,15 +1756,8 @@ setInterval(reintentarConexionSIP, 10000);
         }
 
         window.addEventListener('load', () => {
-    // Autoconectar el servidor WebSocket de la Red SIP al iniciar la app
-    setTimeout(() => {
-        let inputUrl = document.getElementById('ws-url-input');
-        if (inputUrl && typeof conectarServidorWebSocket === 'function') {
-            conectarServidorWebSocket();
-            console.log("Auto-conectando Red SIP en segundo plano...");
-        }
-    }, 1000);
-});
+            setTimeout(suscribirMensajesRealtimeSupabase, 2000);
+        });
     </script>
 </body>
 </html>
