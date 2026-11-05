@@ -1069,6 +1069,7 @@
                     remitente: miNumeroAsignado,
                     remitente_num: miNumeroAsignado,
                     receptor_num: receptorNum,
+                    texto: txt,
                     contenido: txt,
                     mensaje: txt
                 }
@@ -1078,6 +1079,20 @@
                 alert("Error al enviar mensaje: " + error.message);
                 return;
             }
+
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
+            box.scrollTop = box.scrollHeight;
+
+            let index = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === receptorNum.replace(/[^0-9]/g, ''));
+            if (index >= 0) {
+                contactosOmniChat[index].ultimo = "Tú: " + txt;
+            } else {
+                contactosOmniChat.push({ nombre: receptorNom, numero: receptorNum, ultimo: "Tú: " + txt });
+            }
+            guardarContactosUsuario();
+            renderizarContactosChat();
+        }
 
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
