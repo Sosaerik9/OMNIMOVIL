@@ -917,6 +917,8 @@
             let num = targetNum || document.getElementById('zoiper-input-display').value.trim();
             if (!num || num === '+58') { alert("Ingresa un número válido."); return; }
 
+            let numDestinoLimpio = num.replace(/[^0-9]/g, '');
+
             document.getElementById('call-name').innerText = num;
             document.getElementById('call-avatar').innerText = num.slice(-1) || '📞';
             document.getElementById('call-status').innerText = "Solicitando canal WebRTC HD...";
@@ -927,6 +929,16 @@
 
             let ringtone = document.getElementById('ringtoneAudio');
             if (ringtone) ringtone.play().catch(e => {});
+
+            // Enviar señal de llamada entrante vía WebSocket
+            if (wsSocket && wsSocket.readyState === WebSocket.OPEN) {
+                wsSocket.send(JSON.stringify({
+                    type: 'incoming_call',
+                    emisor: miNumeroAsignado,
+                    receptor: numDestinoLimpio,
+                    mensaje: 'Llamada entrante de OmniMovil'
+                }));
+            }
 
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
