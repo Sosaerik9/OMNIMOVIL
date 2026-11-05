@@ -679,7 +679,24 @@
         let isSpeakerOn = false;
         let localStream = null;
         let supabaseChannelMensajes = null;
+        
+// --- AUTOCONEXIÓN Y RECONEXIÓN PERSISTENTE DE LA RED SIP ---
+function reintentarConexionSIP() {
+    if (typeof wsSocket === 'undefined' || !wsSocket || wsSocket.readyState !== WebSocket.OPEN) {
+        console.log("Conectando canal SIP automáticamente...");
+        if (typeof conectarServidorWebSocket === 'function') {
+            conectarServidorWebSocket();
+        }
+    }
+}
 
+// Ejecutar al cargar la página y verificar cada 10 segundos
+window.addEventListener('load', () => {
+    setTimeout(reintentarConexionSIP, 1500);
+});
+setInterval(reintentarConexionSIP, 10000);
+
+// --- GESTIÓN DE CONTACTOS Y MEMORIA COMPARTIDA ---
         // --- GESTIÓN DE CONTACTOS Y MEMORIA COMPARTIDA ---
         function obtenerClaveContactos() {
             return 'omnimovil_contactos_' + (miNumeroAsignado ? miNumeroAsignado.replace(/[^0-9]/g, '') : 'default');
