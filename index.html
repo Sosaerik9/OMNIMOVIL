@@ -593,7 +593,27 @@
                     <input type="text" id="ws-url-input" value="wss://omnimovil-backend.onrender.com" />
                     <button class="btn" style="background: #0284c7; padding: 10px; font-size: 0.85rem;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
                 </div>
-            </div>
+        <script>
+            // Configurar la recepción de llamadas en tiempo real
+            if (typeof wsSocket !== 'undefined' && wsSocket) {
+                wsSocket.onmessage = function(event) {
+                    let data = JSON.parse(event.data);
+                    if (data.type === 'incoming_call') {
+                        let ringtone = document.getElementById('ringtoneAudio');
+                        if (ringtone) ringtone.play().catch(e => {});
+
+                        let callScreen = document.getElementById('modal-call-screen');
+                        if (callScreen) {
+                            document.getElementById('call-name').innerText = data.emisor;
+                            document.getElementById('call-avatar').innerText = '📞';
+                            document.getElementById('call-status').innerText = "Llamada entrante...";
+                            callScreen.style.display = 'flex';
+                        }
+                    }
+                };
+            }
+        </script>
+    </div>
 
             <!-- HISTORIAL -->
             <div id="csec-historial" class="client-section">
