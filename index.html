@@ -1028,7 +1028,7 @@
             abrirChatWhatsApp(numero, nombre);
         }
 
-        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL CON SUPABASE ---
+        // --- GESTIÓN DE CHATS Y MENSAJES EN TIEMPO REAL CON SUPABASE (Columnas exactas: emisor, receptor, contenido) ---
         async function abrirChatWhatsApp(num, nom) { 
             numeroReceptorActual = num;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
@@ -1054,7 +1054,6 @@
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        // --- ENVIAR MENSAJE (Inserta en ambas nomenclaturas para máxima compatibilidad) ---
         async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
             let receptorNum = document.getElementById('chat-numero-receptor-wa').innerText.trim();
@@ -1063,17 +1062,18 @@
 
             document.getElementById('chat-input-texto-wa').value = '';
 
-            // Insertar con doble compatibilidad de columnas en Supabase
             let { error } = await _supabase.from('mensajes_omnimovil').insert([
                 { 
-                    remitente_num: miNumeroAsignado, 
-                    receptor_num: receptorNum, 
                     emisor: miNumeroAsignado, 
                     receptor: receptorNum, 
-                    mensaje: txt, 
                     contenido: txt 
                 }
             ]);
+
+            if (error) {
+                alert("Error al enviar mensaje: " + error.message);
+                return;
+            }
 
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML += `<div class="wa-msg-bubble wa-msg-sent">${txt}</div>`;
@@ -1089,7 +1089,6 @@
             renderizarContactosChat();
         }
 
-        // --- CARGAR HISTORIAL COMPATIBLE ENTRE DOS USUARIOS ---
         async function cargarMensajesChat(receptorNum) {
             let box = document.getElementById('contenedor-mensajes-wa');
             box.innerHTML = `<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem;">🔒 Cargando mensajes cifrados...</div>`;
@@ -1106,9 +1105,9 @@
 
             if (data && data.length > 0) {
                 data.forEach(m => {
-                    let rem = m.remitente_num || m.emisor || '';
-                    let rec = m.receptor_num || m.receptor || '';
-                    let txt = m.mensaje || m.contenido || '';
+                    let rem = m.emisor || '';
+                    let rec = m.receptor || '';
+                    let txt = m.contenido || '';
 
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recvClean = rec.replace(/[^0-9]/g, '');
@@ -1125,7 +1124,6 @@
             box.scrollTop = box.scrollHeight;
         }
 
-        // --- TIEMPO REAL: ESCUCHAR NUEVOS MENSAJES Y ACTUALIZAR VISTA EN VIVO ---
         function suscribirMensajesRealtimeSupabase() {
             if (supabaseChannelMensajes) _supabase.removeChannel(supabaseChannelMensajes);
 
@@ -1133,15 +1131,14 @@
                 .channel('public:mensajes_omnimovil_' + miNumeroAsignado)
                 .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, payload => {
                     let m = payload.new;
-                    let rem = m.remitente_num || m.emisor || '';
-                    let rec = m.receptor_num || m.receptor || '';
-                    let txt = m.mensaje || m.contenido || '';
+                    let rem = m.emisor || '';
+                    let rec = m.receptor || '';
+                    let txt = m.contenido || '';
 
                     let mioClean = miNumeroAsignado.replace(/[^0-9]/g, '');
                     let remClean = rem.replace(/[^0-9]/g, '');
                     let recClean = rec.replace(/[^0-9]/g, '');
 
-                    // Si el mensaje viene dirigido a este usuario
                     if (recClean === mioClean) {
                         let contactIndex = contactosOmniChat.findIndex(c => c.numero.replace(/[^0-9]/g, '') === remClean);
                         if (contactIndex >= 0) {
@@ -1152,7 +1149,6 @@
                         guardarContactosUsuario();
                         renderizarContactosChat();
 
-                        // Si tiene el chat abierto con este remitente exacto, pintar el mensaje al momento
                         let receptorActual = numeroReceptorActual ? numeroReceptorActual.replace(/[^0-9]/g, '') : '';
                         if (receptorActual === remClean) {
                             let box = document.getElementById('contenedor-mensajes-wa');
@@ -1164,7 +1160,6 @@
                 .subscribe();
         }
 
-        // Inicializar suscripción al cargar la sesión
         window.addEventListener('load', () => {
             setTimeout(suscribirMensajesRealtimeSupabase, 2000);
         });
