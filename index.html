@@ -1421,6 +1421,13 @@
             if (btnActivo) btnActivo.classList.add('active');
             let secActiva = document.getElementById(`csec-${seccion}`);
             if (secActiva) secActiva.classList.add('active');
+
+            // 🚀 Auto-conectar el servidor de llamadas si entramos a la sección Red SIP
+            if (seccion === 'llamadas') {
+                if (!wsSocket || wsSocket.readyState !== WebSocket.OPEN) {
+                    conectarServidorWebSocket();
+                }
+            }
         }
 
         function calcularEquivalenteUsd(montoVes) {
