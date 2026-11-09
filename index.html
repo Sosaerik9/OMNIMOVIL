@@ -1402,6 +1402,10 @@
             cargarContactosUsuario();
             renderizarContactosChat();
             suscribirMensajesRealtimeSupabase();
+
+            // 🚀 Auto-conectar el servidor WebSocket de llamadas al iniciar sesión
+            conectarServidorWebSocket();
+        }
         }
 
         function cerrarSesionCliente() {
