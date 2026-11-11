@@ -1045,6 +1045,7 @@
         document.getElementById('saldo-en-bs').innerText = (saldoUsd * tasaBCV).toFixed(2);
 
         alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
+        alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
         location.reload();
 
     } catch (err) {
@@ -1052,12 +1053,12 @@
     }
 }
 
-        function ejecutarRegistroCliente() {
-            let userVal = document.getElementById('init-reg-user').value.trim();
-            if (!userVal) { alert("Completa los campos"); return; }
-            localStorage.setItem('omnimovil_usuario_activo', userVal);
-            location.reload();
-        }
+function ejecutarRegistroCliente() {
+    let userVal = document.getElementById('init-reg-user').value.trim();
+    if (!userVal) { alert("Completa los campos"); return; }
+    localStorage.setItem('omnimovil_usuario_activo', userVal);
+    location.reload();
+}
 
         function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
         function backspaceKey() { 
