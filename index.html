@@ -907,14 +907,20 @@
 
         // FUNCIÓN DE CERRAR SESIÓN TOTALMENTE CORREGIDA
         window.cerrarSesionCliente = function() {
-            try {
-                localStorage.removeItem('omnimovil_usuario_activo');
-                localStorage.removeItem('omnimovil_session');
-            } catch(e) {}
+    try {
+        localStorage.removeItem('omnimovil_usuario_activo');
+        localStorage.removeItem('omnimovil_session');
+    } catch(e) {}
 
-            alert("Has cerrado sesión exitosamente.");
-            window.location.reload();
-        };
+    // Ocultar el panel del cliente y mostrar el modal de acceso al instante
+    let panelCliente = document.getElementById('panel-cliente');
+    if (panelCliente) panelCliente.classList.remove('active');
+
+    let modalAuth = document.getElementById('modal-registro-inicial');
+    if (modalAuth) modalAuth.style.display = 'flex';
+
+    alert("Has cerrado sesión exitosamente.");
+};
 
         function renderizarContactosChat(filtro = '') {
             let listaBox = document.getElementById('lista-chats-wa');
