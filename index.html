@@ -896,11 +896,36 @@
             { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
         ];
 
-        window.onload = function() {
+        window.onload = async function() {
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
-            if (usuarioGuardado) {
-                document.getElementById('modal-registro-inicial').style.display = 'none';
-                document.getElementById('panel-cliente').classList.add('active');
+            
+            if (usuarioGuardado && usuarioGuardado !== 'admin') {
+                try {
+                    let { data } = await _supabase
+                        .from('clientes_omnimovil')
+                        .select('*')
+                        .eq('usuario', usuarioGuardado)
+                        .single();
+                        
+                    if (data) {
+                        document.getElementById('modal-registro-inicial').style.display = 'none';
+                        document.getElementById('panel-cliente').classList.add('active');
+
+                        document.getElementById('cliente-nombre-actual').innerText = data.nombre;
+                        document.getElementById('cliente-num-linea').innerText = data.numero_linea;
+                        document.getElementById('zoiper-line-id').innerText = data.numero_linea;
+                        let saldoUsd = data.saldo || 0.00;
+                        document.getElementById('saldo-usuario').innerText = `$${saldoUsd.toFixed(2)}`;
+                        document.getElementById('saldo-en-bs').innerText = (saldoUsd * tasaBCV).toFixed(2);
+                    } else {
+                        localStorage.removeItem('omnimovil_usuario_activo');
+                        document.getElementById('modal-registro-inicial').style.display = 'flex';
+                    }
+                } catch(e) {
+                    document.getElementById('modal-registro-inicial').style.display = 'flex';
+                }
+            } else {
+                document.getElementById('modal-registro-inicial').style.display = 'flex';
             }
             renderizarContactosChat();
         };
