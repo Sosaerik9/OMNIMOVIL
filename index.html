@@ -1000,12 +1000,57 @@
             document.getElementById('form-registro-container').style.display = mode === 'registro' ? 'block' : 'none';
         }
 
-        function ejecutarInicioSesion() {
-            let userVal = document.getElementById('auth-login-user').value.trim();
-            if (!userVal) { alert("Ingresa tu usuario"); return; }
-            localStorage.setItem('omnimovil_usuario_activo', userVal);
-            location.reload();
+        async function ejecutarInicioSesion() {
+    let userVal = document.getElementById('auth-login-user').value.trim();
+    let passVal = document.getElementById('auth-login-pass').value.trim();
+    
+    if (!userVal || !passVal) { 
+        alert("Por favor ingresa tu usuario y contraseña."); 
+        return; 
+    }
+
+    if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
+        localStorage.setItem('omnimovil_usuario_activo', 'admin');
+        location.href = 'admin.html';
+        return;
+    }
+
+    try {
+        let { data, error } = await _supabase
+            .from('clientes_omnimovil')
+            .select('*')
+            .eq('usuario', userVal)
+            .single();
+
+        if (error || !data) {
+            alert("El usuario no existe en la red OmniMovil.");
+            return;
         }
+
+        if (data.pass !== passVal) {
+            alert("Contraseña incorrecta. Inténtalo nuevamente.");
+            return;
+        }
+
+        localStorage.setItem('omnimovil_usuario_activo', data.usuario);
+        
+        document.getElementById('modal-registro-inicial').style.display = 'none';
+        document.getElementById('panel-cliente').classList.add('active');
+
+        document.getElementById('cliente-nombre-actual').innerText = data.nombre;
+        document.getElementById('cliente-num-linea').innerText = data.numero_linea;
+        document.getElementById('zoiper-line-id').innerText = data.numero_linea;
+        let saldoUsd = data.saldo || 0.00;
+        document.getElementById('saldo-usuario').innerText = `$${saldoUsd.toFixed(2)}`;
+        document.getElementById('saldo-en-bs').innerText = (saldoUsd * tasaBCV).toFixed(2);
+
+        alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
+        location.reload();
+
+    } catch (err) {
+        alert("Error al verificar credenciales: " + err.message);
+    }
+}
 
         function ejecutarRegistroCliente() {
             let userVal = document.getElementById('init-reg-user').value.trim();
