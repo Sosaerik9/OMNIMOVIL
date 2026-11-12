@@ -600,12 +600,12 @@
             </div>
         </header>
 
-        <div id="panel-cliente" class="panel-view active">
+        <div id="panel-cliente" class="panel-view">
             <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div>
-                        <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-3391</strong>
-                        <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Erik</span>)</span>
+                        <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-0000</strong>
+                        <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Usuario</span>)</span>
                         <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
@@ -793,7 +793,7 @@
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                         <span style="font-size: 0.75rem; color: var(--accent-orange); font-weight: bold;" id="webrtc-status-indicator">● WEBRTC (DESCONECTADO)</span>
-                        <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-3391</span>
+                        <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-0000</span>
                     </div>
                     <div class="zoiper-screen">
                         <input type="text" id="zoiper-input-display" class="zoiper-num-input" value="+58 " />
@@ -838,21 +838,16 @@
             </div>
         </div>
 
-        <!-- MODAL DE AUTENTICACIÓN -->
-        <div id="modal-registro-inicial" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <!-- MODAL DE AUTENTICACIÓN (SIN OPCIÓN DE INVITADO) -->
+        <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; border-color: #0284c7;">
                 <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
                 <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Red de Comunicación IP</p>
 
-                <div id="welcome-action-buttons" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
-                    <button class="login-top-btn" onclick="mostrarFormularioAuth()"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</button>
-                    <button style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 10px 14px; border-radius: 10px; font-weight: bold; cursor: pointer;" onclick="cerrarModalAuth()">Continuar como Invitado</button>
-                </div>
-
-                <div id="auth-forms-wrapper" style="display: none;">
+                <div id="auth-forms-wrapper" style="display: block;">
                     <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
-                        <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%;">🔑 Login</button>
-                        <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%;">📝 Registro</button>
+                        <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">🔑 Login</button>
+                        <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">📝 Registro</button>
                     </div>
 
                     <div id="form-login-container" style="display: block;">
@@ -880,7 +875,7 @@
 
         let tasaBCV = 36.50;
         let clienteAutenticado = null;
-        let miNumeroAsignado = "+58 500-3391";
+        let miNumeroAsignado = "+58 500-0000";
         let numeroReceptorActual = null;
         let nombreReceptorActual = null;
         let saldoActual = 0.00;
@@ -896,35 +891,45 @@
             { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
         ];
 
+        function cargarDatosEnInterfaz(data) {
+            clienteAutenticado = data;
+            miNumeroAsignado = data.numero_linea || "+58 500-0000";
+            saldoActual = parseFloat(data.saldo) || 0.00;
+
+            document.getElementById('cliente-nombre-actual').innerText = data.nombre || data.usuario;
+            document.getElementById('cliente-num-linea').innerText = miNumeroAsignado;
+            document.getElementById('zoiper-line-id').innerText = miNumeroAsignado;
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            document.getElementById('saldo-en-bs').innerText = (saldoActual * tasaBCV).toFixed(2);
+
+            document.getElementById('modal-registro-inicial').style.display = 'none';
+            document.getElementById('panel-cliente').classList.add('active');
+        }
+
         window.onload = async function() {
             let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
             
             if (usuarioGuardado && usuarioGuardado !== 'admin') {
                 try {
-                    let { data } = await _supabase
+                    let { data, error } = await _supabase
                         .from('clientes_omnimovil')
                         .select('*')
                         .eq('usuario', usuarioGuardado)
-                        .single();
+                        .maybeSingle();
                         
-                    if (data) {
-                        document.getElementById('modal-registro-inicial').style.display = 'none';
-                        document.getElementById('panel-cliente').classList.add('active');
-
-                        document.getElementById('cliente-nombre-actual').innerText = data.nombre;
-                        document.getElementById('cliente-num-linea').innerText = data.numero_linea;
-                        document.getElementById('zoiper-line-id').innerText = data.numero_linea;
-                        let saldoUsd = data.saldo || 0.00;
-                        document.getElementById('saldo-usuario').innerText = `$${saldoUsd.toFixed(2)}`;
-                        document.getElementById('saldo-en-bs').innerText = (saldoUsd * tasaBCV).toFixed(2);
+                    if (data && !error) {
+                        cargarDatosEnInterfaz(data);
                     } else {
                         localStorage.removeItem('omnimovil_usuario_activo');
+                        document.getElementById('panel-cliente').classList.remove('active');
                         document.getElementById('modal-registro-inicial').style.display = 'flex';
                     }
                 } catch(e) {
+                    document.getElementById('panel-cliente').classList.remove('active');
                     document.getElementById('modal-registro-inicial').style.display = 'flex';
                 }
             } else {
+                document.getElementById('panel-cliente').classList.remove('active');
                 document.getElementById('modal-registro-inicial').style.display = 'flex';
             }
             renderizarContactosChat();
@@ -932,20 +937,24 @@
 
         // FUNCIÓN DE CERRAR SESIÓN TOTALMENTE CORREGIDA
         window.cerrarSesionCliente = function() {
-    try {
-        localStorage.removeItem('omnimovil_usuario_activo');
-        localStorage.removeItem('omnimovil_session');
-    } catch(e) {}
+            try {
+                localStorage.removeItem('omnimovil_usuario_activo');
+                localStorage.removeItem('omnimovil_session');
+            } catch(e) {}
 
-    // Ocultar el panel del cliente y mostrar el modal de acceso al instante
-    let panelCliente = document.getElementById('panel-cliente');
-    if (panelCliente) panelCliente.classList.remove('active');
+            clienteAutenticado = null;
 
-    let modalAuth = document.getElementById('modal-registro-inicial');
-    if (modalAuth) modalAuth.style.display = 'flex';
+            let panelCliente = document.getElementById('panel-cliente');
+            if (panelCliente) panelCliente.classList.remove('active');
 
-    alert("Has cerrado sesión exitosamente.");
-};
+            let modalAuth = document.getElementById('modal-registro-inicial');
+            if (modalAuth) modalAuth.style.display = 'flex';
+
+            document.getElementById('auth-login-user').value = '';
+            document.getElementById('auth-login-pass').value = '';
+
+            alert("Has cerrado sesión exitosamente.");
+        };
 
         function renderizarContactosChat(filtro = '') {
             let listaBox = document.getElementById('lista-chats-wa');
@@ -1014,15 +1023,24 @@
         }
 
         function abrirModalAuth() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
-        function cerrarModalAuth() { document.getElementById('modal-registro-inicial').style.display = 'none'; }
-        function mostrarFormularioAuth() {
-            document.getElementById('welcome-action-buttons').style.display = 'none';
-            document.getElementById('auth-forms-wrapper').style.display = 'block';
-        }
 
         function switchAuthMode(mode) {
             document.getElementById('form-login-container').style.display = mode === 'login' ? 'block' : 'none';
             document.getElementById('form-registro-container').style.display = mode === 'registro' ? 'block' : 'none';
+
+            let btnLogin = document.getElementById('tab-btn-login');
+            let btnReg = document.getElementById('tab-btn-registro');
+            if (mode === 'login') {
+                btnLogin.style.background = '#0284c7';
+                btnLogin.style.color = 'white';
+                btnReg.style.background = '#1e293b';
+                btnReg.style.color = '#94a3b8';
+            } else {
+                btnReg.style.background = '#10b981';
+                btnReg.style.color = 'white';
+                btnLogin.style.background = '#1e293b';
+                btnLogin.style.color = '#94a3b8';
+            }
         }
 
         async function ejecutarInicioSesion() {
@@ -1041,16 +1059,20 @@
             }
 
             try {
-                // Limpiamos cualquier sesión previa antes de validar la nueva
                 localStorage.removeItem('omnimovil_usuario_activo');
 
                 let { data, error } = await _supabase
                     .from('clientes_omnimovil')
                     .select('*')
                     .eq('usuario', userVal)
-                    .single();
+                    .maybeSingle();
 
-                if (error || !data) {
+                if (error) {
+                    alert("Error de conexión con la base de datos: " + error.message);
+                    return;
+                }
+
+                if (!data) {
                     alert("El usuario no existe en la red OmniMovil.");
                     return;
                 }
@@ -1060,34 +1082,69 @@
                     return;
                 }
 
-                // Guardamos EXCLUSIVAMENTE el usuario que acaba de loguearse correctamente
                 localStorage.setItem('omnimovil_usuario_activo', data.usuario);
-                
-                document.getElementById('modal-registro-inicial').style.display = 'none';
-                document.getElementById('panel-cliente').classList.add('active');
-
-                // Inyectamos sus datos reales en pantalla
-                document.getElementById('cliente-nombre-actual').innerText = data.nombre;
-                document.getElementById('cliente-num-linea').innerText = data.numero_linea;
-                document.getElementById('zoiper-line-id').innerText = data.numero_linea;
-                let saldoUsd = data.saldo || 0.00;
-                document.getElementById('saldo-usuario').innerText = `$${saldoUsd.toFixed(2)}`;
-                document.getElementById('saldo-en-bs').innerText = (saldoUsd * tasaBCV).toFixed(2);
+                cargarDatosEnInterfaz(data);
 
                 alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
-                location.reload();
 
             } catch (err) {
                 alert("Error al verificar credenciales: " + err.message);
             }
         }
 
-function ejecutarRegistroCliente() {
-    let userVal = document.getElementById('init-reg-user').value.trim();
-    if (!userVal) { alert("Completa los campos"); return; }
-    localStorage.setItem('omnimovil_usuario_activo', userVal);
-    location.reload();
-}
+        async function ejecutarRegistroCliente() {
+            let nombreVal = document.getElementById('init-reg-nombre').value.trim();
+            let userVal = document.getElementById('init-reg-user').value.trim();
+            let passVal = document.getElementById('init-reg-pass').value.trim();
+
+            if (!nombreVal || !userVal || !passVal) {
+                alert("Completa todos los campos para registrarte.");
+                return;
+            }
+
+            try {
+                let { data: existente } = await _supabase
+                    .from('clientes_omnimovil')
+                    .select('usuario')
+                    .eq('usuario', userVal)
+                    .maybeSingle();
+
+                if (existente) {
+                    alert("Ese nombre de usuario ya está en uso. Elige otro.");
+                    return;
+                }
+
+                let randomDigits = Math.floor(1000 + Math.random() * 9000);
+                let nuevaLinea = `+58 500-${randomDigits}`;
+
+                let nuevoCliente = {
+                    nombre: nombreVal,
+                    usuario: userVal,
+                    pass: passVal,
+                    numero_linea: nuevaLinea,
+                    saldo: 0.00
+                };
+
+                let { data, error } = await _supabase
+                    .from('clientes_omnimovil')
+                    .insert([nuevoCliente])
+                    .select()
+                    .single();
+
+                if (error) {
+                    alert("Error al registrar usuario en Supabase: " + error.message);
+                    return;
+                }
+
+                localStorage.setItem('omnimovil_usuario_activo', data.usuario);
+                cargarDatosEnInterfaz(data);
+
+                alert(`¡Registro exitoso, ${data.nombre}! Tu línea asignada es ${data.numero_linea}`);
+
+            } catch (err) {
+                alert("Error al registrar: " + err.message);
+            }
+        }
 
         function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
         function backspaceKey() { 
