@@ -228,6 +228,39 @@
             border-radius: 10px;
         }
 
+        .profile-avatar-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #1e293b;
+            border: 2px solid #0284c7;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+        .profile-avatar-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-avatar-btn:hover::after {
+            content: '📷';
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.65);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
         .zoiper-phone-card {
             background: #0b141a;
             color: #ffffff;
@@ -387,8 +420,20 @@
         .wa-chat-item:hover { background: #182229; }
 
         .wa-avatar-wrap { position: relative; width: 48px; height: 48px; flex-shrink: 0; }
-        .wa-avatar-img { width: 100%; height: 100%; border-radius: 50%; background: var(--wa-header); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; }
+        .wa-avatar-img { width: 100%; height: 100%; border-radius: 50%; background: var(--wa-header); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; overflow: hidden; }
+        .wa-avatar-img img { width: 100%; height: 100%; object-fit: cover; }
         .wa-chat-info { flex-grow: 1; overflow: hidden; }
+
+        .wa-unknown-banner {
+            background: #182229;
+            padding: 10px 16px;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #2a3942;
+            font-size: 0.8rem;
+            color: #e9edef;
+        }
 
         .wa-chat-view-messages {
             flex-grow: 1;
@@ -498,6 +543,8 @@
 
     <div id="optimizing-indicator"><i class="fa-solid fa-bolt"></i> Turbo Optimizado</div>
 
+    <!-- TONOS DE AUDIO Y NOTIFICACIÓN -->
+    <audio id="msgNotificationAudio" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
     <audio id="ringtoneAudio" loop src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
     <audio id="remoteAudio" autoplay></audio>
     <audio id="localAudio" autoplay muted></audio>
@@ -571,11 +618,11 @@
         </div>
     </div>
 
-    <!-- MODAL NUEVO CONTACTO -->
+    <!-- MODAL NUEVO / GUARDAR CONTACTO -->
     <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h2 style="color: #0284c7; margin: 0;">➕ Nuevo Contacto OmniChat</h2>
+                <h2 style="color: #0284c7; margin: 0;">➕ Guardar Contacto OmniChat</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8;" onclick="cerrarModalNuevoChat()"></i>
             </div>
             <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre (Ej: Soporte Técnico)" />
@@ -603,10 +650,18 @@
         <div id="panel-cliente" class="panel-view">
             <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
-                    <div>
-                        <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-0000</strong>
-                        <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Usuario</span>)</span>
-                        <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 4px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <!-- FOTO DE PERFIL CLICKEABLE -->
+                        <div class="profile-avatar-btn" id="cliente-avatar-perfil" title="Haz clic para cambiar tu foto de perfil" onclick="document.getElementById('input-foto-perfil').click()">
+                            <span id="cliente-avatar-letra">U</span>
+                        </div>
+                        <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;" onchange="cambiarFotoPerfil(this)" />
+                        
+                        <div>
+                            <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-0000</strong>
+                            <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Usuario</span>)</span>
+                            <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
+                        </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="status-badge">● ACTIVA</span>
@@ -700,6 +755,12 @@
                                 <span style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold;" id="chat-estado-en-linea-wa">● En línea</span>
                             </div>
                             <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer; font-size: 1.1rem;" onclick="iniciarLlamadaVozHD()"></i>
+                        </div>
+
+                        <!-- BARRA PARA GUARDAR NÚMERO DESCONOCIDO -->
+                        <div class="wa-unknown-banner" id="banner-guardar-desconocido">
+                            <span>Este número no está en tus contactos</span>
+                            <button class="btn btn-small" style="background: #00a884; color: #0b141a; font-weight: bold;" onclick="prepararGuardarDesconocido()">➕ Guardar número</button>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
@@ -868,7 +929,6 @@
     </div>
 
     <script>
-        // CONEXIÓN OFICIAL CON SUPABASE (PUBLISHABLE KEY CONFIGURADA)
         const SUPABASE_URL = 'https://pgpcjspbzfjslylcwyju.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_fWGQnIMBB95VSvj8AvNi_w_HjzFCfnl';
 
@@ -881,19 +941,94 @@
         let numeroReceptorActual = null;
         let nombreReceptorActual = null;
         let saldoActual = 0.00;
-        let wsSocket = null;
-        let callTimerInterval = null;
-        let callSeconds = 0;
-        let isMuted = false;
-        let isSpeakerOn = false;
-        let localStream = null;
+        let canalMensajes = null;
         let emergencyModeActive = false;
 
         let contactosOmniChat = [
-            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!" }
+            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!", guardado: true }
         ];
 
-        function cargarDatosEnInterfaz(data) {
+        function cargarContactosLocales() {
+            if (!clienteAutenticado) return;
+            let guardados = localStorage.getItem('omnimovil_contactos_' + clienteAutenticado.usuario);
+            if (guardados) {
+                try {
+                    contactosOmniChat = JSON.parse(guardados);
+                } catch(e) {}
+            }
+        }
+
+        function guardarContactosLocales() {
+            if (!clienteAutenticado) return;
+            localStorage.setItem('omnimovil_contactos_' + clienteAutenticado.usuario, JSON.stringify(contactosOmniChat));
+        }
+
+        function actualizarAvatarPerfilUI(fotoUrl, nombre) {
+            let avatarBox = document.getElementById('cliente-avatar-perfil');
+            if (!avatarBox) return;
+            if (fotoUrl) {
+                avatarBox.innerHTML = `<img src="${fotoUrl}" alt="Perfil" />`;
+            } else {
+                let inicial = (nombre || 'U').charAt(0).toUpperCase();
+                avatarBox.innerHTML = `<span id="cliente-avatar-letra">${inicial}</span>`;
+            }
+        }
+
+        async function cambiarFotoPerfil(input) {
+            if (!input.files || !input.files[0] || !clienteAutenticado) return;
+            let file = input.files[0];
+
+            // Redimensionar imagen para que no pese demasiado en base de datos
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let img = new Image();
+                img.onload = async function() {
+                    let canvas = document.createElement('canvas');
+                    let MAX_SIZE = 200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+                    } else {
+                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    let ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    let base64Foto = canvas.toDataURL('image/jpeg', 0.8);
+
+                    // Guardar en Supabase
+                    let { error } = await _supabase
+                        .from('clientes_omnimovil')
+                        .update({ foto_perfil: base64Foto })
+                        .eq('usuario', clienteAutenticado.usuario);
+
+                    if (error) {
+                        alert("Error al guardar foto de perfil: " + error.message);
+                        return;
+                    }
+
+                    clienteAutenticado.foto_perfil = base64Foto;
+                    actualizarAvatarPerfilUI(base64Foto, clienteAutenticado.nombre);
+                    alert("✅ Foto de perfil actualizada correctamente.");
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function reproducirTonoMensaje() {
+            let audio = document.getElementById('msgNotificationAudio');
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(() => {});
+            }
+        }
+
+        async function cargarDatosEnInterfaz(data) {
             clienteAutenticado = data;
             miNumeroAsignado = data.numero_linea || "+58 500-0000";
             saldoActual = parseFloat(data.saldo) || 0.00;
@@ -904,8 +1039,86 @@
             document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
             document.getElementById('saldo-en-bs').innerText = (saldoActual * tasaBCV).toFixed(2);
 
+            actualizarAvatarPerfilUI(data.foto_perfil, data.nombre || data.usuario);
+            cargarContactosLocales();
+
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
+
+            await sincronizarChatsDesdeSupabase();
+            iniciarEscuchaMensajesTiempoReal();
+        }
+
+        // CARGA CONVERSACIONES INCLUSO DE NÚMEROS NO GUARDADOS
+        async function sincronizarChatsDesdeSupabase() {
+            if (!clienteAutenticado) return;
+            let { data, error } = await _supabase
+                .from('mensajes_omnimovil')
+                .select('*')
+                .or(`emisor.eq.${miNumeroAsignado},receptor.eq.${miNumeroAsignado}`)
+                .order('created_at', { ascending: false });
+
+            if (data && !error) {
+                data.forEach(msg => {
+                    let otroNumero = msg.emisor === miNumeroAsignado ? msg.receptor : msg.emisor;
+                    let existente = contactosOmniChat.find(c => c.numero === otroNumero);
+                    if (!existente) {
+                        contactosOmniChat.unshift({
+                            nombre: otroNumero, // Aparece con el número porque no está guardado
+                            numero: otroNumero,
+                            ultimo: msg.contenido,
+                            guardado: false
+                        });
+                    } else {
+                        existente.ultimo = msg.contenido;
+                    }
+                });
+                renderizarContactosChat();
+            }
+        }
+
+        // ESCUCHA MENSAJES EN TIEMPO REAL Y GENERA TONO DE AVISO
+        function iniciarEscuchaMensajesTiempoReal() {
+            if (canalMensajes) {
+                _supabase.removeChannel(canalMensajes);
+            }
+
+            canalMensajes = _supabase
+                .channel('mensajes-entrantes')
+                .on(
+                    'postgres_changes',
+                    { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' },
+                    (payload) => {
+                        let nuevoMsg = payload.new;
+                        // Si el mensaje es para mí
+                        if (nuevoMsg.receptor === miNumeroAsignado) {
+                            reproducirTonoMensaje();
+
+                            let remitente = nuevoMsg.emisor;
+                            let contacto = contactosOmniChat.find(c => c.numero === remitente);
+
+                            if (!contacto) {
+                                // Agregar como desconocido visible en la lista
+                                contacto = {
+                                    nombre: remitente,
+                                    numero: remitente,
+                                    ultimo: nuevoMsg.contenido,
+                                    guardado: false
+                                };
+                                contactosOmniChat.unshift(contacto);
+                            } else {
+                                contacto.ultimo = nuevoMsg.contenido;
+                            }
+                            renderizarContactosChat();
+
+                            // Si tengo ese chat abierto en este momento, pintar el mensaje directo
+                            if (numeroReceptorActual === remitente) {
+                                pintarBurbujaMensaje(nuevoMsg.contenido, false, nuevoMsg.created_at);
+                            }
+                        }
+                    }
+                )
+                .subscribe();
         }
 
         window.onload = async function() {
@@ -920,7 +1133,7 @@
                         .maybeSingle();
                         
                     if (data && !error) {
-                        cargarDatosEnInterfaz(data);
+                        await cargarDatosEnInterfaz(data);
                     } else {
                         localStorage.removeItem('omnimovil_usuario_activo');
                         document.getElementById('panel-cliente').classList.remove('active');
@@ -943,6 +1156,7 @@
                 localStorage.removeItem('omnimovil_session');
             } catch(e) {}
 
+            if (canalMensajes) _supabase.removeChannel(canalMensajes);
             clienteAutenticado = null;
 
             let panelCliente = document.getElementById('panel-cliente');
@@ -971,15 +1185,25 @@
                 let div = document.createElement('div');
                 div.className = 'wa-chat-item';
                 div.onclick = () => abrirChatWhatsApp(c.numero, c.nombre);
+                
+                let etiquetaNoGuardado = c.guardado === false 
+                    ? `<span style="font-size: 0.65rem; background: #f59e0b; color: #000; padding: 2px 6px; border-radius: 6px; font-weight: bold; margin-left: 6px;">Nuevo</span>` 
+                    : '';
+
                 div.innerHTML = `
-                    <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.nombre.charAt(0).toUpperCase()}</div></div>
+                    <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.guardado === false ? '<i class="fa-solid fa-user-question"></i>' : c.nombre.charAt(0).toUpperCase()}</div></div>
                     <div class="wa-chat-info">
-                        <strong style="font-size: 0.9rem;">${c.nombre}</strong><br/>
+                        <strong style="font-size: 0.9rem;">${c.nombre} ${etiquetaNoGuardado}</strong><br/>
                         <span style="font-size: 0.75rem; color: var(--wa-muted);">${c.ultimo}</span>
                     </div>
                 `;
                 listaBox.appendChild(div);
             });
+        }
+
+        function filtrarChatsWhatsApp() {
+            let val = document.getElementById('wa-search-input').value;
+            renderizarContactosChat(val);
         }
 
         function cambiarPestanaWhatsApp(pestana) {
@@ -1004,12 +1228,55 @@
             if (secActiva) secActiva.classList.add('active');
         }
 
-        function abrirChatWhatsApp(num, nom) { 
+        function pintarBurbujaMensaje(texto, esMio, fechaIso) {
+            let box = document.getElementById('contenedor-mensajes-wa');
+            let hora = fechaIso ? new Date(fechaIso).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            box.innerHTML += `
+                <div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">
+                    <div>${texto}</div>
+                    <div class="wa-msg-meta"><span>${hora}</span></div>
+                </div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function abrirChatWhatsApp(num, nom) { 
             numeroReceptorActual = num;
             nombreReceptorActual = nom;
             document.getElementById('pantalla-chat-abierto').classList.add('active'); 
             document.getElementById('chat-nombre-receptor-wa').innerText = nom; 
             document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
+
+            // Mostrar u ocultar banner de "Guardar número" si es desconocido
+            let contacto = contactosOmniChat.find(c => c.numero === num);
+            let bannerDesconocido = document.getElementById('banner-guardar-desconocido');
+            if (!contacto || contacto.guardado === false) {
+                bannerDesconocido.style.display = 'flex';
+            } else {
+                bannerDesconocido.style.display = 'none';
+            }
+
+            // Cargar historial de mensajes desde Supabase
+            let box = document.getElementById('contenedor-mensajes-wa');
+            box.innerHTML = '<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; width: fit-content; margin: 0 auto;">🔒 Mensajes cifrados en OmniMovil.</div>';
+
+            let { data, error } = await _supabase
+                .from('mensajes_omnimovil')
+                .select('*')
+                .or(`and(emisor.eq.${miNumeroAsignado},receptor.eq.${num}),and(emisor.eq.${num},receptor.eq.${miNumeroAsignado})`)
+                .order('created_at', { ascending: true });
+
+            if (data && !error) {
+                data.forEach(m => {
+                    pintarBurbujaMensaje(m.contenido, m.emisor === miNumeroAsignado, m.created_at);
+                });
+            }
+        }
+
+        function prepararGuardarDesconocido() {
+            if (!numeroReceptorActual) return;
+            document.getElementById('input-nuevo-nombre-contacto').value = '';
+            document.getElementById('input-nuevo-numero-chat').value = numeroReceptorActual;
+            abrirModalNuevoChat();
         }
 
         function cerrarChatAbierto() { 
@@ -1084,7 +1351,7 @@
                 }
 
                 localStorage.setItem('omnimovil_usuario_activo', data.usuario);
-                cargarDatosEnInterfaz(data);
+                await cargarDatosEnInterfaz(data);
 
                 alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
 
@@ -1138,7 +1405,7 @@
                 }
 
                 localStorage.setItem('omnimovil_usuario_activo', data.usuario);
-                cargarDatosEnInterfaz(data);
+                await cargarDatosEnInterfaz(data);
 
                 alert(`¡Registro exitoso, ${data.nombre}! Tu línea asignada es ${data.numero_linea}`);
 
@@ -1161,7 +1428,15 @@
             let numero = document.getElementById('input-nuevo-numero-chat').value.trim();
             if (!nombre || !numero) return;
 
-            contactosOmniChat.push({ nombre, numero, ultimo: "Chat iniciado" });
+            let existente = contactosOmniChat.find(c => c.numero === numero);
+            if (existente) {
+                existente.nombre = nombre;
+                existente.guardado = true;
+            } else {
+                contactosOmniChat.push({ nombre, numero, ultimo: "Chat iniciado", guardado: true });
+            }
+
+            guardarContactosLocales();
             cerrarModalNuevoChat();
             renderizarContactosChat();
             abrirChatWhatsApp(numero, nombre);
@@ -1177,18 +1452,32 @@
             document.getElementById('wa-picker-panel').style.display = 'none'; 
         }
 
-        function enviarMensajeWhatsApp() {
+        async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
-            if (!txt) return;
+            if (!txt || !numeroReceptorActual || !clienteAutenticado) return;
 
-            let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML += `
-                <div class="wa-msg-bubble wa-msg-sent">
-                    <div>${txt}</div>
-                    <div class="wa-msg-meta"><span>${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div>
-                </div>`;
             document.getElementById('chat-input-texto-wa').value = '';
-            box.scrollTop = box.scrollHeight;
+            pintarBurbujaMensaje(txt, true);
+
+            // Actualizar último mensaje en la lista lateral
+            let contacto = contactosOmniChat.find(c => c.numero === numeroReceptorActual);
+            if (contacto) {
+                contacto.ultimo = txt;
+                renderizarContactosChat();
+            }
+
+            // Guardar en Supabase
+            let { error } = await _supabase
+                .from('mensajes_omnimovil')
+                .insert([{
+                    emisor: miNumeroAsignado,
+                    receptor: numeroReceptorActual,
+                    contenido: txt
+                }]);
+
+            if (error) {
+                alert("Error al enviar mensaje: " + error.message);
+            }
         }
 
         function makeZoiperCall() {
