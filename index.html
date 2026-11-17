@@ -838,7 +838,7 @@
             </div>
         </div>
 
-        <!-- MODAL DE AUTENTICACIÓN (SIN OPCIÓN DE INVITADO) -->
+        <!-- MODAL DE AUTENTICACIÓN -->
         <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; border-color: #0284c7;">
                 <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
@@ -868,11 +868,12 @@
     </div>
 
     <script>
+        // CONEXIÓN OFICIAL CON SUPABASE (PUBLISHABLE KEY CONFIGURADA)
         const SUPABASE_URL = 'https://pgpcjspbzfjslylcwyju.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_fWGQnIMBB95VSvj8AvNi_w_HjzFCfn1';
+        const SUPABASE_ANON_KEY = 'sb_publishable_fWGQnIMBB95VSvj8AvNi_w_HjzFCfnl';
 
-const { createClient } = supabase;
-const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let tasaBCV = 36.50;
         let clienteAutenticado = null;
@@ -936,7 +937,6 @@ const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             renderizarContactosChat();
         };
 
-        // FUNCIÓN DE CERRAR SESIÓN TOTALMENTE CORREGIDA
         window.cerrarSesionCliente = function() {
             try {
                 localStorage.removeItem('omnimovil_usuario_activo');
