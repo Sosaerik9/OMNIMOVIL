@@ -26,7 +26,6 @@
             --wa-text: #e9edef;
             --wa-muted: #8696a0;
             --wa-green: #00a884;
-            --wa-blue-ticks: #53bdeb;
             --accent-red: #ef4444;
             --accent-orange: #f59e0b;
         }
@@ -226,6 +225,8 @@
             background: #020617;
             padding: 12px;
             border-radius: 10px;
+            margin-bottom: 8px;
+            border: 1px solid #1e293b;
         }
 
         .profile-avatar-btn {
@@ -245,22 +246,9 @@
             position: relative;
             flex-shrink: 0;
         }
-        .profile-avatar-btn img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        .profile-avatar-btn:hover::after {
-            content: '📷';
-            position: absolute;
-            inset: 0;
-            background: rgba(0,0,0,0.65);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
+        .profile-avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
 
+        /* ZOIPER / RED SIP */
         .zoiper-phone-card {
             background: #0b141a;
             color: #ffffff;
@@ -272,7 +260,6 @@
             box-shadow: 0 15px 35px rgba(0,0,0,0.5);
             border: 1px solid #1f2c34;
         }
-
         .zoiper-screen {
             background: #111b21;
             border: 1px solid #202c33;
@@ -281,126 +268,41 @@
             margin-bottom: 20px;
             text-align: center;
         }
-
         .zoiper-num-input {
-            width: 100%;
-            background: transparent;
-            border: none;
-            color: var(--wa-green);
-            font-size: 1.6rem;
-            font-weight: bold;
-            text-align: center;
-            letter-spacing: 2px;
-            margin: 0;
-            outline: none;
+            width: 100%; background: transparent; border: none; color: var(--wa-green);
+            font-size: 1.6rem; font-weight: bold; text-align: center; letter-spacing: 2px; margin: 0; outline: none;
         }
-
-        .zoiper-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin-bottom: 20px;
-        }
-
+        .zoiper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px; }
         .zoiper-key {
-            background: #1f2c34;
-            color: #e9edef;
-            border: 1px solid #2a3942;
-            height: 60px;
-            border-radius: 50%;
-            font-size: 1.3rem;
-            font-weight: bold;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            user-select: none;
-            transition: all 0.1s ease;
+            background: #1f2c34; color: #e9edef; border: 1px solid #2a3942; height: 60px;
+            border-radius: 50%; font-size: 1.3rem; font-weight: bold; display: flex;
+            align-items: center; justify-content: center; cursor: pointer; user-select: none;
         }
-
         .zoiper-key:active { background: var(--wa-green); color: #0b141a; transform: scale(0.92); }
-
         .zoiper-controls { display: flex; justify-content: space-between; align-items: center; }
-
         .zoiper-action-btn {
-            width: 62px;
-            height: 62px;
-            border-radius: 50%;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            cursor: pointer;
+            width: 62px; height: 62px; border-radius: 50%; border: none;
+            display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer;
         }
-        .btn-call-green { background: #00a884; color: #ffffff; box-shadow: 0 4px 15px rgba(0, 168, 132, 0.4); }
-        .btn-hangup-red { background: #ef4444; color: #ffffff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); }
+        .btn-call-green { background: #00a884; color: #ffffff; }
+        .btn-hangup-red { background: #ef4444; color: #ffffff; }
         .btn-backspace-dark { background: #202c33; color: var(--wa-muted); }
 
-        #modal-call-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: #070d12;
-            z-index: 4000;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 60px 20px;
-            color: #e9edef;
+        /* MODAL VISOR FOTO GRANDE */
+        #modal-visor-foto {
+            display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.92); z-index: 6000;
+            flex-direction: column; justify-content: space-between; align-items: center; padding: 24px;
         }
-
-        .wa-call-avatar-container { position: relative; width: 120px; height: 120px; margin: 0 auto 24px auto; }
-        .wa-call-avatar-large {
-            width: 100%; height: 100%; border-radius: 50%;
-            background: #111b21; color: #ffffff;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3.2rem; font-weight: bold; border: 2px solid #2a3942;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-        }
-
-        .wa-call-actions-bar {
-            background: #111b21; width: 100%; max-width: 420px;
-            padding: 22px; border-radius: 35px;
-            display: flex; justify-content: space-around; align-items: center;
-            border: 1px solid #1f2c34; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-        }
-
-        .wa-call-btn { width: 64px; height: 64px; border-radius: 50%; border: none; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; cursor: pointer; }
-        .btn-wa-muted-dark { background: #202c33; color: #aebac1; }
-        .btn-wa-muted-dark.active { background: #e9edef; color: #111b21; }
-        .btn-wa-hangup { background: #ef4444; color: #ffffff; width: 72px; height: 72px; font-size: 1.6rem; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5); }
+        #modal-visor-foto.active { display: flex; }
 
         .wa-app-container {
-            background: var(--wa-bg);
-            color: var(--wa-text);
-            border-radius: 20px;
-            overflow: hidden;
-            height: 72vh;
-            min-height: 520px;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-            border: 1px solid #1f2c34;
+            background: var(--wa-bg); color: var(--wa-text); border-radius: 20px;
+            overflow: hidden; height: 72vh; min-height: 520px; display: flex;
+            flex-direction: column; position: relative; border: 1px solid #1f2c34;
         }
+        @media(max-width: 768px) { .wa-app-container { height: 82vh; border-radius: 12px; } }
 
-        @media(max-width: 768px) {
-            .wa-app-container { height: 82vh; border-radius: 12px; }
-        }
-
-        .wa-top-bar {
-            background: var(--wa-card);
-            padding: 14px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #1f2c34;
-        }
-
+        .wa-top-bar { background: var(--wa-card); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2c34; }
         .wa-top-bar h2 { margin: 0; font-size: 1.2rem; color: var(--wa-text); font-weight: 600; }
         .wa-top-icons { display: flex; gap: 18px; font-size: 1.1rem; color: var(--wa-muted); }
 
@@ -408,15 +310,11 @@
         .wa-search-input-wrap { background: #202c33; border-radius: 24px; padding: 8px 16px; display: flex; align-items: center; gap: 12px; }
         .wa-search-input-wrap input { background: transparent; border: none; color: var(--wa-text); padding: 0; margin: 0; font-size: 0.85rem; outline: none; width: 100%; }
 
-        .wa-filter-chips { display: flex; gap: 8px; padding: 6px 14px 10px 14px; overflow-x: auto; }
-        .wa-chip { background: #202c33; color: var(--wa-muted); padding: 6px 14px; border-radius: 18px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; }
-        .wa-chip.active { background: #0a332c; color: var(--wa-green); font-weight: bold; }
-
         .wa-content-area { flex-grow: 1; overflow-y: auto; position: relative; }
         .wa-tab-content { display: none; }
         .wa-tab-content.active { display: block; }
 
-        .wa-chat-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #1f2c34; transition: background 0.15s ease; user-select: none; }
+        .wa-chat-item { display: flex; align-items: center; gap: 14px; padding: 12px 18px; cursor: pointer; border-bottom: 1px solid #1f2c34; transition: background 0.15s ease; }
         .wa-chat-item:hover { background: #182229; }
 
         .wa-avatar-wrap { position: relative; width: 48px; height: 48px; flex-shrink: 0; }
@@ -425,82 +323,23 @@
         .wa-chat-info { flex-grow: 1; overflow: hidden; }
 
         .wa-unknown-banner {
-            background: #182229;
-            padding: 10px 16px;
-            display: none;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #2a3942;
-            font-size: 0.8rem;
-            color: #e9edef;
+            background: #182229; padding: 10px 16px; display: none; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #2a3942; font-size: 0.8rem; color: #e9edef;
         }
 
         .wa-chat-view-messages {
-            flex-grow: 1;
-            padding: 16px 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            background-color: #0b141a;
-            background-image: 
-                radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 40px 40px;
-            background-position: 0 0, 20px 20px;
-            scroll-behavior: smooth;
+            flex-grow: 1; padding: 16px 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px;
+            background-color: #0b141a; background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px); background-size: 40px 40px;
         }
 
         .wa-msg-bubble { 
-            max-width: 75%; 
-            padding: 10px 14px; 
-            border-radius: 12px; 
-            font-size: 0.9rem; 
-            margin-bottom: 6px; 
-            word-wrap: break-word; 
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-            animation: fadeInMsg 0.2s ease-out;
+            max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: 0.9rem; margin-bottom: 6px; 
+            word-wrap: break-word; position: relative; display: flex; flex-direction: column; box-shadow: 0 1px 2px rgba(0,0,0,0.3);
         }
-        @keyframes fadeInMsg {
-            from { opacity: 0; transform: translateY(4px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .wa-msg-bubble img, .wa-msg-bubble video, .wa-msg-bubble audio {
-            width: 100% !important;
-            max-height: 320px !important;
-            object-fit: contain !important;
-            border-radius: 8px;
-            display: block;
-            margin-top: 4px;
-            background: #000;
-        }
-
-        .wa-msg-sent { 
-            background: #005c4b; 
-            color: #e9edef; 
-            align-self: flex-end; 
-            border-top-right-radius: 3px; 
-        }
-        .wa-msg-received { 
-            background: #202c33; 
-            color: #e9edef; 
-            align-self: flex-start; 
-            border-top-left-radius: 3px; 
-        }
-
-        .wa-msg-meta {
-            display: flex;
-            align-items: center;
-            justify-content: flex-end;
-            gap: 4px;
-            font-size: 0.65rem;
-            color: rgba(241, 245, 249, 0.6);
-            margin-top: 4px;
-        }
+        .wa-msg-bubble img, .wa-msg-bubble video, .wa-msg-bubble audio { width: 100% !important; max-height: 280px !important; object-fit: contain !important; border-radius: 8px; display: block; margin-top: 4px; background: #000; }
+        .wa-msg-sent { background: #005c4b; color: #e9edef; align-self: flex-end; border-top-right-radius: 3px; }
+        .wa-msg-received { background: #202c33; color: #e9edef; align-self: flex-start; border-top-left-radius: 3px; }
+        .wa-msg-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 0.65rem; color: rgba(241, 245, 249, 0.6); margin-top: 4px; }
 
         .wa-bottom-nav { background: var(--wa-card); display: grid; grid-template-columns: repeat(4, 1fr); padding: 8px 0; border-top: 1px solid #1f2c34; }
         .wa-nav-btn { display: flex; flex-direction: column; align-items: center; gap: 4px; color: var(--wa-muted); text-decoration: none; font-size: 0.7rem; cursor: pointer; }
@@ -508,126 +347,76 @@
         .wa-nav-btn.active { color: var(--wa-text); font-weight: bold; }
         .wa-nav-btn.active i { background: #103b34; color: var(--wa-green); }
 
-        .wa-fab { position: absolute; bottom: 70px; right: 20px; width: 54px; height: 54px; background: var(--wa-green); color: #0b141a; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 6px 15px rgba(0,0,0,0.5); cursor: pointer; z-index: 10; transition: transform 0.15s ease; }
-        .wa-fab:active { transform: scale(0.92); }
+        .wa-fab { position: absolute; bottom: 70px; right: 20px; width: 54px; height: 54px; background: var(--wa-green); color: #0b141a; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 6px 15px rgba(0,0,0,0.5); cursor: pointer; z-index: 10; }
         
         .wa-chat-view { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--wa-bg); z-index: 100; flex-direction: column; }
         .wa-chat-view.active { display: flex; }
-
         .wa-chat-view-header { background: var(--wa-card); padding: 12px 16px; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid #1f2c34; }
 
         .wa-input-bar-dark { background: var(--wa-card); padding: 10px 14px; display: flex; align-items: center; gap: 10px; border-top: 1px solid #1f2c34; position: relative; }
         .wa-input-bar-dark input { background: #202c33; border: none; color: var(--wa-text); padding: 10px 16px; border-radius: 24px; margin: 0; font-size: 0.85rem; flex-grow: 1; outline: none; }
-        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; transition: color 0.15s; }
-        .wa-tool-icon:hover { color: var(--wa-text); }
+        .wa-tool-icon { font-size: 1.25rem; color: var(--wa-muted); cursor: pointer; }
 
+        /* PANEL FLOTANTE DE EMOJIS, GIFS Y CUSTOM STICKERS */
         #wa-picker-panel {
-            display: none; position: absolute; bottom: 65px; left: 14px; width: 300px; height: 200px;
-            background: #111b21; border: 1px solid #2a3942; border-radius: 12px; padding: 12px; z-index: 200; overflow-y: auto;
+            display: none; position: absolute; bottom: 65px; left: 14px; width: 340px; height: 270px;
+            background: #111b21; border: 1px solid #2a3942; border-radius: 14px; padding: 12px; z-index: 300; box-shadow: 0 10px 30px rgba(0,0,0,0.7);
         }
+        .picker-tabs { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2a3942; padding-bottom: 6px; margin-bottom: 8px; font-size: 0.8rem; }
+        .picker-tab-group { display: flex; gap: 10px; }
+        .picker-tab-btn { background: none; border: none; color: var(--wa-muted); cursor: pointer; font-weight: bold; }
+        .picker-tab-btn.active { color: var(--wa-green); border-bottom: 2px solid var(--wa-green); }
+
+        .emoji-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; font-size: 1.3rem; max-height: 190px; overflow-y: auto; text-align: center; }
+        .emoji-grid span, .emoji-grid div img { cursor: pointer; }
+        .emoji-grid span { padding: 4px; border-radius: 6px; transition: background 0.1s; display: inline-block; }
+        .emoji-grid span:hover { background: #202c33; }
+
+        .btn-mic-record { background: transparent; border: none; color: var(--wa-muted); font-size: 1.3rem; cursor: pointer; }
+        .btn-mic-record.recording { color: #ef4444; animation: pulse-mic 1s infinite; }
+        @keyframes pulse-mic { 0% { transform: scale(1); } 50% { transform: scale(1.2); } 100% { transform: scale(1); } }
 
         .status-badge { display: inline-block; padding: 4px 10px; border-radius: 14px; font-size: 0.7rem; font-weight: bold; background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
-
-        #optimizing-indicator {
-            display: none; position: absolute; top: 10px; right: 20px; background: rgba(0, 168, 132, 0.9);
-            color: #fff; padding: 4px 10px; border-radius: 10px; font-size: 0.7rem; z-index: 500; font-weight: bold;
-        }
-
-        #modal-opciones-chat {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.75); z-index: 4000; justify-content: center; align-items: center; padding: 20px;
-        }
     </style>
 </head>
 <body>
 
-    <div id="optimizing-indicator"><i class="fa-solid fa-bolt"></i> Turbo Optimizado</div>
-
-    <!-- TONOS DE AUDIO Y NOTIFICACIÓN -->
+    <!-- AUDIO NOTIFICACIÓN -->
     <audio id="msgNotificationAudio" src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3"></audio>
-    <audio id="ringtoneAudio" loop src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-    <audio id="remoteAudio" autoplay></audio>
-    <audio id="localAudio" autoplay muted></audio>
 
+    <!-- MODAL VISOR FOTO GRANDE -->
+    <div id="modal-visor-foto" onclick="cerrarVisorFotoGrande(event)">
+        <div style="width: 100%; display: flex; justify-content: flex-end;">
+            <i class="fa-solid fa-xmark" style="font-size: 1.8rem; color: #fff; cursor: pointer;" onclick="cerrarVisorFotoGrande()"></i>
+        </div>
+        <div style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-grow: 1;">
+            <img id="img-visor-grande" src="" alt="Foto Grande" style="max-width: 90vw; max-height: 65vh; object-fit: contain; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); margin-bottom: 14px;" />
+            <h3 id="txt-visor-nombre" style="color: #fff; font-size: 1.2rem; margin: 0 0 4px 0;">Nombre</h3>
+            <p id="txt-visor-numero" style="color: var(--wa-muted); font-size: 0.95rem; margin: 0;">+58 500-0000</p>
+        </div>
+        <div></div>
+    </div>
+
+    <!-- MODAL EMERGENCIA SOS -->
     <div id="modal-emergency-sos" class="emergency-active-overlay">
-        <div style="max-width: 440px; width: 92%; background: #450a0a; border: 2px solid #ef4444; border-radius: 24px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.8);">
+        <div style="max-width: 440px; width: 92%; background: #450a0a; border: 2px solid #ef4444; border-radius: 24px; padding: 30px;">
             <i class="fa-solid fa-triangle-exclamation" style="font-size: 3.5rem; color: #f87171; margin-bottom: 14px;"></i>
-            <h1 style="color: #fef2f2; font-size: 1.5rem; margin: 0 0 8px 0;">🚨 MODO EMERGENCIA APAGÓN ACTIVADO</h1>
-            <p style="font-size: 0.85rem; color: #fca5a5; margin-bottom: 20px;">Red principal sin fluido eléctrico. Enlace PTT de respaldo local y baliza satelital habilitados.</p>
-            <div style="background: #2b0909; padding: 14px; border-radius: 12px; margin-bottom: 20px; font-size: 0.85rem; border: 1px solid #dc2626;">
-                <p style="margin: 4px 0;"><strong>Frecuencia Activa:</strong> Canal 1 SOS (Respaldo IP)</p>
-                <p style="margin: 4px 0;"><strong>Transmisión PTT:</strong> Directa sin interrupciones</p>
-            </div>
-            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                <button class="btn" style="background: #0284c7; flex: 1;" onclick="abrirChatWhatsApp('+58 500-0001', 'Central de Emergencias')">💬 Chat SOS Central</button>
-                <button class="btn" style="background: #ef4444; flex: 1;" onclick="toggleEmergencyMode()">Desactivar SOS</button>
-            </div>
+            <h1 style="color: #fef2f2; font-size: 1.5rem; margin: 0 0 8px 0;">🚨 MODO EMERGENCIA APAGÓN</h1>
+            <p style="font-size: 0.85rem; color: #fca5a5; margin-bottom: 20px;">Red principal sin fluido eléctrico. Enlace PTT de respaldo local habilitado.</p>
+            <button class="btn" style="background: #ef4444;" onclick="toggleEmergencyMode()">Desactivar SOS</button>
         </div>
     </div>
 
-    <!-- MODAL DE OPCIONES CHAT -->
-    <div id="modal-opciones-chat">
-        <div class="card" style="width: 100%; max-width: 360px; border-color: #ef4444; text-align: center;">
-            <h2 style="color: #f87171; margin-bottom: 8px;"><i class="fa-solid fa-triangle-exclamation"></i> Opciones de Conversación</h2>
-            <p style="font-size: 0.8rem; color: var(--wa-muted); margin-bottom: 16px;" id="lbl-chat-seleccionado-opciones">Gestionar chat</p>
-            <button class="btn" style="background: #ef4444; margin-bottom: 10px;" onclick="borrarChatParaTodos()">🗑️ Borrar chat para TODOS</button>
-            <button class="btn" style="background: #334155; margin-bottom: 14px;" onclick="borrarChatParaMi()">👁️‍🗨️ Borrar chat solo para Mí</button>
-            <button class="btn" style="background: transparent; border: 1px solid #334155; color: #94a3b8;" onclick="cerrarModalOpcionesChat()">Cancelar</button>
-        </div>
-    </div>
-
-    <!-- MODAL CREAR ESTADO -->
-    <div id="modal-crear-estado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 3000; justify-content: center; align-items: center; padding: 20px;">
-        <div class="card" style="width: 100%; max-width: 420px; border-color: #00a884;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
-                <h2 style="color: #00a884; margin: 0;"><i class="fa-solid fa-circle-notch"></i> Publicar Mi Estado</h2>
-                <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8; font-size: 1.2rem;" onclick="cerrarModalEstado()"></i>
-            </div>
-            <textarea id="estado-texto-input" rows="3" placeholder="¿Qué estás pensando hoy?"></textarea>
-            <input type="file" id="estado-file-input" accept="image/*,video/*,audio/*" style="margin-bottom: 14px;" />
-            <button class="btn" style="background: #00a884; color: #fff;" onclick="publicarEstadoContacto()">🚀 Publicar Estado</button>
-        </div>
-    </div>
-
-    <!-- MODAL VISUALIZADOR DE ESTADOS -->
-    <div id="modal-ver-estado" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3500; flex-direction: column; justify-content: space-between; padding: 20px; color: #fff;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <strong id="ver-estado-autor" style="font-size: 0.95rem;">Autor</strong>
-            <i class="fa-solid fa-xmark" style="cursor: pointer; font-size: 1.4rem;" onclick="cerrarVisorEstado()"></i>
-        </div>
-        <div id="ver-estado-contenido" style="text-align: center; flex-grow: 1; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px;"></div>
-    </div>
-
-    <!-- MODAL PANTALLA DE LLAMADA VOIP -->
-    <div id="modal-call-screen">
-        <div style="text-align: center; width: 100%;">
-            <div style="font-size: 0.8rem; color: #8696a0; display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 24px;">
-                <i class="fa-solid fa-lock" style="font-size: 0.7rem;"></i> Llamada cifrada de extremo a extremo
-            </div>
-            <div class="wa-call-avatar-container">
-                <div class="wa-call-avatar-large" id="call-avatar">C</div>
-            </div>
-            <h2 style="color: #e9edef; margin: 0; font-size: 1.8rem; font-weight: 600;" id="call-name">Llamada VoIP</h2>
-            <p style="color: var(--wa-green); font-size: 0.95rem; margin-top: 8px;" id="call-status">Conectando WebRTC HD...</p>
-            <div style="color: #8696a0; font-size: 1.3rem; font-weight: bold; margin-top: 12px;" id="call-timer">00:00</div>
-        </div>
-        <div class="wa-call-actions-bar">
-            <button class="wa-call-btn btn-wa-muted-dark" id="btn-speaker" title="Altavoz" onclick="toggleSpeaker()"><i class="fa-solid fa-volume-high"></i></button>
-            <button class="wa-call-btn btn-wa-muted-dark" id="btn-mute" title="Silenciar" onclick="toggleMuteCall()"><i class="fa-solid fa-microphone-slash"></i></button>
-            <button class="wa-call-btn btn-wa-hangup" title="Colgar" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
-        </div>
-    </div>
-
-    <!-- MODAL NUEVO / GUARDAR CONTACTO -->
-    <div id="modal-select-contact" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
+    <!-- MODAL NUEVO CONTACTO -->
+    <div id="modal-select-contact" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 2500; justify-content: center; align-items: center; padding: 20px;">
         <div class="card" style="width: 100%; max-width: 380px; border-color: #0284c7;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2 style="color: #0284c7; margin: 0;">➕ Guardar Contacto OmniChat</h2>
                 <i class="fa-solid fa-xmark" style="cursor: pointer; color: #94a3b8;" onclick="cerrarModalNuevoChat()"></i>
             </div>
-            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre (Ej: Soporte Técnico)" />
+            <input type="text" id="input-nuevo-nombre-contacto" placeholder="Nombre (Ej: Soporte)" />
             <input type="text" id="input-nuevo-numero-chat" placeholder="Número (Ej: +58 500-1000)" />
-            <button class="btn" style="background: var(--accent-green); color: #fff;" onclick="guardarNuevoContactoChat()">💬 Guardar e Iniciar Chat</button>
+            <button class="btn" style="background: var(--accent-green);" onclick="guardarNuevoContactoChat()">Guardar e Iniciar Chat</button>
         </div>
     </div>
 
@@ -638,12 +427,8 @@
                 <p style="font-size: 0.7rem; color: #94a3b8; margin: 2px 0 0 0;">omnimovil.xo.je | Tasa BCV: <span id="tasa-bcv-header">36.50</span> VES/USD</p>
             </div>
             <div class="header-actions">
-                <button class="btn-emergency-sos" onclick="toggleEmergencyMode()">
-                    <i class="fa-solid fa-tower-broadcast"></i> SOS APAGÓN
-                </button>
+                <button class="btn-emergency-sos" onclick="toggleEmergencyMode()"><i class="fa-solid fa-tower-broadcast"></i> SOS APAGÓN</button>
                 <button class="login-top-btn" onclick="abrirModalAuth()"><i class="fa-solid fa-right-to-bracket"></i> Iniciar Sesión</button>
-                <button style="background: #1e293b; color: #38bdf8; border: 1px solid #334155; padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="solicitarPermisoNotificaciones()">🔔</button>
-                <button style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); padding: 8px 12px; border-radius: 10px; font-weight: bold; font-size: 0.75rem; cursor: pointer;" onclick="instalarPWA()">📲 App</button>
             </div>
         </header>
 
@@ -651,21 +436,19 @@
             <div class="card" style="padding: 14px; margin-bottom: 12px; border-color: #0284c7;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <!-- FOTO DE PERFIL CLICKEABLE -->
-                        <div class="profile-avatar-btn" id="cliente-avatar-perfil" title="Haz clic para cambiar tu foto de perfil" onclick="document.getElementById('input-foto-perfil').click()">
+                        <div class="profile-avatar-btn" id="cliente-avatar-perfil" title="Cambiar foto" onclick="document.getElementById('input-foto-perfil').click()">
                             <span id="cliente-avatar-letra">U</span>
                         </div>
                         <input type="file" id="input-foto-perfil" accept="image/*" style="display: none;" onchange="cambiarFotoPerfil(this)" />
-                        
                         <div>
                             <strong style="font-size: 0.95rem; color: #38bdf8;" id="cliente-num-linea">+58 500-0000</strong>
                             <span style="font-size: 0.8rem; color: #94a3b8;"> (<span id="cliente-nombre-actual">Usuario</span>)</span>
-                            <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;" id="prueba-estado-banner">⏳ Prueba de 24 horas activa</div>
+                            <div style="font-size: 0.75rem; color: #f59e0b; margin-top: 2px;">⏳ Prueba de 24 horas activa</div>
                         </div>
                     </div>
                     <div style="display: flex; align-items: center; gap: 10px;">
                         <span class="status-badge">● ACTIVA</span>
-                        <button class="logout-top-btn" onclick="cerrarSesionCliente()">Salir / Cerrar Sesión</button>
+                        <button class="logout-top-btn" onclick="cerrarSesionCliente()">Cerrar Sesión</button>
                     </div>
                 </div>
             </div>
@@ -680,105 +463,73 @@
 
             <!-- OMNICHAT -->
             <div id="csec-chat" class="client-section active">
-                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Menú Principal</button>
                 <div class="wa-app-container">
                     <div class="wa-top-bar">
-                        <h2 id="wa-header-title">OmniChat</h2>
+                        <h2>OmniChat</h2>
                         <div class="wa-top-icons">
-                            <i class="fa-solid fa-camera" onclick="document.getElementById('input-file-media').click()" title="Adjuntar archivo multimedia"></i>
-                            <i class="fa-solid fa-ellipsis-vertical" onclick="alert('Opciones de OmniChat')"></i>
+                            <i class="fa-solid fa-camera" onclick="document.getElementById('input-file-media').click()" title="Adjuntar multimedia"></i>
                         </div>
                     </div>
 
-                    <!-- CHATS -->
-                    <div id="wa-tab-chats" class="wa-tab-content active">
+                    <div id="wa-tab-chats" class="wa-tab-content active" style="height: 100%; display: flex; flex-direction: column;">
                         <div class="wa-search-box">
                             <div class="wa-search-input-wrap">
                                 <i class="fa-solid fa-magnifying-glass" style="color: var(--wa-muted);"></i>
                                 <input type="text" id="wa-search-input" placeholder="Buscar chats..." onkeyup="filtrarChatsWhatsApp()">
                             </div>
                         </div>
-                        <div class="wa-filter-chips">
-                            <span class="wa-chip active">Todos</span>
-                            <span class="wa-chip">No leídos</span>
-                        </div>
                         <div class="wa-content-area" id="lista-chats-wa"></div>
-                        <div class="wa-fab" onclick="abrirModalNuevoChat()" title="Iniciar nuevo chat">
-                            <i class="fa-solid fa-comment-medical"></i>
-                        </div>
+                        <div class="wa-fab" onclick="abrirModalNuevoChat()" title="Nuevo Chat"><i class="fa-solid fa-comment-medical"></i></div>
                     </div>
 
-                    <!-- ESTADOS -->
-                    <div id="wa-tab-novedades" class="wa-tab-content" style="padding: 20px; overflow-y: auto;">
-                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Novedades y Estados</h3>
-                        <div style="background: #111b21; padding: 16px; border-radius: 12px; border: 1px solid #1f2c34; display: flex; align-items: center; gap: 14px; margin-bottom: 16px; cursor: pointer;" onclick="abrirModalCrearEstado()">
-                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #00a884; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #fff;"><i class="fa-solid fa-plus"></i></div>
-                            <div>
-                                <strong style="font-size: 0.95rem;">Mi estado</strong><br/>
-                                <span style="font-size: 0.75rem; color: var(--wa-muted);">Comparte foto, video o nota con tus contactos</span>
-                            </div>
-                        </div>
-                        <div id="lista-estados-contactos"></div>
-                    </div>
-
-                    <!-- COMUNIDADES -->
-                    <div id="wa-tab-comunidades" class="wa-tab-content" style="padding: 20px;">
-                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Comunidades de OmniMovil</h3>
-                        <div style="background: #111b21; padding: 16px; border-radius: 12px; border: 1px solid #1f2c34; display: flex; align-items: center; gap: 14px;">
-                            <div style="width: 50px; height: 50px; border-radius: 12px; background: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; color: #fff;"><i class="fa-solid fa-users-rectangle"></i></div>
-                            <div>
-                                <strong style="font-size: 0.95rem;">Canal Oficial Central IP</strong><br/>
-                                <span style="font-size: 0.75rem; color: var(--wa-muted);">Anuncios de la red</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- LLAMADAS REGISTRO -->
-                    <div id="wa-tab-llamadas" class="wa-tab-content" style="padding: 20px;">
-                        <h3 style="color: #38bdf8; margin-top: 0; font-size: 1rem;">Registro de Llamadas VoIP</h3>
-                        <div class="history-item" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong style="font-size: 0.85rem; color: #f8fafc;"><i class="fa-solid fa-phone-arrow-up-right" style="color: #10b981;"></i> Soporte Técnico</strong>
-                                <div style="font-size: 0.7rem; color: var(--wa-muted);">Hoy, 02:30 PM</div>
-                            </div>
-                            <button class="btn btn-small" style="background: #00a884;" onclick="iniciarLlamadaVozHD('+58 500-0001')"><i class="fa-solid fa-phone"></i></button>
-                        </div>
-                    </div>
-
-                    <!-- PANTALLA CHAT ABIERTO -->
+                    <!-- CHAT ABIERTO -->
                     <div class="wa-chat-view" id="pantalla-chat-abierto">
                         <div class="wa-chat-view-header">
                             <i class="fa-solid fa-arrow-left" style="cursor: pointer; color: var(--wa-muted); font-size: 1.1rem;" onclick="cerrarChatAbierto()"></i>
-                            <div class="wa-avatar-wrap" style="width: 38px; height: 38px;"><div class="wa-avatar-img" id="chat-header-avatar-wa">S</div></div>
-                            <div style="flex-grow: 1;">
-                                <strong style="font-size: 0.9rem;" id="chat-nombre-receptor-wa">Contacto</strong><br/>
-                                <span style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold;" id="chat-estado-en-linea-wa">● En línea</span>
+                            <div class="wa-avatar-wrap" style="width: 38px; height: 38px; cursor: pointer;" onclick="abrirFotoPerfilGrande()">
+                                <div class="wa-avatar-img" id="chat-header-avatar-wa">S</div>
                             </div>
-                            <i class="fa-solid fa-phone" style="color: var(--wa-muted); cursor: pointer; font-size: 1.1rem;" onclick="iniciarLlamadaVozHD()"></i>
+                            <div style="flex-grow: 1;">
+                                <strong style="font-size: 0.9rem; cursor: pointer;" id="chat-nombre-receptor-wa" onclick="abrirFotoPerfilGrande()">Contacto</strong><br/>
+                                <span style="font-size: 0.65rem; color: var(--wa-green); font-weight: bold;">● En línea</span>
+                            </div>
                         </div>
 
-                        <!-- BARRA PARA GUARDAR NÚMERO DESCONOCIDO -->
                         <div class="wa-unknown-banner" id="banner-guardar-desconocido">
                             <span>Este número no está en tus contactos</span>
-                            <button class="btn btn-small" style="background: #00a884; color: #0b141a; font-weight: bold;" onclick="prepararGuardarDesconocido()">➕ Guardar número</button>
+                            <button class="btn btn-small" style="background: #00a884; color: #0b141a; font-weight: bold;" onclick="prepararGuardarDesconocido()">➕ Guardar</button>
                         </div>
 
                         <div class="wa-chat-view-messages" id="contenedor-mensajes-wa">
                             <div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; width: fit-content; margin: 0 auto;">🔒 Mensajes cifrados en OmniMovil.</div>
                         </div>
 
+                        <!-- PANEL FLOTANTE DE EMOJIS, GIFS Y AGREGAR EXTERNOS -->
                         <div id="wa-picker-panel">
-                            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #2a3942; padding-bottom: 6px; margin-bottom: 8px; font-size: 0.75rem; color: var(--wa-muted);">
-                                <span>😀 Emojis y Stickers</span>
-                                <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="togglePickerPanel()"></i>
+                            <div class="picker-tabs">
+                                <div class="picker-tab-group">
+                                    <button class="picker-tab-btn active" onclick="cambiarPestanaPicker('emojis')">😀 Emojis</button>
+                                    <button class="picker-tab-btn" onclick="cambiarPestanaPicker('gifs')">🎞️ GIFs / Stickers</button>
+                                </div>
+                                <label style="background: #0284c7; color: #fff; font-size: 0.7rem; padding: 4px 8px; border-radius: 6px; cursor: pointer;" title="Agregar sticker o emoji desde otra app">
+                                    ➕ Añadir <input type="file" id="input-agregar-emoji-app" accept="image/*" style="display:none;" onchange="importarStickerExterno(this)">
+                                </label>
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; font-size: 1.2rem; cursor: pointer; text-align: center;">
-                                <span onclick="insertarEmojiOrSticker('😀')">😀</span>
-                                <span onclick="insertarEmojiOrSticker('😂')">😂</span>
-                                <span onclick="insertarEmojiOrSticker('😍')">😍</span>
-                                <span onclick="insertarEmojiOrSticker('👍')">👍</span>
-                                <span onclick="insertarEmojiOrSticker('🔥')">🔥</span>
-                                <span onclick="insertarEmojiOrSticker('🚀')">🚀</span>
+
+                            <div id="picker-content-emojis" class="emoji-grid">
+                                <span onclick="insertarEmojiOrSticker('😀')">😀</span><span onclick="insertarEmojiOrSticker('😂')">😂</span><span onclick="insertarEmojiOrSticker('😍')">😍</span><span onclick="insertarEmojiOrSticker('🥳')">🥳</span><span onclick="insertarEmojiOrSticker('😎')">😎</span><span onclick="insertarEmojiOrSticker('👍')">👍</span>
+                                <span onclick="insertarEmojiOrSticker('🔥')">🔥</span><span onclick="insertarEmojiOrSticker('🚀')">🚀</span><span onclick="insertarEmojiOrSticker('❤️')">❤️</span><span onclick="insertarEmojiOrSticker('✨')">✨</span><span onclick="insertarEmojiOrSticker('🙏')">🙏</span><span onclick="insertarEmojiOrSticker('🎉')">🎉</span>
+                                <span onclick="insertarEmojiOrSticker('😁')">😁</span><span onclick="insertarEmojiOrSticker('😅')">😅</span><span onclick="insertarEmojiOrSticker('😊')">😊</span><span onclick="insertarEmojiOrSticker('😉')">😉</span><span onclick="insertarEmojiOrSticker('😘')">😘</span><span onclick="insertarEmojiOrSticker('😜')">😜</span>
+                                <span onclick="insertarEmojiOrSticker('🤔')">🤔</span><span onclick="insertarEmojiOrSticker('😴')">😴</span><span onclick="insertarEmojiOrSticker('😭')">😭</span><span onclick="insertarEmojiOrSticker('😡')">😡</span><span onclick="insertarEmojiOrSticker('💀')">💀</span><span onclick="insertarEmojiOrSticker('🎉')">🎉</span>
+                                <span onclick="insertarEmojiOrSticker('⚽')">⚽</span><span onclick="insertarEmojiOrSticker('🍕')">🍕</span><span onclick="insertarEmojiOrSticker('☕')">☕</span><span onclick="insertarEmojiOrSticker('💡')">💡</span><span onclick="insertarEmojiOrSticker('💻')">💻</span><span onclick="insertarEmojiOrSticker('🏆')">🏆</span>
+                            </div>
+
+                            <div id="picker-content-gifs" class="emoji-grid" style="display:none; grid-template-columns: repeat(2, 1fr); font-size: 0.8rem;">
+                                <div onclick="insertarEmojiOrSticker('<img src=\'https://media.giphy.com/media/xT5LMPj8P2GHnGIIqY/giphy.gif\' style=\'max-width:160px;border-radius:8px;\'/>')" style="cursor:pointer;background:#202c33;padding:6px;border-radius:8px;text-align:center;">🎉 Fiesta GIF</div>
+                                <div onclick="insertarEmojiOrSticker('<img src=\'https://media.giphy.com/media/l0HlRnAWXxn0MhOBK/giphy.gif\' style=\'max-width:160px;border-radius:8px;\'/>')" style="cursor:pointer;background:#202c33;padding:6px;border-radius:8px;text-align:center;">🚀 Cohete GIF</div>
+                                <div onclick="insertarEmojiOrSticker('<img src=\'https://media.giphy.com/media/26u4lOMA8JKSnL9Uk/giphy.gif\' style=\'max-width:160px;border-radius:8px;\'/>')" style="cursor:pointer;background:#202c33;padding:6px;border-radius:8px;text-align:center;">👏 Aplausos GIF</div>
+                                <div onclick="insertarEmojiOrSticker('<img src=\'https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif\' style=\'max-width:160px;border-radius:8px;\'/>')" style="cursor:pointer;background:#202c33;padding:6px;border-radius:8px;text-align:center;">🔥 Fuego GIF</div>
                             </div>
                         </div>
 
@@ -786,31 +537,20 @@
                             <i class="fa-regular fa-face-smile wa-tool-icon" onclick="togglePickerPanel()"></i>
                             <i class="fa-solid fa-paperclip wa-tool-icon" onclick="document.getElementById('input-file-media').click()"></i>
                             <input type="file" id="input-file-media" accept="image/*,video/*,audio/*" style="display: none;" onchange="manejarSubidaArchivoMedia(this)" />
-                            
                             <input type="text" id="chat-input-texto-wa" placeholder="Escribe un mensaje..." onkeypress="if(event.key === 'Enter') enviarMensajeWhatsApp()" />
-                            <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.25rem; cursor: pointer;" onclick="enviarMensajeWhatsApp()"></i>
-                        </div>
-                    </div>
+                            
+                            <button class="btn-mic-record" id="btn-audio-record" title="Mantén presionado para nota de voz" onmousedown="iniciarGrabacionAudio()" onmouseup="detenerYEnviarAudio()" ontouchstart="iniciarGrabacionAudio()" ontouchend="detenerYEnviarAudio()">
+                                <i class="fa-solid fa-microphone"></i>
+                                <span id="audio-timer-display" style="font-size: 0.7rem; display: none; font-weight: bold; margin-left: 4px;">0:00</span>
+                            </button>
 
-                    <!-- NAV INFERIOR -->
-                    <div class="wa-bottom-nav">
-                        <div class="wa-nav-btn active" id="nav-btn-chats" onclick="cambiarPestanaWhatsApp('chats')">
-                            <i class="fa-solid fa-comment-dots"></i><span>Chats</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-novedades" onclick="cambiarPestanaWhatsApp('novedades')">
-                            <i class="fa-solid fa-circle-notch"></i><span>Novedades</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-comunidades" onclick="cambiarPestanaWhatsApp('comunidades')">
-                            <i class="fa-solid fa-people-group"></i><span>Comunidades</span>
-                        </div>
-                        <div class="wa-nav-btn" id="nav-btn-llamadas" onclick="cambiarPestanaWhatsApp('llamadas')">
-                            <i class="fa-solid fa-phone"></i><span>Llamadas</span>
+                            <i class="fa-solid fa-paper-plane" style="color: var(--wa-green); font-size: 1.25rem; cursor: pointer; margin-left: 6px;" onclick="enviarMensajeWhatsApp()"></i>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- BILLETERA -->
+            <!-- BILLETERA / PAGO MÓVIL -->
             <div id="csec-billetera" class="client-section">
                 <div class="card" style="text-align: center;">
                     <h2>Saldo Disponible en Cuenta</h2>
@@ -827,7 +567,7 @@
                     </div>
 
                     <h2>⚡ Reportar Pago en Bolívares (VES)</h2>
-                    <input type="number" id="monto-pago-ves" placeholder="Monto en Bolívares (Ej: 100.00 VES)" oninput="calcularEquivalenteUsd(this.value)" />
+                    <input type="number" id="monto-pago-ves" placeholder="Monto en Bolívares (Ej: 182.50 VES)" oninput="calcularEquivalenteUsd(this.value)" />
                     <p style="font-size: 0.75rem; color: #10b981; margin-top: -8px; margin-bottom: 12px;" id="info-eq-usd">Equivalente a acreditar: $0.00 USD</p>
                     <input type="text" id="ref-pago" placeholder="Últimos 4 dígitos o Referencia Pago Móvil" />
                     <button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff;" onclick="enviarReportePagoBolivares()">🚀 Enviar Reporte de Pago</button>
@@ -840,20 +580,20 @@
                     <h2>📦 Paquetes Mensuales (30 Días)</h2>
                     <div class="history-item" style="display: flex; justify-content: space-between; align-items: center;">
                         <div>
-                            <strong style="color: #f8fafc; font-size: 1rem;">🌟 Paquete Ilimitado Pro ($2.00/mes)</strong>
-                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #10b981;">Llamadas + Mensajes ilimitados</p>
+                            <strong style="color: #f8fafc; font-size: 1rem;">🌟 Paquete Ilimitado Pro ($2.00)</strong>
+                            <p style="margin: 4px 0 0 0; font-size: 0.8rem; color: #10b981;">Llamadas SIP + OmniChat ilimitado</p>
                         </div>
-                        <button class="btn btn-small" style="background: #10b981; padding: 10px 18px;" onclick="suscribirPlanAutomatico('Paquete Ilimitado Pro', 2.00)">Activar</button>
+                        <button class="btn btn-small" style="background: #10b981;" onclick="suscribirPlanAutomatico('Paquete Ilimitado Pro', 2.00)">Activar</button>
                     </div>
                 </div>
             </div>
 
-            <!-- RED SIP -->
+            <!-- RED SIP / ZOIPER -->
             <div id="csec-llamadas" class="client-section">
-                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Menú Principal</button>
                 <div class="zoiper-phone-card">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="font-size: 0.75rem; color: var(--accent-orange); font-weight: bold;" id="webrtc-status-indicator">● WEBRTC (DESCONECTADO)</span>
+                        <span style="font-size: 0.75rem; color: var(--accent-orange); font-weight: bold;">● WEBRTC ACTIVO</span>
                         <span style="font-size: 0.7rem; color: var(--wa-muted);" id="zoiper-line-id">+58 500-0000</span>
                     </div>
                     <div class="zoiper-screen">
@@ -879,19 +619,13 @@
                         <button class="zoiper-action-btn btn-hangup-red" onclick="finalizarLlamada()"><i class="fa-solid fa-phone-slash"></i></button>
                     </div>
                 </div>
-
-                <div class="card" style="max-width: 380px; margin: 0 auto; border-color: #0284c7;">
-                    <h2 style="font-size: 0.85rem; color: #38bdf8; margin-bottom: 8px;"><i class="fa-solid fa-gear"></i> Servidor WebSocket</h2>
-                    <input type="text" id="ws-url-input" value="wss://omnimovil-backend.onrender.com" />
-                    <button class="btn" style="background: #0284c7; padding: 10px; font-size: 0.85rem;" onclick="conectarServidorWebSocket()">⚡ Conectar Servidor</button>
-                </div>
             </div>
 
             <!-- HISTORIAL -->
             <div id="csec-historial" class="client-section">
-                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Regresar al Menú Principal</button>
+                <button class="btn-volver-panel" onclick="cambiarSeccionCliente('billetera')"><i class="fa-solid fa-arrow-left"></i> Menú Principal</button>
                 <div class="card">
-                    <h2>📋 Historial de Transacciones</h2>
+                    <h2>📋 Historial de Transacciones y Pagos</h2>
                     <div class="static-scroll-box" id="lista-historial-personal" style="height: 260px;">
                         <div style="color: #8696a0; text-align: center; padding: 20px;">Sin registros recientes.</div>
                     </div>
@@ -899,30 +633,28 @@
             </div>
         </div>
 
-        <!-- MODAL DE AUTENTICACIÓN -->
-        <div id="modal-registro-inicial" style="display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <!-- MODAL AUTENTICACIÓN -->
+        <div id="modal-registro-inicial" style="display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
             <div class="card" style="width: 100%; max-width: 380px; text-align: center; padding: 28px; border-color: #0284c7;">
                 <h1 style="color: #38bdf8; font-size: 1.6rem; margin: 0 0 6px 0; font-weight: bold;">OmniMovil</h1>
                 <p style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 22px;">Red de Comunicación IP</p>
 
-                <div id="auth-forms-wrapper" style="display: block;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
-                        <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">🔑 Login</button>
-                        <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">📝 Registro</button>
-                    </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
+                    <button class="tab-auth-btn active" id="tab-btn-login" onclick="switchAuthMode('login')" style="background: #0284c7; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">🔑 Login</button>
+                    <button class="tab-auth-btn" id="tab-btn-registro" onclick="switchAuthMode('registro')" style="background: #1e293b; color: #94a3b8; border: none; padding: 10px; border-radius: 8px; font-weight: bold; width: 48%; cursor: pointer;">📝 Registro</button>
+                </div>
 
-                    <div id="form-login-container" style="display: block;">
-                        <input type="text" id="auth-login-user" placeholder="Usuario" />
-                        <input type="password" id="auth-login-pass" placeholder="Contraseña" />
-                        <button class="btn" style="background: #0284c7; margin-top: 6px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
-                    </div>
+                <div id="form-login-container" style="display: block;">
+                    <input type="text" id="auth-login-user" placeholder="Usuario" />
+                    <input type="password" id="auth-login-pass" placeholder="Contraseña" />
+                    <button class="btn" style="background: #0284c7; margin-top: 6px;" onclick="ejecutarInicioSesion()">Iniciar Sesión</button>
+                </div>
 
-                    <div id="form-registro-container" style="display: none;">
-                        <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
-                        <input type="text" id="init-reg-user" placeholder="Usuario" />
-                        <input type="password" id="init-reg-pass" placeholder="Contraseña" />
-                        <button class="btn" style="background: var(--accent-green); margin-top: 6px;" onclick="ejecutarRegistroCliente()">Registrarme</button>
-                    </div>
+                <div id="form-registro-container" style="display: none;">
+                    <input type="text" id="init-reg-nombre" placeholder="Nombre completo" />
+                    <input type="text" id="init-reg-user" placeholder="Usuario" />
+                    <input type="password" id="init-reg-pass" placeholder="Contraseña" />
+                    <button class="btn" style="background: var(--accent-green); margin-top: 6px;" onclick="ejecutarRegistroCliente()">Registrarme</button>
                 </div>
             </div>
         </div>
@@ -944,18 +676,19 @@
         let canalMensajes = null;
         let emergencyModeActive = false;
 
+        let mediaRecorder = null;
+        let audioChunks = [];
+        let audioTimerInterval = null;
+        let audioSeconds = 0;
+
         let contactosOmniChat = [
-            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!", guardado: true }
+            { nombre: "Soporte OmniMovil", numero: "+58 500-0001", ultimo: "¡Bienvenido a la red IP!", guardado: true, foto: null }
         ];
 
         function cargarContactosLocales() {
             if (!clienteAutenticado) return;
             let guardados = localStorage.getItem('omnimovil_contactos_' + clienteAutenticado.usuario);
-            if (guardados) {
-                try {
-                    contactosOmniChat = JSON.parse(guardados);
-                } catch(e) {}
-            }
+            if (guardados) { try { contactosOmniChat = JSON.parse(guardados); } catch(e) {} }
         }
 
         function guardarContactosLocales() {
@@ -977,40 +710,26 @@
         async function cambiarFotoPerfil(input) {
             if (!input.files || !input.files[0] || !clienteAutenticado) return;
             let file = input.files[0];
-
-            // Redimensionar imagen para que no pese demasiado en base de datos
             let reader = new FileReader();
             reader.onload = function(e) {
                 let img = new Image();
                 img.onload = async function() {
                     let canvas = document.createElement('canvas');
                     let MAX_SIZE = 200;
-                    let width = img.width;
-                    let height = img.height;
-
-                    if (width > height) {
-                        if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
-                    } else {
-                        if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
-                    }
-                    canvas.width = width;
-                    canvas.height = height;
+                    let width = img.width, height = img.height;
+                    if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } }
+                    else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+                    canvas.width = width; canvas.height = height;
                     let ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-
                     let base64Foto = canvas.toDataURL('image/jpeg', 0.8);
 
-                    // Guardar en Supabase
                     let { error } = await _supabase
                         .from('clientes_omnimovil')
                         .update({ foto_perfil: base64Foto })
                         .eq('usuario', clienteAutenticado.usuario);
 
-                    if (error) {
-                        alert("Error al guardar foto de perfil: " + error.message);
-                        return;
-                    }
-
+                    if (error) { alert("Error al guardar foto: " + error.message); return; }
                     clienteAutenticado.foto_perfil = base64Foto;
                     actualizarAvatarPerfilUI(base64Foto, clienteAutenticado.nombre);
                     alert("✅ Foto de perfil actualizada correctamente.");
@@ -1020,12 +739,206 @@
             reader.readAsDataURL(file);
         }
 
-        function reproducirTonoMensaje() {
-            let audio = document.getElementById('msgNotificationAudio');
-            if (audio) {
-                audio.currentTime = 0;
-                audio.play().catch(() => {});
+        function abrirFotoPerfilGrande() {
+            let contacto = contactosOmniChat.find(c => c.numero === numeroReceptorActual);
+            let imgGrande = document.getElementById('img-visor-grande');
+            document.getElementById('txt-visor-nombre').innerText = nombreReceptorActual || "Contacto";
+            document.getElementById('txt-visor-numero').innerText = numeroReceptorActual || "";
+
+            if (contacto && contacto.foto) {
+                imgGrande.src = contacto.foto;
+            } else {
+                imgGrande.src = "https://via.placeholder.com/300/1f2c34/ffffff?text=" + encodeURIComponent((nombreReceptorActual || 'U').charAt(0));
             }
+            document.getElementById('modal-visor-foto').classList.add('active');
+        }
+
+        function cerrarVisorFotoGrande(e) {
+            if (!e || e.target.id === 'modal-visor-foto' || e.target.classList.contains('fa-xmark')) {
+                document.getElementById('modal-visor-foto').classList.remove('active');
+            }
+        }
+
+        // CONTROL DE PESTAÑAS DEL PICKER (EMOJIS / GIFS) Y AGREGAR EXTERNOS
+        function togglePickerPanel() {
+            let p = document.getElementById('wa-picker-panel');
+            p.style.display = p.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function cambiarPestanaPicker(tipo) {
+            let tabEmojis = document.getElementById('picker-content-emojis');
+            let tabGifs = document.getElementById('picker-content-gifs');
+            let botones = document.querySelectorAll('.picker-tab-btn');
+
+            botones.forEach(b => b.classList.remove('active'));
+            if (tipo === 'emojis') {
+                tabEmojis.style.display = 'grid';
+                tabGifs.style.display = 'none';
+                botones[0].classList.add('active');
+            } else {
+                tabEmojis.style.display = 'none';
+                tabGifs.style.display = 'grid';
+                botones[1].classList.add('active');
+            }
+        }
+
+        function insertarEmojiOrSticker(val) {
+            if (val.includes('<img')) {
+                enviarContenidoDirecto(val);
+            } else {
+                document.getElementById('chat-input-texto-wa').value += val;
+            }
+            document.getElementById('wa-picker-panel').style.display = 'none';
+        }
+
+        function importarStickerExterno(input) {
+            if (!input.files || !input.files[0]) return;
+            let file = input.files[0];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let base64Img = e.target.result;
+                let htmlSticker = `<img src="${base64Img}" style="max-width:140px;border-radius:10px;" />`;
+                
+                // Agregar dinámicamente al grid de GIFs / Stickers
+                let gridGifs = document.getElementById('picker-content-gifs');
+                let nuevoDiv = document.createElement('div');
+                nuevoDiv.innerHTML = `<img src="${base64Img}" style="max-width:100%;height:60px;object-fit:contain;border-radius:6px;background:#202c33;padding:4px;" />`;
+                nuevoDiv.style.cursor = 'pointer';
+                nuevoDiv.onclick = () => insertarEmojiOrSticker(htmlSticker);
+                gridGifs.appendChild(nuevoDiv);
+
+                alert("✅ Sticker / Emoji agregado exitosamente al panel.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        async function enviarContenidoDirecto(htmlContenido) {
+            if (!numeroReceptorActual || !clienteAutenticado) return;
+            pintarBurbujaMensaje(htmlContenido, true);
+            await _supabase.from('mensajes_omnimovil').insert([{ emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: htmlContenido }]);
+        }
+
+        // FUNCIONES DE PAGO MÓVIL Y SALDO
+        function calcularEquivalenteUsd(montoBs) {
+            let eq = parseFloat(montoBs) / tasaBCV;
+            document.getElementById('info-eq-usd').innerText = `Equivalente a acreditar: $${isNaN(eq) ? '0.00' : eq.toFixed(2)} USD`;
+        }
+
+        async function enviarReportePagoBolivares() {
+            let montoBs = parseFloat(document.getElementById('monto-pago-ves').value);
+            let ref = document.getElementById('ref-pago').value.trim();
+
+            if (!montoBs || !ref) {
+                alert("Por favor ingresa el monto en bolívares y la referencia de pago.");
+                return;
+            }
+
+            let montoUsd = montoBs / tasaBCV;
+            saldoActual += montoUsd;
+
+            let { error } = await _supabase
+                .from('clientes_omnimovil')
+                .update({ saldo: saldoActual })
+                .eq('usuario', clienteAutenticado.usuario);
+
+            if (error) { alert("Error al actualizar saldo: " + error.message); return; }
+
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            document.getElementById('saldo-en-bs').innerText = (saldoActual * tasaBCV).toFixed(2);
+            document.getElementById('monto-pago-ves').value = '';
+            document.getElementById('ref-pago').value = '';
+
+            registrarHistorialLocal(`Pago Móvil reportado (Ref: ${ref}): +$${montoUsd.toFixed(2)}`);
+            alert(`✅ ¡Pago reportado con éxito! Se han acreditado $${montoUsd.toFixed(2)} a tu cuenta.`);
+        }
+
+        async function suscribirPlanAutomatico(nombrePlan, costoPlan) {
+            if (saldoActual < costoPlan) {
+                alert(`Saldo insuficiente. Tu saldo actual es $${saldoActual.toFixed(2)} y el plan cuesta $${costoPlan.toFixed(2)}. Por favor reporta un pago móvil.`);
+                cambiarSeccionCliente('billetera');
+                return;
+            }
+
+            saldoActual -= costoPlan;
+            let { error } = await _supabase
+                .from('clientes_omnimovil')
+                .update({ saldo: saldoActual })
+                .eq('usuario', clienteAutenticado.usuario);
+
+            if (error) { alert("Error al activar plan: " + error.message); return; }
+
+            document.getElementById('saldo-usuario').innerText = `$${saldoActual.toFixed(2)}`;
+            registrarHistorialLocal(`Activación de ${nombrePlan}: -$${costoPlan.toFixed(2)}`);
+            alert(`🎉 ¡${nombrePlan} activado exitosamente por 30 días!`);
+            cambiarSeccionCliente('chat');
+        }
+
+        function registrarHistorialLocal(texto) {
+            let caja = document.getElementById('lista-historial-personal');
+            let fecha = new Date().toLocaleString();
+            if (caja.innerHTML.includes('Sin registros recientes')) { caja.innerHTML = ''; }
+            caja.innerHTML = `<div class="history-item"><strong>${fecha}</strong><p style="margin:4px 0 0 0; color:#38bdf8;">${texto}</p></div>` + caja.innerHTML;
+        }
+
+        // GRABACIÓN DE AUDIO
+        async function iniciarGrabacionAudio() {
+            audioChunks = [];
+            audioSeconds = 0;
+            let timerSpan = document.getElementById('audio-timer-display');
+            let micBtn = document.getElementById('btn-audio-record');
+            micBtn.classList.add('recording');
+            timerSpan.style.display = 'inline-block';
+            timerSpan.innerText = '0:00';
+
+            audioTimerInterval = setInterval(() => {
+                audioSeconds++;
+                let mins = Math.floor(audioSeconds / 60);
+                let secs = audioSeconds % 60;
+                timerSpan.innerText = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+            }, 1000);
+
+            try {
+                let stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                mediaRecorder.ondataavailable = e => { if (e.data.size > 0) audioChunks.push(e.data); };
+                mediaRecorder.start();
+            } catch (err) { console.error("Micrófono no disponible", err); }
+        }
+
+        function detenerYEnviarAudio() {
+            let timerSpan = document.getElementById('audio-timer-display');
+            let micBtn = document.getElementById('btn-audio-record');
+            micBtn.classList.remove('recording');
+            clearInterval(audioTimerInterval);
+            timerSpan.style.display = 'none';
+
+            if (!mediaRecorder) return;
+            mediaRecorder.onstop = async () => {
+                let audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                let reader = new FileReader();
+                reader.onload = async function(e) {
+                    let base64Audio = e.target.result;
+                    let htmlAudio = `<audio controls src="${base64Audio}"></audio>`;
+                    pintarBurbujaMensaje(htmlAudio, true);
+                    await _supabase.from('mensajes_omnimovil').insert([{ emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: htmlAudio }]);
+                };
+                reader.readAsDataURL(audioBlob);
+                mediaRecorder.stream.getTracks().forEach(t => t.stop());
+            };
+            mediaRecorder.stop();
+        }
+
+        function manejarSubidaArchivoMedia(input) {
+            if (!input.files || !input.files[0] || !numeroReceptorActual) return;
+            let file = input.files[0];
+            let reader = new FileReader();
+            reader.onload = async function(e) {
+                let base64 = e.target.result;
+                let html = file.type.startsWith('image/') ? `<img src="${base64}" />` : file.type.startsWith('video/') ? `<video controls src="${base64}"></video>` : `<a href="${base64}" download="${file.name}">📁 ${file.name}</a>`;
+                pintarBurbujaMensaje(html, true);
+                await _supabase.from('mensajes_omnimovil').insert([{ emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: html }]);
+            };
+            reader.readAsDataURL(file);
         }
 
         async function cargarDatosEnInterfaz(data) {
@@ -1041,7 +954,6 @@
 
             actualizarAvatarPerfilUI(data.foto_perfil, data.nombre || data.usuario);
             cargarContactosLocales();
-
             document.getElementById('modal-registro-inicial').style.display = 'none';
             document.getElementById('panel-cliente').classList.add('active');
 
@@ -1049,151 +961,88 @@
             iniciarEscuchaMensajesTiempoReal();
         }
 
-        // CARGA CONVERSACIONES INCLUSO DE NÚMEROS NO GUARDADOS
         async function sincronizarChatsDesdeSupabase() {
             if (!clienteAutenticado) return;
-            let { data, error } = await _supabase
+            let { data: todosClientes } = await _supabase.from('clientes_omnimovil').select('numero_linea, foto_perfil, nombre');
+            let mapaClientes = {};
+            if (todosClientes) { todosClientes.forEach(cl => { if (cl.numero_linea) mapaClientes[cl.numero_linea] = { foto: cl.foto_perfil, nombreReal: cl.nombre }; }); }
+
+            let { data } = await _supabase
                 .from('mensajes_omnimovil')
                 .select('*')
-                .or(`emisor.eq.${miNumeroAsignado},receptor.eq.${miNumeroAsignado}`)
+                .or(`and(emisor.eq.${miNumeroAsignado}),and(receptor.eq.${miNumeroAsignado})`)
                 .order('created_at', { ascending: false });
 
-            if (data && !error) {
+            if (data) {
                 data.forEach(msg => {
                     let otroNumero = msg.emisor === miNumeroAsignado ? msg.receptor : msg.emisor;
+                    let infoCli = mapaClientes[otroNumero] || {};
+                    let fotoRemota = infoCli.foto || null;
                     let existente = contactosOmniChat.find(c => c.numero === otroNumero);
                     if (!existente) {
                         contactosOmniChat.unshift({
-                            nombre: otroNumero, // Aparece con el número porque no está guardado
+                            nombre: infoCli.nombreReal || otroNumero,
                             numero: otroNumero,
-                            ultimo: msg.contenido,
-                            guardado: false
+                            ultimo: msg.contenido.includes('<img') ? '[Imagen/Sticker]' : msg.contenido,
+                            guardado: !!infoCli.nombreReal,
+                            foto: fotoRemota
                         });
                     } else {
-                        existente.ultimo = msg.contenido;
+                        if (fotoRemota) existente.foto = fotoRemota;
                     }
                 });
                 renderizarContactosChat();
             }
         }
 
-        // ESCUCHA MENSAJES EN TIEMPO REAL Y GENERA TONO DE AVISO
         function iniciarEscuchaMensajesTiempoReal() {
-            if (canalMensajes) {
-                _supabase.removeChannel(canalMensajes);
-            }
-
+            if (canalMensajes) _supabase.removeChannel(canalMensajes);
             canalMensajes = _supabase
                 .channel('mensajes-entrantes')
-                .on(
-                    'postgres_changes',
-                    { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' },
-                    (payload) => {
-                        let nuevoMsg = payload.new;
-                        // Si el mensaje es para mí
-                        if (nuevoMsg.receptor === miNumeroAsignado) {
-                            reproducirTonoMensaje();
-
-                            let remitente = nuevoMsg.emisor;
-                            let contacto = contactosOmniChat.find(c => c.numero === remitente);
-
-                            if (!contacto) {
-                                // Agregar como desconocido visible en la lista
-                                contacto = {
-                                    nombre: remitente,
-                                    numero: remitente,
-                                    ultimo: nuevoMsg.contenido,
-                                    guardado: false
-                                };
-                                contactosOmniChat.unshift(contacto);
-                            } else {
-                                contacto.ultimo = nuevoMsg.contenido;
-                            }
-                            renderizarContactosChat();
-
-                            // Si tengo ese chat abierto en este momento, pintar el mensaje directo
-                            if (numeroReceptorActual === remitente) {
-                                pintarBurbujaMensaje(nuevoMsg.contenido, false, nuevoMsg.created_at);
-                            }
+                .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'mensajes_omnimovil' }, async (payload) => {
+                    let msg = payload.new;
+                    if (msg.receptor === miNumeroAsignado) {
+                        let audio = document.getElementById('msgNotificationAudio');
+                        if (audio) audio.play().catch(() => {});
+                        if (numeroReceptorActual === msg.emisor) {
+                            pintarBurbujaMensaje(msg.contenido, false, msg.created_at);
                         }
                     }
-                )
+                })
                 .subscribe();
         }
 
         window.onload = async function() {
-            let usuarioGuardado = localStorage.getItem('omnimovil_usuario_activo');
-            
-            if (usuarioGuardado && usuarioGuardado !== 'admin') {
-                try {
-                    let { data, error } = await _supabase
-                        .from('clientes_omnimovil')
-                        .select('*')
-                        .eq('usuario', usuarioGuardado)
-                        .maybeSingle();
-                        
-                    if (data && !error) {
-                        await cargarDatosEnInterfaz(data);
-                    } else {
-                        localStorage.removeItem('omnimovil_usuario_activo');
-                        document.getElementById('panel-cliente').classList.remove('active');
-                        document.getElementById('modal-registro-inicial').style.display = 'flex';
-                    }
-                } catch(e) {
-                    document.getElementById('panel-cliente').classList.remove('active');
-                    document.getElementById('modal-registro-inicial').style.display = 'flex';
-                }
-            } else {
-                document.getElementById('panel-cliente').classList.remove('active');
-                document.getElementById('modal-registro-inicial').style.display = 'flex';
+            let userActivo = localStorage.getItem('omnimovil_usuario_activo');
+            if (userActivo && userActivo !== 'admin') {
+                let { data } = await _supabase.from('clientes_omnimovil').select('*').eq('usuario', userActivo).maybeSingle();
+                if (data) await cargarDatosEnInterfaz(data);
             }
             renderizarContactosChat();
         };
 
         window.cerrarSesionCliente = function() {
-            try {
-                localStorage.removeItem('omnimovil_usuario_activo');
-                localStorage.removeItem('omnimovil_session');
-            } catch(e) {}
-
+            localStorage.removeItem('omnimovil_usuario_activo');
             if (canalMensajes) _supabase.removeChannel(canalMensajes);
-            clienteAutenticado = null;
-
-            let panelCliente = document.getElementById('panel-cliente');
-            if (panelCliente) panelCliente.classList.remove('active');
-
-            let modalAuth = document.getElementById('modal-registro-inicial');
-            if (modalAuth) modalAuth.style.display = 'flex';
-
-            document.getElementById('auth-login-user').value = '';
-            document.getElementById('auth-login-pass').value = '';
-
-            alert("Has cerrado sesión exitosamente.");
+            document.getElementById('panel-cliente').classList.remove('active');
+            document.getElementById('modal-registro-inicial').style.display = 'flex';
         };
 
         function renderizarContactosChat(filtro = '') {
             let listaBox = document.getElementById('lista-chats-wa');
             if (!listaBox) return;
             listaBox.innerHTML = '';
-
-            let filtrados = contactosOmniChat.filter(c => 
-                c.nombre.toLowerCase().includes(filtro.toLowerCase()) || 
-                c.numero.includes(filtro)
-            );
+            let filtrados = contactosOmniChat.filter(c => c.nombre.toLowerCase().includes(filtro.toLowerCase()) || c.numero.includes(filtro));
 
             filtrados.forEach(c => {
                 let div = document.createElement('div');
                 div.className = 'wa-chat-item';
                 div.onclick = () => abrirChatWhatsApp(c.numero, c.nombre);
-                
-                let etiquetaNoGuardado = c.guardado === false 
-                    ? `<span style="font-size: 0.65rem; background: #f59e0b; color: #000; padding: 2px 6px; border-radius: 6px; font-weight: bold; margin-left: 6px;">Nuevo</span>` 
-                    : '';
-
+                let avatarHtml = c.foto ? `<div class="wa-avatar-img"><img src="${c.foto}" /></div>` : `<div class="wa-avatar-img">${c.nombre.charAt(0).toUpperCase()}</div>`;
                 div.innerHTML = `
-                    <div class="wa-avatar-wrap"><div class="wa-avatar-img">${c.guardado === false ? '<i class="fa-solid fa-user-question"></i>' : c.nombre.charAt(0).toUpperCase()}</div></div>
+                    <div class="wa-avatar-wrap">${avatarHtml}</div>
                     <div class="wa-chat-info">
-                        <strong style="font-size: 0.9rem;">${c.nombre} ${etiquetaNoGuardado}</strong><br/>
+                        <strong style="font-size: 0.9rem;">${c.nombre}</strong><br/>
                         <span style="font-size: 0.75rem; color: var(--wa-muted);">${c.ultimo}</span>
                     </div>
                 `;
@@ -1201,294 +1050,92 @@
             });
         }
 
-        function filtrarChatsWhatsApp() {
-            let val = document.getElementById('wa-search-input').value;
-            renderizarContactosChat(val);
-        }
-
-        function cambiarPestanaWhatsApp(pestana) {
-            document.querySelectorAll('.wa-nav-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.wa-tab-content').forEach(t => t.classList.remove('active'));
-
-            let btn = document.getElementById(`nav-btn-${pestana}`);
-            let tab = document.getElementById(`wa-tab-${pestana}`);
-
-            if (btn) btn.classList.add('active');
-            if (tab) tab.classList.add('active');
-        }
-
-        function cambiarSeccionCliente(seccion) {
+        function filtrarChatsWhatsApp() { renderizarContactosChat(document.getElementById('wa-search-input').value); }
+        function cambiarSeccionCliente(s) {
             document.querySelectorAll('.client-tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.client-section').forEach(s => s.classList.remove('active'));
-            
-            let btnActivo = document.getElementById(`ctab-${seccion === 'billetera' ? '1' : seccion === 'chat' ? 'chat' : seccion === 'paquetes' ? '2' : seccion === 'llamadas' ? '3' : '4'}`);
-            if (btnActivo) btnActivo.classList.add('active');
-            
-            let secActiva = document.getElementById(`csec-${seccion}`);
-            if (secActiva) secActiva.classList.add('active');
+            document.querySelectorAll('.client-section').forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`csec-${s}`).classList.add('active');
         }
 
-        function pintarBurbujaMensaje(texto, esMio, fechaIso) {
+        function pintarBurbujaMensaje(html, esMio, fechaIso) {
             let box = document.getElementById('contenedor-mensajes-wa');
             let hora = fechaIso ? new Date(fechaIso).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            box.innerHTML += `
-                <div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}">
-                    <div>${texto}</div>
-                    <div class="wa-msg-meta"><span>${hora}</span></div>
-                </div>`;
+            box.innerHTML += `<div class="wa-msg-bubble ${esMio ? 'wa-msg-sent' : 'wa-msg-received'}"><div>${html}</div><div class="wa-msg-meta"><span>${hora}</span></div></div>`;
             box.scrollTop = box.scrollHeight;
         }
 
-        async function abrirChatWhatsApp(num, nom) { 
+        async function abrirChatWhatsApp(num, nom) {
             numeroReceptorActual = num;
             nombreReceptorActual = nom;
-            document.getElementById('pantalla-chat-abierto').classList.add('active'); 
-            document.getElementById('chat-nombre-receptor-wa').innerText = nom; 
-            document.getElementById('chat-header-avatar-wa').innerText = nom.charAt(0).toUpperCase(); 
-
-            // Mostrar u ocultar banner de "Guardar número" si es desconocido
+            document.getElementById('pantalla-chat-abierto').classList.add('active');
+            document.getElementById('chat-nombre-receptor-wa').innerText = nom;
+            
             let contacto = contactosOmniChat.find(c => c.numero === num);
-            let bannerDesconocido = document.getElementById('banner-guardar-desconocido');
-            if (!contacto || contacto.guardado === false) {
-                bannerDesconocido.style.display = 'flex';
-            } else {
-                bannerDesconocido.style.display = 'none';
-            }
+            let avatar = document.getElementById('chat-header-avatar-wa');
+            if (contacto && contacto.foto) { avatar.innerHTML = `<img src="${contacto.foto}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>`; }
+            else { avatar.innerText = nom.charAt(0).toUpperCase(); }
 
-            // Cargar historial de mensajes desde Supabase
             let box = document.getElementById('contenedor-mensajes-wa');
-            box.innerHTML = '<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; width: fit-content; margin: 0 auto;">🔒 Mensajes cifrados en OmniMovil.</div>';
+            box.innerHTML = '<div style="text-align: center; color: var(--wa-muted); font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; width: fit-content; margin: 0 auto;">🔒 Mensajes cifrados.</div>';
 
-            let { data, error } = await _supabase
-                .from('mensajes_omnimovil')
-                .select('*')
-                .or(`and(emisor.eq.${miNumeroAsignado},receptor.eq.${num}),and(emisor.eq.${num},receptor.eq.${miNumeroAsignado})`)
-                .order('created_at', { ascending: true });
-
-            if (data && !error) {
-                data.forEach(m => {
-                    pintarBurbujaMensaje(m.contenido, m.emisor === miNumeroAsignado, m.created_at);
-                });
-            }
+            let { data } = await _supabase.from('mensajes_omnimovil').select('*').or(`and(emisor.eq.${miNumeroAsignado},receptor.eq.${num}),and(emisor.eq.${num},receptor.eq.${miNumeroAsignado})`).order('created_at', { ascending: true });
+            if (data) { data.forEach(m => pintarBurbujaMensaje(m.contenido, m.emisor === miNumeroAsignado, m.created_at)); }
         }
 
-        function prepararGuardarDesconocido() {
-            if (!numeroReceptorActual) return;
-            document.getElementById('input-nuevo-nombre-contacto').value = '';
-            document.getElementById('input-nuevo-numero-chat').value = numeroReceptorActual;
-            abrirModalNuevoChat();
-        }
-
-        function cerrarChatAbierto() { 
-            document.getElementById('pantalla-chat-abierto').classList.remove('active'); 
-            numeroReceptorActual = null;
-        }
-
-        function toggleEmergencyMode() {
-            emergencyModeActive = !emergencyModeActive;
-            let sosModal = document.getElementById('modal-emergency-sos');
-            if (sosModal) sosModal.classList.toggle('active', emergencyModeActive);
-        }
-
+        function cerrarChatAbierto() { document.getElementById('pantalla-chat-abierto').classList.remove('active'); numeroReceptorActual = null; }
+        function toggleEmergencyMode() { emergencyModeActive = !emergencyModeActive; document.getElementById('modal-emergency-sos').classList.toggle('active', emergencyModeActive); }
         function abrirModalAuth() { document.getElementById('modal-registro-inicial').style.display = 'flex'; }
 
         function switchAuthMode(mode) {
             document.getElementById('form-login-container').style.display = mode === 'login' ? 'block' : 'none';
             document.getElementById('form-registro-container').style.display = mode === 'registro' ? 'block' : 'none';
-
-            let btnLogin = document.getElementById('tab-btn-login');
-            let btnReg = document.getElementById('tab-btn-registro');
-            if (mode === 'login') {
-                btnLogin.style.background = '#0284c7';
-                btnLogin.style.color = 'white';
-                btnReg.style.background = '#1e293b';
-                btnReg.style.color = '#94a3b8';
-            } else {
-                btnReg.style.background = '#10b981';
-                btnReg.style.color = 'white';
-                btnLogin.style.background = '#1e293b';
-                btnLogin.style.color = '#94a3b8';
-            }
         }
 
         async function ejecutarInicioSesion() {
-            let userVal = document.getElementById('auth-login-user').value.trim();
-            let passVal = document.getElementById('auth-login-pass').value.trim();
-            
-            if (!userVal || !passVal) { 
-                alert("Por favor ingresa tu usuario y contraseña."); 
-                return; 
-            }
-
-            if (userVal.toLowerCase() === 'admin' && passVal === 'admin123') {
-                localStorage.setItem('omnimovil_usuario_activo', 'admin');
-                location.href = 'admin.html';
-                return;
-            }
-
-            try {
-                localStorage.removeItem('omnimovil_usuario_activo');
-
-                let { data, error } = await _supabase
-                    .from('clientes_omnimovil')
-                    .select('*')
-                    .eq('usuario', userVal)
-                    .maybeSingle();
-
-                if (error) {
-                    alert("Error de conexión con la base de datos: " + error.message);
-                    return;
-                }
-
-                if (!data) {
-                    alert("El usuario no existe en la red OmniMovil.");
-                    return;
-                }
-
-                if (data.pass !== passVal) {
-                    alert("Contraseña incorrecta. Inténtalo nuevamente.");
-                    return;
-                }
-
-                localStorage.setItem('omnimovil_usuario_activo', data.usuario);
-                await cargarDatosEnInterfaz(data);
-
-                alert(`¡Bienvenido de nuevo, ${data.nombre}!`);
-
-            } catch (err) {
-                alert("Error al verificar credenciales: " + err.message);
-            }
+            let u = document.getElementById('auth-login-user').value.trim();
+            let p = document.getElementById('auth-login-pass').value.trim();
+            let { data } = await _supabase.from('clientes_omnimovil').select('*').eq('usuario', u).maybeSingle();
+            if (!data || data.pass !== p) { alert("Credenciales incorrectas."); return; }
+            localStorage.setItem('omnimovil_usuario_activo', data.usuario);
+            await cargarDatosEnInterfaz(data);
         }
 
         async function ejecutarRegistroCliente() {
-            let nombreVal = document.getElementById('init-reg-nombre').value.trim();
-            let userVal = document.getElementById('init-reg-user').value.trim();
-            let passVal = document.getElementById('init-reg-pass').value.trim();
-
-            if (!nombreVal || !userVal || !passVal) {
-                alert("Completa todos los campos para registrarte.");
-                return;
-            }
-
-            try {
-                let { data: existente } = await _supabase
-                    .from('clientes_omnimovil')
-                    .select('usuario')
-                    .eq('usuario', userVal)
-                    .maybeSingle();
-
-                if (existente) {
-                    alert("Ese nombre de usuario ya está en uso. Elige otro.");
-                    return;
-                }
-
-                let randomDigits = Math.floor(1000 + Math.random() * 9000);
-                let nuevaLinea = `+58 500-${randomDigits}`;
-
-                let nuevoCliente = {
-                    nombre: nombreVal,
-                    usuario: userVal,
-                    pass: passVal,
-                    numero_linea: nuevaLinea,
-                    saldo: 0.00
-                };
-
-                let { data, error } = await _supabase
-                    .from('clientes_omnimovil')
-                    .insert([nuevoCliente])
-                    .select()
-                    .single();
-
-                if (error) {
-                    alert("Error al registrar usuario en Supabase: " + error.message);
-                    return;
-                }
-
-                localStorage.setItem('omnimovil_usuario_activo', data.usuario);
-                await cargarDatosEnInterfaz(data);
-
-                alert(`¡Registro exitoso, ${data.nombre}! Tu línea asignada es ${data.numero_linea}`);
-
-            } catch (err) {
-                alert("Error al registrar: " + err.message);
-            }
-        }
-
-        function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
-        function backspaceKey() { 
-            let d = document.getElementById('zoiper-input-display'); 
-            if (d.value.length > 3) d.value = d.value.slice(0, -1); 
+            let nom = document.getElementById('init-reg-nombre').value.trim();
+            let u = document.getElementById('init-reg-user').value.trim();
+            let p = document.getElementById('init-reg-pass').value.trim();
+            let nuevaLinea = `+58 500-${Math.floor(1000 + Math.random() * 9000)}`;
+            let { data, error } = await _supabase.from('clientes_omnimovil').insert([{ nombre: nom, usuario: u, pass: p, numero_linea: nuevaLinea, saldo: 0.00 }]).select().single();
+            if (error) { alert("Error al registrar: " + error.message); return; }
+            localStorage.setItem('omnimovil_usuario_activo', data.usuario);
+            await cargarDatosEnInterfaz(data);
         }
 
         function abrirModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'flex'; }
         function cerrarModalNuevoChat() { document.getElementById('modal-select-contact').style.display = 'none'; }
-
         function guardarNuevoContactoChat() {
-            let nombre = document.getElementById('input-nuevo-nombre-contacto').value.trim();
-            let numero = document.getElementById('input-nuevo-numero-chat').value.trim();
-            if (!nombre || !numero) return;
-
-            let existente = contactosOmniChat.find(c => c.numero === numero);
-            if (existente) {
-                existente.nombre = nombre;
-                existente.guardado = true;
-            } else {
-                contactosOmniChat.push({ nombre, numero, ultimo: "Chat iniciado", guardado: true });
-            }
-
+            let nom = document.getElementById('input-nuevo-nombre-contacto').value.trim();
+            let num = document.getElementById('input-nuevo-numero-chat').value.trim();
+            if (!nom || !num) return;
+            contactosOmniChat.push({ nombre: nom, numero: num, ultimo: "Chat iniciado", guardado: true, foto: null });
             guardarContactosLocales();
             cerrarModalNuevoChat();
             renderizarContactosChat();
-            abrirChatWhatsApp(numero, nombre);
-        }
-
-        function togglePickerPanel() { 
-            let p = document.getElementById('wa-picker-panel'); 
-            p.style.display = p.style.display === 'block' ? 'none' : 'block'; 
-        }
-
-        function insertarEmojiOrSticker(v) { 
-            document.getElementById('chat-input-texto-wa').value += v; 
-            document.getElementById('wa-picker-panel').style.display = 'none'; 
+            abrirChatWhatsApp(num, nom);
         }
 
         async function enviarMensajeWhatsApp() {
             let txt = document.getElementById('chat-input-texto-wa').value.trim();
             if (!txt || !numeroReceptorActual || !clienteAutenticado) return;
-
             document.getElementById('chat-input-texto-wa').value = '';
             pintarBurbujaMensaje(txt, true);
-
-            // Actualizar último mensaje en la lista lateral
-            let contacto = contactosOmniChat.find(c => c.numero === numeroReceptorActual);
-            if (contacto) {
-                contacto.ultimo = txt;
-                renderizarContactosChat();
-            }
-
-            // Guardar en Supabase
-            let { error } = await _supabase
-                .from('mensajes_omnimovil')
-                .insert([{
-                    emisor: miNumeroAsignado,
-                    receptor: numeroReceptorActual,
-                    contenido: txt
-                }]);
-
-            if (error) {
-                alert("Error al enviar mensaje: " + error.message);
-            }
+            await _supabase.from('mensajes_omnimovil').insert([{ emisor: miNumeroAsignado, receptor: numeroReceptorActual, contenido: txt }]);
         }
 
-        function makeZoiperCall() {
-            let callScreen = document.getElementById('modal-call-screen');
-            if (callScreen) callScreen.style.display = 'flex';
-        }
-
-        function finalizarLlamada() {
-            let callScreen = document.getElementById('modal-call-screen');
-            if (callScreen) callScreen.style.display = 'none';
-        }
+        function pressKey(c) { document.getElementById('zoiper-input-display').value += c; }
+        function backspaceKey() { let d = document.getElementById('zoiper-input-display'); if (d.value.length > 3) d.value = d.value.slice(0, -1); }
+        function makeZoiperCall() { alert("Marcando línea VoIP HD de OmniMovil..."); }
+        function finalizarLlamada() { alert("Llamada finalizada."); }
     </script>
 </body>
 </html>
